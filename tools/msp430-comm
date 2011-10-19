@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ "$1" == "" ]; then
+	echo "Usage: `basename $0` /dev/ttyACMx"
+else
+	echo "Use Ctrl-A Ctrl-Q to exit!"
+	picocom --baud 9600 --flow n --parity n --databits 8 --noinit $1
+fi

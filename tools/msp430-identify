@@ -1,0 +1,3 @@
+#!/bin/bash
+MCU=`mspdebug -q rf2500 "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]"`
+echo "Device: $MCU"
