@@ -23,7 +23,7 @@ CL=msp430-gcc
 LFLAGS=
 
 # Object files and target binary
-OBJS=main.o suart.o
+OBJS=main.o
 BIN=main.elf
 
 # Phony targets; all and clean
