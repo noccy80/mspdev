@@ -1,0 +1,10 @@
+= Installing environment: =
+
+It is recommended to create symlinks to the files in the tools folder somewhere in your path.
+
+== Debian / Ubuntu Oneiric ==
+
+To install the whole msp430-gcc suite in Oneiric, issue the following command:
+
+  $ sudo apt-get install msp430-libc msp430mcu binutils-msp430 gcc-msp430 gdb-msp430 mspdebug
+
