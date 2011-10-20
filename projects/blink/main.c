@@ -61,9 +61,14 @@ int main(void) {
 
 }
 
-// Interrupt Service Routine for Timer A0.
+// Interrupt Service Routine for Timer A0. We need to use preprocessor
+// directives in order to place the interrupt at the correct address for
+// the current mcu.
+#ifdef TIMER0_A0_VECTOR
+interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
+#else
 interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
-
+#endif
 	twink = !twink;
 	LED_OUT = (twink)?LED0:LED1;
 
