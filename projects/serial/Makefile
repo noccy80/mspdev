@@ -16,52 +16,79 @@ MSPTYPE=rf2500
 # Or the preferred way, have it reported by mspdebug:
 MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]")
 
-# Compiler, compiler flags, linker, linker flags
-CC=msp430-gcc
-CFLAGS=-Os -Wall -g -mmcu=$(MCU)
-CL=msp430-gcc
-LFLAGS=
+#
+# Source files and target binary, define your source files here to have them
+# compiled, and define the target basename. An .elf binary will be created as
+# well as a .hex file:
+SOURCES=main.c suart.c
+SOURCESASM=
+TARGET=main
+INCLUDES=
+LIBS=
 
-# Object files and target binary
-OBJS=main.o suart.o
-BIN=main.elf
+# Compiler and other binaries. No need to change these really, unless you know
+# what you are doing.
+CC=msp430-gcc
+OBJCOPY=msp430-objcopy
+SIZE=msp430-size -t
+# Flags and command lines
+CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
+ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
+LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
+# Object files and listings
+OBJS=$(SOURCES:.c=.o) $(SOURCESASM:.asm=.o)
+LSTS=$(SOURCES:.c=.lst)
 
 # Phony targets; all and clean
-.phony: all bin clean prog identify
+.phony: all bin clean listing prog identify
 
 # All, to build the binary and program it
 all: bin prog
 
 # Binary, depends on the object files
-bin: $(BIN)
-$(BIN): $(OBJS)
-	$(CL) $(CFLAGS) -o $(BIN) $(OBJS) $(LFLAGS)
+bin: $(TARGET).elf $(TARGET).hex
+$(TARGET).elf: $(OBJS)
+	$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJS) $(LIBS)
+	$(SIZE) $(TARGET).elf
+
+listing: $(LSTS)
 
 # Compile the object files
 %.o: %.c
-	$(CC) $(CFLAGS) -c $<
+	$(CC) -c $(CFLAGS) -o $@ $<
+%.o: %.asm
+	$(CC) -c $(ASFLAGS) -o $@ $<
+
+# Create hex files
+%.hex: %.elf
+	$(OBJCOPY) -O ihex $< $@
+
+# rule for making assembler source listing, to see the code
+%.lst: %.c
+	$(CC) -c $(CFLAGS) -Wa,-anlhd $< > $@
 
 # Clean
 clean:
-	rm -fr $(BIN) $(OBJS)
+	rm -fr $(TARGET).hex $(TARGET).elf $(TARGET).map $(OBJS) $(LSTS)
 
-prog: $(BIN)
-	$(MSPDEBUG) $(MSPTYPE) "prog $(BIN)"
+prog: $(TARGET)
+	$(MSPDEBUG) $(MSPTYPE) "prog $(TARGET).elf"
 
 identify:
 	@echo "Device: $(MCU)"
 
 help:
 	@echo "Target binary:"
-	@echo "  $(BIN)"
+	@echo "  $(TARGET)"
 	@echo
-	@echo "Object files:"
-	@echo "  $(OBJS)"
+	@echo "Source files:"
+	@echo "  $(SOURCES) $(SOURCESASM)"
 	@echo 
 	@echo "Supported rules:"
 	@echo "  all       Build and program the device"
 	@echo "  bin       Only build binary"
 	@echo "  prog      Only program device with binary"
 	@echo "  clean     Clean the build environment"
+	@echo "  listing   Assembly source listings"
 	@echo "  identify  Identify the attached MCU"
 
