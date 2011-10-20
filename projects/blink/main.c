@@ -50,10 +50,10 @@ int main(void) {
 	// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
 	// should output an LED change every 1 second. Try this out and see how
 	// inaccurate the VLO can be 
-	TACCR0 = 3000;	
+	TACCR0 = 3000;
 
 	//Enable global interrupts
-	WRITE_SR(GIE);	
+	WRITE_SR(GIE);
 
 	while(1) {
 		//Loop forever, interrupts take care of the rest
@@ -61,11 +61,8 @@ int main(void) {
 
 }
 
-#ifdef TIMER0_A0_VECTOR
-interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
-#elif TIMERA0_VECTOR
+// Interrupt Service Routine for Timer A0.
 interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
-#endif
 
 	twink = !twink;
 	LED_OUT = (twink)?LED0:LED1;
