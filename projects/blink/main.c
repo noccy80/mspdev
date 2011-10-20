@@ -10,16 +10,12 @@
  
 #include <msp430.h>
 #include <legacymsp430.h>
+#include "ta0compat.h"
 
 #define  LED0      BIT0
 #define  LED1      BIT6
 #define  LED_DIR   P1DIR
 #define  LED_OUT   P1OUT
-
-#ifndef TACTL
-#define TACTL TA0CTL
-#define TACCTL0 TA0CCTL0
-#endif
 
 unsigned char twink = 0;
 
