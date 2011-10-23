@@ -47,7 +47,7 @@ all: bin prog
 # Binary, depends on the object files
 bin: $(TARGET).elf $(TARGET).hex
 $(TARGET).elf: $(OBJS)
-ifndef $(MCU)
+ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
 	@exit 1
 endif
@@ -58,14 +58,15 @@ listing: $(LSTS)
 
 # Compile the object files
 %.o: %.c
-ifndef $(MCU)
+ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
+	@echo $(MCU)
 	@exit 1
 endif
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.o: %.asm
-ifndef $(MCU)
+ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
 	@exit 1
 endif

@@ -19,6 +19,10 @@ unsigned char cmdptr = 0;
 unsigned char cmdmode = CMD_COMMAND;
 void cmdhandler();
 
+/**
+ * @brief Main function
+ *
+ */
 int main(void) {
 
 	// Halt the watchdog timer - According to the datasheet the watchdog timer
@@ -41,21 +45,30 @@ int main(void) {
 
 }
 
+/**
+ * @brief Display command prompt
+ *
+ */
 void cmdprompt() {
 
+	// Branch based on the current command mode and display an appropriate
+	// prompt.
 	switch(cmdmode) {
 
 		case CMD_COMMAND:
 			printf("cmd> ");
 			break;
 		case CMD_INPUT:
-			printf("enter> ");
 			break;
 	}
 
 
 }
 
+/**
+ * @brief Evaluate commands and input
+ *
+ */
 void cmdeval() {
 
 	RTC_TIME_STRUCT t_time;
@@ -74,15 +87,13 @@ void cmdeval() {
 		// empty command
 		} else if (cmdptr == 0) {
 			// Nada
-			} else if (0 == strncmp((const char*)cmdbuf,"action\0",7)) {
+		} else if (0 == strncmp((const char*)cmdbuf,"action\0",7)) {
 			cmdmode = CMD_INPUT;
 			// settime command
 		} else if (0 == strncmp((const char*)cmdbuf,"settime\0",8)) {
-			#ifdef HAS_RTC
-			printf("RTC: %02d:%02d:%02d\r\n", RTCHOUR, RTCMIN, RTCSEC);
-			#else
-			printf("This device does not have an on-board RTC\r\n");
-			#endif
+			cmdmode = CMD_INPUT;
+			rtc_get_time(&t_time); 
+			printf("Year [%02d]: ", t_time.year);
 		// gettime command
 		} else if (0 == strncmp((const char*)cmdbuf,"gettime\0",8)) {
 			rtc_get_time(&t_time); 
@@ -95,6 +106,10 @@ void cmdeval() {
 	}
 }
 
+/**
+ * @brief Handler for all text I/O 
+ *
+ */
 void cmdhandler() {
 
 	unsigned char byte;
@@ -104,14 +119,14 @@ void cmdhandler() {
 		byte = suart_receive();
 
 		if (byte == 13) {
-
+			// When the enter key is pressed
 			cmdeval();
 			cmdprompt();
 			cmdbuf[0] = 0;
 			cmdptr = 0;
 
 		} else if (byte==127) {
-
+			// When backspace is pressed
 			if (cmdptr > 0) {
 				// Move back one step, output a space, and move back again.
 				// This should erase a character on most terminals.
@@ -120,10 +135,11 @@ void cmdhandler() {
 			}
 
 		} else if (byte>=32) {
+			// Space or any character above ascii 32 should be echoed back to
+			// the client. It should also be added to the buffer.
 
 			cmdbuf[cmdptr++] = byte;
 			cmdbuf[cmdptr] = 0;
-			// TXByte = byte;	// Load the recieved byte into the byte to be transmitted
 			suart_transmit(byte);
 			
 		}
