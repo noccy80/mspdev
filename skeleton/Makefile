@@ -47,6 +47,10 @@ all: bin prog
 # Binary, depends on the object files
 bin: $(TARGET).elf $(TARGET).hex
 $(TARGET).elf: $(OBJS)
+ifndef $(MCU)
+	@echo "ERROR: MCU not defined or programmer not connected."
+	@exit 1
+endif
 	$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJS) $(LIBS)
 	$(SIZE) $(TARGET).elf
 
@@ -54,8 +58,17 @@ listing: $(LSTS)
 
 # Compile the object files
 %.o: %.c
+ifndef $(MCU)
+	@echo "ERROR: MCU not defined or programmer not connected."
+	@exit 1
+endif
 	$(CC) -c $(CFLAGS) -o $@ $<
+
 %.o: %.asm
+ifndef $(MCU)
+	@echo "ERROR: MCU not defined or programmer not connected."
+	@exit 1
+endif
 	$(CC) -c $(ASFLAGS) -o $@ $<
 
 # Create hex files
@@ -95,4 +108,5 @@ help:
 	@echo "  clean     Clean the build environment"
 	@echo "  listing   Assembly source listings"
 	@echo "  identify  Identify the attached MCU"
+
 

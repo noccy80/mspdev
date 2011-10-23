@@ -8,6 +8,7 @@
 #include <msp430.h>
 #include <legacymsp430.h>
 #include "suart.h"
+#include "rtc.h"
 
 #define CMD_COMMAND 0
 #define CMD_INPUT 1
@@ -57,6 +58,8 @@ void cmdprompt() {
 
 void cmdeval() {
 
+	RTC_TIME_STRUCT t_time;
+
 	printf("\r\n");
 
 	if (cmdmode == CMD_INPUT) {
@@ -82,7 +85,9 @@ void cmdeval() {
 			#endif
 		// gettime command
 		} else if (0 == strncmp((const char*)cmdbuf,"gettime\0",8)) {
-			printf("Get RTC time/date\r\n");
+			rtc_get_time(&t_time); 
+			printf("RTC Date: %02d-%02d-%02d (%d)\r\n", t_time.year, t_time.month, t_time.day, t_time.dow);
+			printf("RTC Time: %02d:%02d:%02d\r\n", t_time.hour, t_time.minute, t_time.second);
 		// rest is invalid
 		} else {
 			printf("Bad command!\r\n");
