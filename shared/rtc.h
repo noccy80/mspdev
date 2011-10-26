@@ -35,7 +35,14 @@ typedef struct rtc_time_struct {
 	unsigned int second;
 } RTC_TIME_STRUCT;
 
+#define RTC_USE_BEST 0
+#define RTC_ONBOARD 1
+#define RTC_EMULATED 2
+#define RTC_I2C 3
+
+void rtc_init(unsigned char mode, unsigned char i2caddr);
 unsigned int rtc_get_time(RTC_TIME_STRUCT* time);
 unsigned int rtc_set_time(RTC_TIME_STRUCT* time);
+const char* rtc_get_mode();
 
 #endif
