@@ -7,17 +7,24 @@
  
 #include <msp430.h>
 #include <legacymsp430.h>
+#include <stdint.h>
 #include "suart.h"
 #include "rtc.h"
+#include "adc.h"
 
 #define CMD_COMMAND 0
 #define CMD_INPUT 1
+#define CMD_NONE 2
+
+#define KEY_CTRL_C 3
 
 // Buffer to store commands, and pointer to the first character index
-unsigned char cmdbuf[256];
-unsigned char cmdptr = 0;
-unsigned char cmdmode = CMD_COMMAND;
+uint8_t cmdbuf[256];
+uint8_t cmdptr = 0;
+uint8_t cmdmode = CMD_COMMAND;
 void cmdhandler();
+
+void cmdeval();
 
 /**
  * @brief Main function
@@ -34,13 +41,24 @@ int main(void) {
 	WDTCTL = WDTPW + WDTHOLD;
 
 	suart_init();
+	rtc_init(RTC_USE_BEST,0);
 
 	while(1) {
+		if (cmdmode == CMD_NONE) {
+			__delay_cycles(64000);
+			__delay_cycles(64000);
+			cmdeval();
+		}
 		cmdhandler();
-		if (!suart_datawaiting()) // Loop again if another value has been received
-				__bis_SR_register(CPUOFF + GIE);        
-		// LPM0, the ADC interrupt will wake the processor up. This is so that
-		// it does not endlessly loop when no value has been Received.
+		
+		if (!suart_datawaiting()) {
+			// Loop again if another value has been received
+			/*
+			__bis_SR_register(CPUOFF + GIE);        
+			*/
+			// LPM0, the ADC interrupt will wake the processor up. This is so that
+			// it does not endlessly loop when no value has been Received.
+		}
 	}
 
 }
@@ -71,9 +89,10 @@ void cmdprompt() {
  */
 void cmdeval() {
 
+	uint16_t temp;
 	RTC_TIME_STRUCT t_time;
 
-	printf("\r\n");
+	if (cmdmode != CMD_NONE) printf("\r\n");
 
 	if (cmdmode == CMD_INPUT) {
 		cmdmode = CMD_COMMAND;
@@ -83,7 +102,7 @@ void cmdeval() {
 		// Evaluate commands
 		// help command
 		if (0 == strncmp((const char*)cmdbuf,"help\0",5)) {
-			printf("Valid commands: help settime gettime action\r\n");
+			printf("Available Commands: help settime gettime gettemp action\r\n");
 		// empty command
 		} else if (cmdptr == 0) {
 			// Nada
@@ -99,6 +118,11 @@ void cmdeval() {
 			rtc_get_time(&t_time); 
 			printf("RTC Date: %02d-%02d-%02d (%d)\r\n", t_time.year, t_time.month, t_time.day, t_time.dow);
 			printf("RTC Time: %02d:%02d:%02d\r\n", t_time.hour, t_time.minute, t_time.second);
+			printf("RTC Mode: %s\r\n", rtc_get_mode());
+		} else if (0 == strncmp((const char*)cmdbuf,"gettemp\0",8)) {
+			cmdmode = CMD_NONE;
+			temp = adc_single_measure(INCH_10);
+			printf("Temperature: %d\r\n", temp);
 		// rest is invalid
 		} else {
 			printf("Bad command!\r\n");
@@ -112,7 +136,7 @@ void cmdeval() {
  */
 void cmdhandler() {
 
-	unsigned char byte;
+	uint8_t byte;
 
 	// If the device has recieved a value
 	if (suart_datawaiting()) {
@@ -121,6 +145,15 @@ void cmdhandler() {
 		if (byte == 13) {
 			// When the enter key is pressed
 			cmdeval();
+			if (cmdmode == CMD_NONE) return;
+			cmdprompt();
+			cmdbuf[0] = 0;
+			cmdptr = 0;
+			
+		} if ((byte == 3) && (cmdmode == CMD_NONE)) {
+		
+			printf("Abort.\r\n");
+			cmdmode = CMD_COMMAND;
 			cmdprompt();
 			cmdbuf[0] = 0;
 			cmdptr = 0;

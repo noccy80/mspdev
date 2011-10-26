@@ -19,7 +19,7 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 # Source files and target binary, define your source files here to have them
 # compiled, and define the target basename. An .elf binary will be created as
 # well as a .hex file:
-SOURCES  = main.c suart.c i2c.c rtc.c
+SOURCES  = main.c suart.c i2c.c rtc.c adc.c
 SOURCESA =
 TARGET   = rtcctl
 INCLUDES =
@@ -85,7 +85,7 @@ clean:
 	rm -fr $(TARGET).hex $(TARGET).elf $(TARGET).map $(OBJS) $(LSTS)
 
 prog: $(TARGET).elf
-	$(MSPDEBUG) $(MSPTYPE) "prog $(TARGET).elf"
+	$(MSPDEBUG) -q $(MSPTYPE) "prog $(TARGET).elf"
 
 sim: $(TARGET).elf
 	@echo "Type 'prog $(TARGET).elf' to load the program in the simulator"
