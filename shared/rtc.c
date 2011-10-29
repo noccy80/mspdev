@@ -10,11 +10,15 @@ char* _rtc_modestr[] = { "Emulated", "Integrated", "I2C" };
 
 void rtc_init(unsigned char mode, unsigned char i2caddr) {
 	if (mode == RTC_USE_BEST) {
+	#ifdef HAS_RTC
+		_rtc_mode = RTC_INTEGRATED;
+	#else
 		_rtc_mode = RTC_EMULATED;
+	#endif // HAS_RTC
 	} else {
 		_rtc_mode = mode;
-		_rtc_i2caddr = i2caddr;
 	}
+	_rtc_i2caddr = i2caddr; // should be 0 for all but I2C
 }
 
 unsigned int rtc_get_time(RTC_TIME_STRUCT* time) {

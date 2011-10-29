@@ -1,7 +1,22 @@
 #!/bin/bash
+# CLIENT=screen
+test -e ~/.msp430-comm && . ~/.msp430-comm
 if [ "$1" == "" ]; then
 	echo "Usage: `basename $0` /dev/ttyACMx"
 else
-	echo "Use Ctrl-A Ctrl-Q to exit!"
-	picocom --baud 9600 --flow n --parity n --databits 8 --noinit $1
+	case "$CLIENT" in
+	"screen")
+		screen $1 9600
+		;;
+	"picocom")
+		echo "Use Ctrl-A Ctrl-Q to exit!"
+		picocom --baud 9600 --flow n --parity n --databits 8 --noinit $1
+		;;
+	"minicom")
+		echo "Minicom"
+		minicom -D $1 -b 9600 -o -z -8
+		;;
+	*)
+		echo "No terminal emulator defined, please add 'CLIENT=client' to ~/.msp430-comm with a supported client"
+	esac
 fi

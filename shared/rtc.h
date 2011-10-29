@@ -36,7 +36,7 @@ typedef struct rtc_time_struct {
 } RTC_TIME_STRUCT;
 
 #define RTC_USE_BEST 0
-#define RTC_ONBOARD 1
+#define RTC_INTEGRATED 1
 #define RTC_EMULATED 2
 #define RTC_I2C 3
 
