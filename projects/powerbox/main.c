@@ -10,18 +10,29 @@
 #include "utils.h"
 
 // Input, the buttons we are using
-#define BTN_POWER BIT4 // port1.4 is power button
-#define BTN_RESET BIT5 // port1.5 is reset button
+#define BTN_POWER    BIT4   // port1.4 is power button
+#define BTN_RESET    BIT5   // port1.5 is reset button
 
-// Outputs, this is led 1 and 2 on the Launchpad
-#define LED_STATUS BIT0 // port1.0 is our status led
-#define LED_POWER BIT1 // port1.1 is our power led
-#define LED_ERROR BIT2 // port1.2 is our error led
+// Outputs for leds on port1
+#define LED_STATUS   BIT0 // port1.0 is our status led
+#define LED_POWER    BIT1 // port1.1 is our power led
+#define LED_ERROR    BIT2 // port1.2 is our error led
+// NOTE: These are on port2
+#define LED_LINE1    BIT3 // port2.3 is the status led for line1
+#define LED_LINE2    BIT4 // port2.4 is the status led for line2
+
+// Output for power control
+#define CTL_LINE1    BIT0 // port2.0 is control for line1 +5/+12V
+#define CTL_LINE2    BIT1 // port2.1 is control for line2 +5/+12V
 
 // Power state definitions
 #define STA_OFF 0
 #define STA_ON 1
 #define STA_ERROR 2
+
+#define LIN_OFF 0 // Line is off
+#define LIN_5V 1 // Line is at +5V
+#define LIN_12V 2 // Line is at +12V
 
 int main(void) {
 
@@ -36,6 +47,7 @@ int main(void) {
 	// Select the direction of the pins, we want to make the leds outputs and
 	// the TSOP pin input
 	P1DIR |= LED_POWER + LED_STATUS + LED_ERROR;
+	P2DIR |= CTL_LINE1 + CTL_LINE2;
 	P1DIR &= ~(BTN_POWER + BTN_RESET);
 
 	// Enable interrupts, and set the interrupt to be triggered on the falling
