@@ -10,7 +10,7 @@ void delay_ms(uint16_t n) {
 void flash(int8_t led, int8_t times, uint16_t duration) {
 
 	int8_t current, c1;
-	
+
 	// Get current state of the led
 	current = P1OUT & led;
 	// And flash it the specified number of times
@@ -20,7 +20,7 @@ void flash(int8_t led, int8_t times, uint16_t duration) {
 		P1OUT &= ~led;
 		delay_ms(duration);
 	}
-	
+
 	// If it was enabled before, we re-enable it
 	P1OUT |= current;
 

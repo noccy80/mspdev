@@ -19,7 +19,7 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 # Source files and target binary, define your source files here to have them
 # compiled, and define the target basename. An .elf binary will be created as
 # well as a .hex file:
-SOURCES  = main.c utils.c
+SOURCES  = main.c utils.c flash.c
 SOURCESA =
 TARGET   = main
 INCLUDES =

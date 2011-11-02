@@ -11,6 +11,13 @@
 #ifndef __i2c_h__
 #define __i2c_h__
 
+#include <msp430.h>
+#include <legacymsp430.h>
+
+#ifndef __MSP430_HAS_USCI__
+#warning Device does not have USCI! Emulation will be used!
+#endif
+
 void i2c_begin(unsigned char addr);
 void i2c_end();
 void i2c_send(const char* data, unsigned char datalen);
