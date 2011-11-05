@@ -96,12 +96,12 @@ identify:
 
 package: clean
 	@echo "Packaging source..."
-	@sh -c "test -e $(TARGET)-src.tgz && rm -rf $(TARGET)-src.tgz"
+	@bash -c "test -e $(TARGET)-src.tgz && rm -rf $(TARGET)-src.tgz; exit 0"
 	@echo "Copying files..."
 	@mkdir /tmp/$(TARGET)-src
 	@cp * /tmp/$(TARGET)-src
 	@echo "Creating tarball..."
-	@cd /tmp && tar cvfz $(TARGET)-src.tgz $(TARGET)-src
+	@cd /tmp && tar cfz $(TARGET)-src.tgz $(TARGET)-src
 	@mv /tmp/$(TARGET)-src.tgz .
 	@echo "Cleaning up..."
 	@rm -rf /tmp/$(TARGET)-src
