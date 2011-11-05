@@ -94,6 +94,18 @@ sim: $(TARGET).elf
 identify:
 	@echo "Device: $(MCU)"
 
+package: clean
+	@echo "Packaging source..."
+	@bash -c "test -e $(TARGET)-src.tgz && rm -rf $(TARGET)-src.tgz; exit 0"
+	@echo "Copying files..."
+	@mkdir /tmp/$(TARGET)-src
+	@cp * /tmp/$(TARGET)-src
+	@echo "Creating tarball..."
+	@cd /tmp && tar cfz $(TARGET)-src.tgz $(TARGET)-src
+	@mv /tmp/$(TARGET)-src.tgz .
+	@echo "Cleaning up..."
+	@rm -rf /tmp/$(TARGET)-src
+
 help:
 	@echo "Target binary:"
 	@echo "  $(TARGET)"
@@ -109,5 +121,6 @@ help:
 	@echo "  clean     Clean the build environment"
 	@echo "  listing   Assembly source listings"
 	@echo "  identify  Identify the attached MCU"
+	@echo "  package   Create tarball package"
 
 

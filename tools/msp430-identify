@@ -1,3 +1,22 @@
 #!/bin/bash
-MCU=`mspdebug -q rf2500 "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]"`
-echo "Device: $MCU"
+#
+# Identify a MSP430-based device attached to the system
+# Change the line below if you are using a device other than the launchpad
+#
+MSPDEBUG="rf2500"
+
+# Show help on -h
+if [ "$1" == "-h" ]; then
+	echo "Use: `basename $0`"
+	echo "Sets exitcode 0 on success and returns name of attached device"
+	exit 1
+fi
+
+# Identify the MCU
+MCU=`mspdebug -q $MSPDEBUG "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]"`
+if [ -z "$MCU" ]; then
+	exit 1
+else
+	echo "$MCU"
+	exit 0
+fi
