@@ -21,7 +21,7 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 # well as a .hex file:
 SOURCES  = main.c utils.c flash.c
 SOURCESA =
-TARGET   = main
+TARGET   = powerbox
 INCLUDES =
 LIBS     =
 
@@ -29,7 +29,7 @@ LIBS     =
 # what you are doing.
 CC       = msp430-gcc
 OBJCOPY  = msp430-objcopy
-SIZE     = msp430-size -t
+SIZE     = msp430-size -Axt
 # Flags and command lines
 CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
@@ -94,6 +94,18 @@ sim: $(TARGET).elf
 identify:
 	@echo "Device: $(MCU)"
 
+package: clean
+	@echo "Packaging source..."
+	@sh -c "test -e $(TARGET)-src.tgz && rm -rf $(TARGET)-src.tgz"
+	@echo "Copying files..."
+	@mkdir /tmp/$(TARGET)-src
+	@cp * /tmp/$(TARGET)-src
+	@echo "Creating tarball..."
+	@cd /tmp && tar cvfz $(TARGET)-src.tgz $(TARGET)-src
+	@mv /tmp/$(TARGET)-src.tgz .
+	@echo "Cleaning up..."
+	@rm -rf /tmp/$(TARGET)-src
+
 help:
 	@echo "Target binary:"
 	@echo "  $(TARGET)"
@@ -109,5 +121,6 @@ help:
 	@echo "  clean     Clean the build environment"
 	@echo "  listing   Assembly source listings"
 	@echo "  identify  Identify the attached MCU"
+	@echo "  package   Create tarball package"
 
 
