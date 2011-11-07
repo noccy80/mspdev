@@ -1,24 +1,59 @@
-/**
- * 
- *
- *
- * Compile with -DWITH_LINECTL if you want to use port2 for controlling the
- * individual power levels with a pair of transistors (one NPN and one PNP)
- *
- *   +5V    CTL  +12V
- *    |      |      |
- *    |     LED    |
- *     \|    |    |/
- *     >|----+----|<
- *    v |         | ^
- *    |______+______|
- *           |
- *          OUT
- *
- * @author Christopher Vagnetoft <noccylabs.info>
- * @license GNU General Public License (GPL) v2 or later
- */
- 
+//
+//
+//   msp430 PowerBox mk4 Controller Firmware
+//
+//
+//   Controls an ATX power supply to provide two separate power connections of
+//   +5VDC and +12VDC. Also contains code to detect erroneous conditions (i.e.
+//   the supply shutting down on its own) and indicating this with a flashing
+//   LED as well as a buzzer.
+//
+//   Pin Definitions:
+//
+//                                .---------.
+//          |               VDD  ¤| 1  U 20 |¤  VSS                |
+//    F2013 |              P1.0  ¤| 2    19 |¤  XIN                | F2013
+//          |              P1.1 >¤| 3    18 |¤  XOUT               |
+//          |              P1.2  ¤| 4    17 |¤< TEST               |
+//          |              P1.3 <¤| 5    16 |¤  RST                |
+//          |              P1.4  ¤| 6    15 |¤> P1.7               |
+//   _______|              P1.5  ¤| 7    14 |¤> P1.6               |_______
+//          |              P2.0 >¤: 8    13 :¤  P2.5               |
+//    G2553 |              P2.1  ¤: 9    12 :¤  P2.4               | G2553
+//          |              P2.2  ¤: 10   11 :¤  P2.3               |
+//                                '·········'
+//
+//      RA4   Power Button
+//      RA2   Reset Button
+//
+//      RC1   Power Led
+//      RC2   Status Led and PS/ON control
+//      RC5   Buzzer
+//      RC6   Power OK (+5V Expected)
+//
+//   Use the makefile, or compile with "sdcc -ppic16f689 -mpic14 main.c"
+//   to load & run manually, use pk2cmd -p -fmain.hex -m -t
+//
+//
+//   Compile with -DWITH_LINECTL if you want to use port2 for controlling the
+//   individual power levels with a pair of transistors (one NPN and one PNP)
+//
+//   +5V    CTL  +12V
+//    |      |      |
+//    |     LED    |
+//     \|    |    |/
+//     >|----+----|<
+//    v |         | ^
+//    |______+______|
+//           |
+//          OUT
+//
+//
+//  Author:     Christopher Vagnetoft <noccylabs.info>
+//  License:    GNU General Public License (GPL) v2 or later
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #include <msp430.h>
 #include <legacymsp430.h>
 #include "utils.h"

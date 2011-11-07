@@ -1,13 +1,13 @@
 /**
  * Blink example for MSP430
  *
- * Snatched from hackaday.com and rewritten to compile for a number of 
+ * Snatched from hackaday.com and rewritten to compile for a number of
  * different MCUs in the MSP430 series.
  *
  * @author Christopher Vagnetoft <noccylabs.info>
  * @license GNU General Public License (GPL) v2 or later
  */
- 
+
 #include <msp430.h>
 #include <legacymsp430.h>
 #include "ta0compat.h"
@@ -22,7 +22,7 @@ unsigned char twink = 0;
 void initLEDs(void) {
 
 	LED_DIR |= LED0 + LED1;	//Set LED pins as outputs
-	LED_OUT |= LED0 + LED1;	//Turn on both LEDs
+	LED_OUT &= ~(LED0 + LED1);	//Turn off both LEDs
 
 }
 
@@ -49,7 +49,7 @@ int main(void) {
 
 	// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
 	// should output an LED change every 1 second. Try this out and see how
-	// inaccurate the VLO can be 
+	// inaccurate the VLO can be
 	TACCR0 = 3000;
 
 	//Enable global interrupts

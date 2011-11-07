@@ -21,7 +21,7 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 # well as a .hex file:
 SOURCES  = main.c
 SOURCESA =
-TARGET   = main
+TARGET   = blink
 INCLUDES =
 LIBS     =
 
@@ -29,9 +29,10 @@ LIBS     =
 # what you are doing.
 CC       = msp430-gcc
 OBJCOPY  = msp430-objcopy
-SIZE     = msp430-size -t
+SIZE     = msp430-size --format=sysv
+STRIP    = msp430-strip
 # Flags and command lines
-CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
+CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-functions -g -Os -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings
@@ -52,6 +53,7 @@ ifeq ($(MCU),)
 	@exit 1
 endif
 	$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJS) $(LIBS)
+	$(STRIP) $(TARGET).elf
 	$(SIZE) $(TARGET).elf
 
 listing: $(LSTS)
