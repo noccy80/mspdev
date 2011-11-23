@@ -40,9 +40,21 @@ int main(void) {
 	// associated with WDTPW.
 	WDTCTL = WDTPW + WDTHOLD;
 
+	// Initialize the software UART
 	suart_init();
+
+	P1DIR |= BIT6;
+	// Initialize I2C support
+	I2C_INIT_STRUCT init = {
+		(uint16_t)&P1OUT, BIT6,
+		(uint16_t)&P1OUT, BIT5	
+	};
+	i2c_master_init(&init);
+
+	// Initialize real time clock
 	rtc_init(RTC_USE_BEST,0);
 
+	// Main loop
 	while(1) {
 		if (cmdmode == CMD_NONE) {
 			__delay_cycles(64000);
