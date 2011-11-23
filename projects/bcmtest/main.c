@@ -58,7 +58,7 @@ int main(void) {
 	// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
 	// should output an LED change every 1 second. Try this out and see how
 	// inaccurate the VLO can be
-	TACCR0 = 1;
+	TACCR0 = 3;
 
 	//Enable global interrupts
 	WRITE_SR(GIE);
