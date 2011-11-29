@@ -24,10 +24,10 @@ int putchar(int character) {
 }
 
 /**
- *
+ * @brief Transmit a byte
  *
  */
-void huart_transmit(unsigned int c) {
+void huart_transmit(unsigned char c) {
 
 	// USCI_A0 TX buffer ready?
 	while (!(IFG2&UCA0TXIFG)); 
@@ -60,8 +60,9 @@ void huart_init(void) {
 }
 
 /**
+ * @brief Check if there is data waiting to be received 
  *
- *
+ * @return bool True if there is data in the buffer
  */
 bool huart_datawaiting(void) {
 
@@ -70,8 +71,9 @@ bool huart_datawaiting(void) {
 }
 
 /**
+ * @brief Retrieve a byte from the buffer
  *
- *
+ * @return unsigned char The byte
  */
 unsigned char huart_receive(void) {
 
