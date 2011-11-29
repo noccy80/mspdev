@@ -13,14 +13,24 @@
 
 #include <msp430.h>
 #include <legacymsp430.h>
+#include <stdint.h>
 
 #ifndef __MSP430_HAS_USCI__
 #warning Device does not have USCI! Emulation will be used!
 #endif
 
-void i2c_begin(unsigned char addr);
-void i2c_end();
-void i2c_send(const char* data, unsigned char datalen);
-void i2c_receive(const char* buffer, unsigned char* datalen);
+typedef struct i2c_init_struct {
+	uint16_t clk_port;
+	uint8_t clk_pin;
+	uint16_t sda_port;
+	uint8_t sda_pin;
+	void (*cbfunc) (char*,int);
+} I2C_INIT_STRUCT;
+
+void i2c_master_init(I2C_INIT_STRUCT* init_struct);
+void i2c_slave_init(unsigned char addr);
+
+void i2c_send(unsigned char addr, const char* data, unsigned char datalen);
+void i2c_receive(unsigned char addr, const char* buffer, unsigned char* datalen);
 
 #endif // __i2c_h__
