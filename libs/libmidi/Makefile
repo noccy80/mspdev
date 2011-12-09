@@ -22,8 +22,9 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 # compiled, and define the target basename. An .elf binary will be created as
 # well as a .hex file:
 #
-SOURCES  = main.c
+SOURCES  = midi.c midimessages.c buffer.c
 SOURCESA =
+BUILD    = lib
 TARGET   = libmidi
 INCLUDES =
 LIBS     =
@@ -31,13 +32,14 @@ LIBS     =
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
 CC       = msp430-gcc
-OBJCOPY  = msp430-objcopy vcr
+OBJCOPY  = msp430-objcopy
 SIZE     = msp430-size -t
 AR       = msp430-ar 
 # Flags and command lines
 CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
+ARFLAGS  = vcr
 # Object files and listings
 OBJS     = $(SOURCES:.c=.o) $(SOURCESA:.asm=.o)
 LSTS     = $(SOURCES:.c=.lst)
@@ -46,10 +48,12 @@ LSTS     = $(SOURCES:.c=.lst)
 .phony: all bin clean listing prog identify
 
 # All, to build the binary and program it
-all: bin prog
+all: $(BUILD)
 
 # Binary, depends on the object files
-bin: $(TARGET).elf $(TARGET).hex
+bin: $(TARGET).elf $(TARGET).hex $(TARGET).lst
+lib: $(TARGET).a
+
 $(TARGET).elf: $(OBJS)
 ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
@@ -57,6 +61,9 @@ ifeq ($(MCU),)
 endif
 	$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJS) $(LIBS)
 	$(SIZE) $(TARGET).elf
+
+$(TARGET).a: $(OBJS)
+	$(AR) $(ARFLAGS) -o $(TARGET).a $(OBJS)
 
 listing: $(LSTS)
 
