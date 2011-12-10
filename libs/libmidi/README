@@ -1,0 +1,48 @@
+libMidi: An implementation of the MIDI protocol for the MSP430
+===============================================================
+
+This is a GPL licensed implementation of MIDI for use with the MSP430 series
+microcontrollers. It is written to work both as a master and a slave. The
+hardware implementation should use the USI/USCI pins on the microcontroller
+via an optoisolator.
+
+
+Implementing
+------------
+
+To use libMidi with your MSP430 project, first build the library using the
+included makefile. Remember to define the microcontroller you are using on
+the command line if it is not currently hooked up to your computer:
+
+  $ export MCU=msp430g2553
+  $ make
+  
+Or as a one-liner:
+
+  $ MCU=msp430g2553 make
+
+When you have the library compiled, copy it into your project folder if needed
+and pass it on the command line to the compiler, preferably by adding it to
+your projects makefile.
+
+
+Interrupts
+----------
+
+If you aren't doing anything else with your interrupts, you can safely use the
+interrupt stubs defined in midi.h in your code:
+
+  #include "midi.h"
+  USCI_HANDLER; // Or USI_HANDLER
+
+
+Initialization
+--------------
+
+To initialize the library, call the init method like so:
+
+  midi_init(MIDI_MODE_USCI, &rcvmidi);
+
+If parameter 2 is set to null no callback will be used.
+
+
