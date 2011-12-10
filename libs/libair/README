@@ -1,5 +1,13 @@
 Anaren AIR Library
 ==================
 
-This is a FLOSS implementation of the Anaren AIR Firmware for the MSP430 series
-MCU. 
+This is a FLOSS implementation of the Anaren AIR Firmware and protocol stack
+for the MSP430 series MCU. It consists of a library for the TI CC1101 wireless
+radio and a library to implement the Anaren Integrated Radio protocol stack.
+
+The goal is to keep the code as compliant as possible with the official Anaren
+APIs.
+
+
+Anaren AIR is a Registered Trademark of Anaren Inc.
+NoccyLabs is not affiliated with Anaren in any way.

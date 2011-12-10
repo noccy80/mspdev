@@ -24,12 +24,7 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCES  = main.c
-SOURCESA =
-BUILD    = bin prog
-TARGET   = main
-INCLUDES =
-LIBS     =
+# -- defined locally --
 #
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
@@ -52,7 +47,7 @@ OBJS     = $(SOURCES:.c=.o) $(SOURCESA:.asm=.o)
 LSTS     = $(SOURCES:.c=.lst)
 #
 # Phony targets; all and clean
-.phony: all bin clean listing prog identify
+.phony: all bin lib clean listing prog identify
 
 # Target rules
 all: $(BUILD)
@@ -101,8 +96,9 @@ endif
 
 # Clean
 clean:
+clean:
 ifeq ($(BUILD),lib)
-	rm -fr $(TARGET).a $(OBJS)
+	rm -fr $(TARGET).a $(OBJS)        
 else
 	rm -fr $(TARGET).hex $(TARGET).elf $(TARGET).map $(OBJS) $(LSTS)
 endif
