@@ -6,6 +6,7 @@
 # This script makes use of mspdebug to identify and program the device. If it
 # is located in a location outside of the path, change the following line to
 # point to the proper location. Also, the driver is defined here:
+#
 MSPDEBUG = mspdebug
 MSPTYPE  = rf2500
 #
@@ -14,38 +15,55 @@ MSPTYPE  = rf2500
 # Or explicitly defined in the makefile:
 #   MCU=msp430g2553
 # Or the preferred way, have it reported by mspdebug:
+#
 MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]")
 #
 # Source files and target binary, define your source files here to have them
-# compiled, and define the target basename. An .elf binary will be created as
-# well as a .hex file:
+# compiled, and define the target basename. BUILD defines the default build
+# type, as either "lib" or "bin". If bin, an .elf binary will be created as
+# well as a .hex file, and if lib an .a library file will be created. To have
+# the binary flashed on the device after build, use "bin prog".
+#
 SOURCES  = main.c
 SOURCESA =
+BUILD    = bin prog
 TARGET   = main
 INCLUDES =
 LIBS     =
-
+#
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
+#
 CC       = msp430-gcc
 OBJCOPY  = msp430-objcopy
 SIZE     = msp430-size -t
+AR       = msp430-ar 
+#
 # Flags and command lines
+#
 CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
+ARFLAGS  = crs
+#
 # Object files and listings
+#
 OBJS     = $(SOURCES:.c=.o) $(SOURCESA:.asm=.o)
 LSTS     = $(SOURCES:.c=.lst)
-
+#
 # Phony targets; all and clean
 .phony: all bin clean listing prog identify
 
-# All, to build the binary and program it
-all: bin prog
-
-# Binary, depends on the object files
+# Target rules
+all: $(BUILD)
+lib: $(TARGET).a
 bin: $(TARGET).elf $(TARGET).hex
+
+# Build library
+$(TARGET).a: $(OBJS)
+	$(AR) $(ARFLAGS) -o $(TARGET).a $(OBJS)
+
+# Build binary
 $(TARGET).elf: $(OBJS)
 ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
@@ -56,6 +74,7 @@ endif
 
 listing: $(LSTS)
 
+#
 # Compile the object files
 %.o: %.c
 ifeq ($(MCU),)
@@ -107,15 +126,19 @@ package: clean
 	@rm -rf /tmp/$(TARGET)-src
 
 help:
+	@echo "Build type:"
+	@echo "  $(BUILD)"
 	@echo "Target binary:"
 	@echo "  $(TARGET)"
-	@echo
 	@echo "Source files:"
 	@echo "  $(SOURCES) $(SOURCESASM)"
+	@echo "MCU:"
+	@echo "  $(MCU)"
 	@echo 
 	@echo "Supported rules:"
-	@echo "  all       Build and program the device"
-	@echo "  bin       Only build binary"
+	@echo "  all       Same as $(BUILD)"
+	@echo "  bin       Only build binary (if supported)"
+	@echo "  lib       Only build library (if supported)"
 	@echo "  prog      Only program device with binary"
 	@echo "  sim       Open the binary in the mspdebug simulator"
 	@echo "  clean     Clean the build environment"
