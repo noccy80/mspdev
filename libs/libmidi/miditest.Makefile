@@ -24,12 +24,12 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCES  = midi.c midimessages.c buffer.c
+SOURCES  = miditest.c
 SOURCESA =
-BUILD    = lib
-TARGET   = libmidi
+BUILD    = bin
+TARGET   = miditest
 INCLUDES =
-LIBS     =
+LIBS     = libmidi.a
 #
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
