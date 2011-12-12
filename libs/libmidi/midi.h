@@ -5,7 +5,12 @@
 #include <legacymsp430.h>
 #include <stdint.h>
 
-#define MIDI_MODE_USI       0
+#define MIDI_MODE_USI       1
+#define MIDI_MODE_USCI      2
+
+#define MIDI_DIR_IN         1
+#define MIDI_DIR_OUT        2
+#define MIDI_DIR_BOTH       3
 
 // Bit 7 set for messages, upper nibble message type
 #define MIDI_MESSAGE_MASK   0xF0
@@ -18,7 +23,7 @@
 #define MIDI_MSG_PRESSURE   0xD0
 #define MIDI_MSG_WHEEL      0xE0
 
-// Size of transmit and receive buffers
+// Size of transmit and receive buffers in BYTES -- not messages!
 #define MIDI_TXBUFSIZE      16
 #define MIDI_RXBUFSIZE      16
 
@@ -30,9 +35,12 @@
 /**
  * @brief Initialize the MIDI subsystem 
  *
- * @param uint16_t mode MIDI_MODE_USI for using USI
+ * @param uint8_t mode MIDI_MODE_USI or MIDI_MODE_USCI
+ * @param uint8_t dir The direction (MIDI_DIR_IN, _OUT or _BOTH)
  */
-void midi_init(uint8_t mode);
+void midi_init(uint8_t mode, uint8_t dir);
+
+uint8_t midi_set_channel_mask(uint8_t newmask);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
