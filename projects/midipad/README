@@ -1,0 +1,31 @@
+MIDIpad - A MIDI Controller Interface
+=====================================
+
+
+
+
+Mapping of controllers
+----------------------
+
+ 1. Press MENU
+ 2. Select "Controller Map"
+ 3. Move the slider/fader you would like to modify
+ 4. Select type, "Rotary/Fader" or "Encoder"
+ 5. (For Rotary/Fader only) Calibrate the controller by going to the lowest
+    value, press OK, then the highest value, then OK, then center and OK.
+ 6. Select the MIDI CC to assign
+
+Linking controllers
+-------------------
+
+ 1. Press MENU
+ 2. Select "Controller Link"
+ 3. Move the controller you would like to assign to, press OK.
+ 4. Move the first controller, change mode if needed (Map, Invert), press OK.
+ 5. Move the second controller, change mode if needed, press OK.
+
+Using linked controllers
+------------------------
+
+ 1. Hold the SHIFT button
+ 2. Move the controller
