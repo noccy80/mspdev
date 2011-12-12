@@ -1,0 +1,72 @@
+;*******************************************************************************
+;   MSP430F20F3 Demo - SD16, Using the Integrated Temperature Sensor
+;
+;   Description: Use SD16 and it's integrated temperature sensor to detect
+;   temperature delta. The temperature sensor output voltage is sampled
+;   ~ every 240ms and compared with the last value and if more than ~0.5C
+;   delta, P1.0 is set, else reset.
+;   SD16 Internal VRef, Bipolar offset binary output format used.
+;   Watchdog used as interval time and ISR used to start next SD16 conversion.
+;   ACLK = n/a, MCLK = default DCO, SMCLK = SD16CLK = default DCO/8
+;
+;		 MSP430F20xx
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |A6+              |
+;            |A6-          P1.0|-->LED
+;
+;
+;   M. Buccini / L. Westlund
+;   Texas Instruments Inc.
+;   October 2005
+;   Built with IAR Embedded Workbench Version: 3.40A
+;*******************************************************************************
+ADCDeltaOn  EQU      31                     ;  ~ 0.5 Deg C delta for LED on
+;   CPU Registers Used
+#define     LastADCVal R4
+#include  "msp430x20x3.h"
+;-------------------------------------------------------------------------------
+            ORG     0F800h                  ; Program Reset
+;-------------------------------------------------------------------------------
+RESET       mov.w   #0280h,SP               ; Initialize stackpointer
+            bis.b   #DIVS_3,&BCSCTL2        ; SMCLK/8
+SetupWDT    mov.w   #WDT_MDLY_32,&WDTCTL    ; WDT Timer interval
+            bis.b   #WDTIE,&IE1             ; Enable WDT interrupt
+SetupP1     bis.b   #001h,&P1DIR            ; P1.0 output
+SetupSD16   mov.w   #SD16REFON+SD16SSEL_1,&SD16CTL  ; 1.2V ref, SMCLK
+            mov.b   #SD16INCH_6,&SD16INCTL0       ; A6+/-
+            mov.w   #SD16SNGL+SD16IE,&SD16CCTL0    ; Single conv, interrupt
+                                            ;				
+Mainloop    bis.w   #CPUOFF+GIE,SR          ; CPU off, enable interrupts
+            nop                             ; Required only for debugger
+                                            ;
+;-------------------------------------------------------------------------------
+SD16_ISR;
+;-------------------------------------------------------------------------------
+            add.w   #ADCDeltaOn,LastADCVal  ;
+            bic.b   #01h,&P1OUT             ; LED off
+            cmp.w   LastADCVal,&SD16MEM0    ; Clears IFG
+            jlo     SD16_ISR_1              ;
+            bis.b   #01h,&P1OUT             ; LED on
+SD16_ISR_1  mov.w   &SD16MEM0,LastADCVal    ; Store value
+            reti                            ;		
+                                            ;
+;-------------------------------------------------------------------------------
+WDT_ISR;
+;-------------------------------------------------------------------------------
+            bis.w   #SD16SC,&SD16CCTL0      ; Start conversion
+            reti                            ;		
+                                            ;
+;-------------------------------------------------------------------------------
+;           Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            ORG     0FFF4h                  ; WDT Vector
+            DW      WDT_ISR                 ;
+            ORG     0FFEAh                  ; SD16 Vector
+            DW      SD16_ISR                ;
+            END
