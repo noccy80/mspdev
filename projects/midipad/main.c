@@ -56,6 +56,7 @@ int main(void) {
 
 void read_config(void) {
 
+	// This should be infomem segment
 	flash_write(0x1000, &padconfig, sizeof(pad_config)*MAX_CONTROLLERS);
 	// Read configuration block from flash
 

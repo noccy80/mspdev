@@ -28,9 +28,11 @@ void flash_write(uint16_t addr, void* sdata, uint16_t size) {
 */
 void flash_clear(uint16_t addr) {
 
+	char* dp = (char*)&addr;
+
 	FCTL3 = FWKEY;        // Clear Lock bit
 	FCTL1 = FWKEY + ERASE;    // Set Erase bit
-	// *addr = 0;       // Dummy write to erase Flash segment D
+	dp = 0;       // Dummy write to erase Flash segment D
 	FCTL1 = FWKEY;        // Clear WRT bit
 	FCTL3 = FWKEY + LOCK;     // Set LOCK bit
 }
