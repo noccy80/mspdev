@@ -10,7 +10,7 @@
 
 #define MIDI_DIR_IN         1
 #define MIDI_DIR_OUT        2
-#define MIDI_DIR_BOTH       3
+#define MIDI_DIR_BOTH       MIDI_DIR_IN | MIDI_DIR_OUTwwwww
 
 // Bit 7 set for messages, upper nibble message type
 #define MIDI_MESSAGE_MASK   0xF0
@@ -40,12 +40,19 @@
  */
 void midi_init(uint8_t mode, uint8_t dir);
 
+/**
+ * @brief Set the channel mask
+ *
+ *
+ */
 uint8_t midi_set_channel_mask(uint8_t newmask);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  midimessage.c methods
 //
+
+uint8_t midi_poll();
 
 /**
  * @brief Read a MIDI message, indirectly, by examining the buffer

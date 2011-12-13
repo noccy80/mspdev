@@ -9,6 +9,7 @@
 #include <legacymsp430.h>
 #include <stdint.h>
 #include "midi.h"
+#include "flash.h"
 
 #define MAX_CONTROLLERS 32
 #define PADTYPE_SLIDER 0 // Slider (min-max)
@@ -42,6 +43,9 @@ int main(void) {
 	// associated with WDTPW.
 	WDTCTL = WDTPW + WDTHOLD;
 
+	
+
+	// lcd_init();
 	read_config();
 
 	while(1) {
@@ -52,6 +56,7 @@ int main(void) {
 
 void read_config(void) {
 
+	flash_write(0x1000, &padconfig, sizeof(pad_config)*MAX_CONTROLLERS);
 	// Read configuration block from flash
 
 }
