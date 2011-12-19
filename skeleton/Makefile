@@ -7,8 +7,8 @@
 # is located in a location outside of the path, change the following line to
 # point to the proper location. Also, the driver is defined here:
 #
-MSPDEBUG = mspdebug
-MSPTYPE  = rf2500
+MSPDEBUG?= mspdebug
+MSPTYPE ?= rf2500
 #
 # The MCU to use can either be defined on the command line:
 #   export MCU=msp430g2253
