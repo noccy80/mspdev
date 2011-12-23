@@ -7,8 +7,8 @@
 # is located in a location outside of the path, change the following line to
 # point to the proper location. Also, the driver is defined here:
 #
-MSPDEBUG  ?= mspdebug
-MSPTYPE   ?= rf2500
+MSPDEBUG = mspdebug
+MSPTYPE  = rf2500
 #
 # The MCU to use can either be defined on the command line:
 #   export MCU=msp430g2253
@@ -16,7 +16,7 @@ MSPTYPE   ?= rf2500
 #   MCU=msp430g2553
 # Or the preferred way, have it reported by mspdebug:
 #
-MCU       ?= $(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]")
+MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]")
 #
 # Source files and target binary, define your source files here to have them
 # compiled, and define the target basename. BUILD defines the default build
@@ -24,13 +24,7 @@ MCU       ?= $(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Dev
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCES   = main.c
-SOURCESA  =
-BUILD     = bin prog
-TARGET    = main
-INCLUDES  =
-LIBS      =
-INCDIR    = -I../include
+# -- defined locally --
 #
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
@@ -42,7 +36,7 @@ AR       = msp430-ar
 #
 # Flags and command lines
 #
-CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCDIR) $(INCLUDES)
+CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 ARFLAGS  = crs
@@ -53,7 +47,7 @@ OBJS     = $(SOURCES:.c=.o) $(SOURCESA:.asm=.o)
 LSTS     = $(SOURCES:.c=.lst)
 #
 # Phony targets; all and clean
-.phony: all bin clean listing prog identify
+.phony: all bin lib clean listing prog identify
 
 # Target rules
 all: $(BUILD)
@@ -102,8 +96,9 @@ endif
 
 # Clean
 clean:
+clean:
 ifeq ($(BUILD),lib)
-	rm -fr $(TARGET).a $(OBJS)
+	rm -fr $(TARGET).a $(OBJS)        
 else
 	rm -fr $(TARGET).hex $(TARGET).elf $(TARGET).map $(OBJS) $(LSTS)
 endif

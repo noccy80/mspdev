@@ -7,21 +7,13 @@
  
 #include <msp430.h>
 #include <legacymsp430.h>
+#include <msplib/main.c>
 
-
-int main(void) {
-
-	// Halt the watchdog timer - According to the datasheet the watchdog timer
-	// starts automatically after powerup. It must be configured or halted at
-	// the beginning of code execution to avoid a system reset. Furthermore,
-	// the watchdog timer register (WDTCTL) is password protected, and requires
-	// the upper byte during write operations to be 0x5A, which is the value
-	// associated with WDTPW.
-	WDTCTL = WDTPW + WDTHOLD;
-
-	while(1) {
-		//Loop forever, interrupts take care of the rest
-	}
-
+void setup() {
+	GPIO_setPinDirection(HAL_PORT_0 + 0xFF, GPIO_OUTPUT);
 }
 
+void loop() {
+	// Blink the leds
+	
+}
