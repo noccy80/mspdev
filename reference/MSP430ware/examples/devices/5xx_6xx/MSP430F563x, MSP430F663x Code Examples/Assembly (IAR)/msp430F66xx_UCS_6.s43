@@ -1,0 +1,76 @@
+;******************************************************************************
+;  MSP430F66xx Demo - XT1 sources ACLK Toggles P1.0
+;
+;  Description: This program demonstrates using XT1 to source ACLK
+;  ACLK = LFXT1 = 32,768Hz	
+;  ;* An external watch crystal between XIN & XOUT is required for ACLK *;	
+;
+;               MSP430F6638
+;             -----------------
+;        /|\ |              XIN|-
+;         |  |                 | 32kHz
+;         ---|RST          XOUT|-
+;            |                 |
+;            |             P1.0|--> ACLK = ~32kHz
+;            |                 |
+;            |             P1.1|--> Toggle
+;
+;   Priya Thanigai
+;   Texas Instruments Inc.
+;   March 2010
+;   Built with IAR Embedded Workbench Version: 4.20
+;******************************************************************************
+
+#include <msp430f6638.h>
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDT_ADLY_1000,&WDTCTL  ; WDT ~1000ms, ACLK, interval timer
+            bis.w   #WDTIE,&SFRIE1          ; Enable WDT interrupt
+      
+            bis.b   #BIT0 + BIT1,&P1DIR;    ; P1.0, P1.1 to output direction
+            bis.b   #BIT0,&P1SEL            ; P1.0 to output ACLK
+            
+            ; Initialize LFXT1
+Test_LOCKIO bit.w   #LOCKIO,&BAKCTL
+            jz      Clock_Init
+            bic.w   #LOCKIO,&BAKCTL
+            jmp     Test_LOCKIO
+           
+Clock_Init  bic.w   #XT1OFF,&UCSCTL6        ; XT1 On
+            bis.w   #XCAP_3,&UCSCTL6        ; Internal load cap
+
+            ; Loop until XT1,XT2 & DCO stabilizes
+do_while    bic.w   #XT2OFFG + XT1LFOFFG + DCOFFG,&UCSCTL7
+                                            ; Clear XT2,XT1,DCO fault flags
+            bic.w   #OFIFG,&SFRIFG1         ; Clear fault flags
+            bit.w   #OFIFG,&SFRIFG1         ; Test oscillator fault flag
+            jc      do_while
+
+            bic.w   #XT1DRIVE_3,&UCSCTL6    ; XT1 stable, reduce drive strength
+
+            bis.w   #LPM3 + GIE,SR          ; Enter LPM3 w/ interrupts
+            nop                             ; For debugger
+
+;-------------------------------------------------------------------------------
+WDT_ISR;    Watchdog Timer interrupt service routine
+;-------------------------------------------------------------------------------
+            xor.b   #BIT1,&P1OUT            ; Toggle P1.0 using exclusive-OR
+            reti
+;-------------------------------------------------------------------------------
+                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     WDT_VECTOR                  ; WDT Vector
+            DW      WDT_ISR
+            ORG     RESET_VECTOR                ; POR, ext. Reset
+            DW      RESET
+            END
+            
+            

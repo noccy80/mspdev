@@ -1,0 +1,63 @@
+;******************************************************************************
+;   MSP-FET430P440 Demo - Timer_B, PWM TB1-6 Up Mode, DCO SMCLK
+;
+;   Description: This program outputs six PWM signals on P2.2,3 and P3.4-7
+;   using Timer_B configured for up mode. The value in CCR0 defines the PWM
+;   period and the values in CCR1-6 the PWM duty cycles. Using SMCLK as TBCLK,
+;   the timer period is ~488us.
+;   ACLK = LFXT1 = 32768Hz, MCLK = SMCLK = default DCO = 32 x ACLK = 1048576Hz
+;   ;* An external watch crystal between XIN & XOUT is required for ACLK *//	
+;
+;                MSP430F449
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |         P2.2/TB1|--> CCR1 - 75% PWM
+;            |         P2.3/TB2|--> CCR2 - 25% PWM
+;            |         P3.4/TB3|--> CCR3 - 12.5% PWM
+;            |         P3.5/TB4|--> CCR4 - 6.25% PWM
+;            |         P3.6/TB5|--> CCR5 - 3.125% PWM
+;            |         P3.7/TB6|--> CCR6 - 1.5625% PWM
+;
+;   M. Buccini / A. Dannenberg
+;   Texas Instruments Inc.
+;   May 2005
+;   Built with Code Composer Essentials Version: 1.0
+;******************************************************************************
+ .cdecls C,LIST, "msp430x44x.h"
+;------------------------------------------------------------------------------
+            .text                  			; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+SetupPx     bis.b   #0ch,&P2DIR             ; P2.2-P2.3 output
+            bis.b   #0ch,&P2SEL             ; P2.2-P2.3 TB1-6 options
+            bis.b   #0F0h,&P3DIR            ; P3.4-P3.7 output
+            bis.b   #0F0h,&P3SEL            ; P3.4-P3.7 TB1-6 options
+SetupC0     mov.w   #512-1,&TBCCR0          ; PWM Period
+SetupC1     mov.w   #OUTMOD_7,&TBCCTL1      ; CCR1 reset/set
+            mov.w   #384,&TBCCR1            ; CCR1 PWM Duty Cycle	
+SetupC2     mov.w   #OUTMOD_7,&TBCCTL2      ; CCR2 reset/set
+            mov.w   #192,&TBCCR2            ; CCR2 PWM duty cycle	
+SetupC3     mov.w   #OUTMOD_7,&TBCCTL3      ; CCR3 reset/set
+            mov.w   #96,&TBCCR3             ; CCR3 PWM duty cycle	
+SetupC4     mov.w   #OUTMOD_7,&TBCCTL4      ; CCR4 reset/set
+            mov.w   #48,&TBCCR4             ; CCR4 PWM duty cycle	
+SetupC5     mov.w   #OUTMOD_7,&TBCCTL5      ; CCR5 reset/set
+            mov.w   #24,&TBCCR5             ; CCR5 PWM duty cycle	
+SetupC6     mov.w   #OUTMOD_7,&TBCCTL6      ; CCR6 reset/set
+            mov.w   #12,&TBCCR6             ; CCR6 PWM duty cycle	
+SetupTB     mov.w   #TBSSEL_2+MC_1,&TBCTL   ; SMCLK, upmode
+                                            ;					
+Mainloop    bis.w   #CPUOFF,SR              ; CPU off
+            nop                             ; Required only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            .sect   ".reset"                ; RESET Vector
+            .short  RESET                   ;
+            .end

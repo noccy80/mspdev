@@ -1,0 +1,53 @@
+;*****************************************************************************
+;   MSP430x11x1 Demo  - Software Interface to CD4511 7-Segment Decoder
+;
+;   Description: Increment BCD value directly on P1.0-P1.3
+;   ACLK = n/a, MCLK = SMCLK = default DCO ~800k
+;
+;		 MSP430F1121     ^    CD4511
+;             -----------------  |  ----------
+;            |                 | |-|LT,BL     |  8
+;            |             P1.0|-->|A      a-g|--\-> 7-Segment LED
+;            |             P1.1|-->|B         |
+;            |             P1.2|-->|C       LE|--|
+;            |             P1.3|-->|D         |  V
+;
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;*****************************************************************************
+#include  <msp430x11x1.h>
+;-----------------------------------------------------------------------------
+            ORG     0F000h                  ; Program Start
+;-----------------------------------------------------------------------------
+RESET       mov.w   #0300h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupP2     bic.b   #0Fh,&P1OUT             ; A,B,C,D = 0
+            bis.b   #0Fh,&P1DIR             ; A,B,C,D = outputs
+                                            ;
+Mainloop    push.b  &P1OUT                  ; Save current P1OUT
+            setc                            ;
+            dadc.b  0(SP)                   ; Decimal increment P1OUT
+            and.b   #0Fh,0(SP)              ; Lower nibble only
+            bic.b   #0Fh,&P1OUT             ; Lower nibble only cleared
+TX_4011     bis.b   @SP+,&P1OUT             ; Incremented nibble
+            call    #Delay                  ; Wait
+            jmp     Mainloop                ; Repeat
+                                            ;
+;-----------------------------------------------------------------------------
+Delay;      Software delay
+;-----------------------------------------------------------------------------
+            push.w  #0FFFFh                 ; Delay to TOS
+L1          dec.w   0(SP)                   ; Decrement TOS
+            jnz     L1                      ; Delay over?
+            incd.w  SP                      ; Clean TOS
+            ret                             ;
+                                            ;
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

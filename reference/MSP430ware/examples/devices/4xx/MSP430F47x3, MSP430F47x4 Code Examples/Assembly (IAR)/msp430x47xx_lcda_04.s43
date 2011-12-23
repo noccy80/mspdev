@@ -1,0 +1,86 @@
+;******************************************************************************
+;    MSP430x47xx Demo - LCD_A Put "0123456" on SBLCDA4 LCD
+;
+;  Description; Put "0123456" on SBLCDA4 LCD.
+;  ACLK = LFXT1 = 32768, MCLK = SMCLK = DCO = 32xACLK = 1.048576MHz
+;  //*An external watch crystal is required on XIN/XOUT for ACLK*//	
+;
+;
+;                MSP430x47xx
+;            -----------------
+;        /|\|              XIN|-
+;         | |                 | 32kHz
+;         --|RST          XOUT|-         SBLCDA4 
+;           |                 |        ___________
+;           |              S4 |------>|14         |
+;           |              S5 |------>|13         | 
+;           |             ..  | ....  |..         |
+;           |             S17 |------>|1          | 
+;           |             COM0|------>|15         |
+;           |             COM1|------>|16         | 
+;           |             COM2|------>|17         | 
+;           |             COM3|------>|18         |
+;           |             S18 |------>|19         | 
+;           |             S19 |------>|20         | 
+;           |              .. | ....  |..         | 
+;           |             S25 |------>|26         |     
+;           |_________________|       |___________| 
+;
+;
+;  P. Thanigai/ K. Venkat
+;  Texas Instruments Inc.
+;  November 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x47x4.h>
+;------------------------------------------------------------------------------
+            ORG     08000h                  ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #300h,SP                ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+            bis.b   #XCAP14PF,&FLL_CTL0     ; Set load capacitance for xtal
+            mov.b   #LCDON +LCD4MUX, &LCDACTL ; 4mux LCD, ACLK/32
+
+            mov.b   #0x7E, &LCDAPCTL0       ; Segments 0-13
+            mov.b   #0x1C, &P5SEL           ; set COM pins for LCD
+ClearLCD    mov.w   #20,R15                 ; 15 LCD memory bytes to clear
+Clear1      mov.b   #0,LCDM1(R15)           ; Write zeros in LCD RAM locations
+                                            ; to clear display
+            dec     R15                     ; All LCD mem clear?
+            jc      Clear1                  ; More LCD mem to clear go, use JC
+                                            ; to get memory location 0
+setLCD      clr.w   R15                     ; 0 is first digit to display
+            mov.w   #2,R14
+writeLCD    mov.b   LCD_Tab(R15),LCDMEM(R14); Write to LCD with offset of 2
+            inc     R14                     ; inc table pointer
+            inc     R15
+            cmp     #9, R14
+            jl      writeLCD
+            bis     #LPM3,SR                ; Set SR bits to wait in LPM3
+
+d           EQU     0x08
+c           EQU     0x04
+b           EQU     0x02
+a           EQU     0x01
+h           EQU     0x80
+e           EQU     0x40
+g           EQU     0x20
+f           EQU     0x10
+
+LCD_Tab     DB      a+b+c+d+e+f             ; Displays '0'
+            DB      b+c                     ; Displays '1'
+            DB      a+b+d+e+g               ; Displays '2'
+            DB      a+b+c+d+g               ; Displays '3'
+            DB      b+c+f+g                 ; Displays '4'
+            DB      a+c+d+f+g               ; Displays '5'
+            DB      a+c+d+e+f+g             ; Displays '6'
+            DB      a+b+c                   ; Displays '7'
+            DB      a+b+c+d+e+f+g           ; Displays '8'
+            DB      a+b+c+d+f+g             ; Displays '9'
+
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     0FFFEh                  ; RESET Vector
+            DW      RESET                   ;
+            END

@@ -1,0 +1,11 @@
+04/13/2011  Rev 1.0
+- First  Revision
+04/25/2011  Rev 1.1
+- Included S2 for ULP option in all modes
+- Fixed error in mode 4 in UART packet 
+- Changed LED sequence in Mode 1 and Mode 2
+- Changed UART transmit frequency in Mode 2
+- Modified overall code formatting
+- Included TXBreak, Mode1, Mode2, Mode3 and Mode4 functions
+08/31/2011  Rev 1.2
+- Support for CCSv5

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href=".imports.xsl"?>
+<tree-imports>
+ <tools-version TOOLS_SETTING="Build Host">
+     MINGW32_NT-5.1 LTAWILGOH 1.0.17(0.48/3/2) 2011-04-24 23:39 i686 Msys
+ </tools-version>
+ <location-prefix root="/c/gohak/MSP430_Tools/Experimenters_Board/mspexp430f5529">
+  <!--Location prefix is the absolute starting location for all the imports.-->
+ </location-prefix>
+  <import>
+   <name>
+    SLAA448a.zip
+   </name>
+   <location>
+    2.0/http://focus.ti.com/lit/an/slaa448a/slaa448a.zip
+   </location>
+   <package>
+    <!--Placeholder only. not yet used -->
+   </package>
+  </import>
+  <import>
+   <name>
+    MSP430_USB_Developers_Package-3.0-Installer.exe
+   </name>
+   <location>
+    3_00_00_00/http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430_USB_Developers_Package
+   </location>
+   <package>
+    <!--Placeholder only. not yet used -->
+   </package>
+  </import>
+  <import>
+   <name>
+    slac489.zip
+   </name>
+   <location>
+    1.0/http://focus.ti.com/lit/sw/slac489/slac489.zip
+   </location>
+   <package>
+    <!--Placeholder only. not yet used -->
+   </package>
+  </import>
+</tree-imports>

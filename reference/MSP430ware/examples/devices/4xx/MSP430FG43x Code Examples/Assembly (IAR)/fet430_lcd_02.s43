@@ -1,0 +1,135 @@
+;******************************************************************************
+;   MSP-FET430P430 Demo - LCD, Display "430" on Varitronix VI-322 LCD
+;
+;   Description: Displays "430" on Varitronix VI-322 LCD as used on Softbaugh
+;   D437
+;   ACLK = LFXT1 = 32768Hz, MCLK = SMCLK = default DCO = 32 x ACLK = 1048576Hz
+;   //* An external watch crystal between XIN & XOUT is required for ACLK *//	
+;
+;               MSP430F437
+;            -----------------
+;        /|\|              XIN|-
+;         | |                 | 32kHz
+;         --|RST          XOUT|-
+;           |                 |      Varitronix VI-322
+;           |                 |     (as used on Softbaugh D437 board)
+;           |             S0  |     ---------
+;           |              -  |--> | + 3 2 1 |
+;           |             S31 |     ---------
+;           |             COM0|-----|
+;           |                 |
+;           |                 |
+;           |                 |
+;           |                 |
+;
+;
+;   L. Westlund
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;******************************************************************************
+#include  <msp430x43x.h>
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stack pointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+
+SetupFLL2   bis.b   #XCAP18PF,&FLL_CTL0     ; set load capacitance for xtal
+
+SetupLCD    mov.b   #LCDON+LCDSTATIC+LCDOGOFF,&LCDCTL ;Static LCD,
+                                                      ;segments = 0 - 31
+SetupBT     mov.b   #BTFRFQ1+BTFRFQ0,&BTCTL ; LCD freq
+
+            mov.b   #0xFC, &P5SEL           ; Common and Rxx all selected
+                                            ; For P5.0 P5.1 P4.6 P4.7 setting
+                                            ; SEL bits selects Analog for FG
+
+ClearLCD    mov.w   #18,R15                 ; 18 LCD memory bytes to clear
+Clear1      mov.b   #0,LCDM1(R15)           ; write zeros in LCD RAM locations
+            dec     R15                     ; all LCD mem clear?
+            jc      Clear1                  ; more LCD mem to clear, use JC
+
+                                            ; R15  Digits to display
+                                            ; R14   LCD Table data for digit
+Display     mov.w   #0x430, R15             ; move data to display
+            mov.w   R15, R12                ; preserve data
+            and     #0x0F, R12              ; get 1st digit
+            mov.w   LCD_Tab(R12), R14       ; lookup display data in table
+            bit     #0x01, R12              ; test for odd digit
+            jz      EVEN_1                  ; if not, do nothing
+            swpb    r14                     ; else, swap bytes to get high
+                                            ; byte in table location
+EVEN_1      mov.b   R14, &LCDM1             ; shift in data to LCD memory...
+            rra     R14
+            mov.b   R14, &LCDM2
+            rra     R14
+            mov.b   R14, &LCDM3
+            rra     R14
+            mov.b   R14, &LCDM4
+
+            mov.w   R15, R12                ; move data to display
+            rra     R12                     ; shift to get 2nd digit....
+            rra     R12
+            rra     R12
+            rra     R12
+            and     #0x0F, R12              ; get 2nd digit
+            mov.w   LCD_Tab(R12), R14       ; lookup display data in table
+            bit     #0x01, R12              ; test for odd digit
+            jz      EVEN_2                  ; if not, do nothing
+            swpb    r14                     ; else, swap bytes to get high byte
+EVEN_2      mov.b   R14, &LCDM5             ; shift data to LCD memory...
+            rra     R14
+            mov.b   R14, &LCDM6
+            rra     R14
+            mov.b   R14, &LCDM7
+            rra     R14
+            mov.b   R14, &LCDM8
+
+            mov.w   R15, R12                ; move data to display
+            swpb    R12                     ; 8 RRAs to get 3rd digit
+            and     #0x0F, R12              ; get 3rd digit
+            mov.w   LCD_Tab(R12), R14       ; lookup display data in table
+            bit     #0x01, R12              ; test for odd digit
+            jz      EVEN_3                  ; if not, do nothing
+            swpb    r14                     ; else, swap bytes to get high byte
+EVEN_3      mov.b   R14, &LCDM11            ; shift data to LCD memory...
+            rra     R14
+            mov.b   R14, &LCDM12
+            rra     R14
+            mov.b   R14, &LCDM13
+            rra     R14
+            mov.b   R14, &LCDM14
+
+LOOP        jmp     LOOP                    ; do nothing so as to display data
+;------------------------------------------------------------------------------
+;            LCD Type Definition
+;------------------------------------------------------------------------------
+;Segments definition
+a            equ     001h
+b            equ     010h
+c            equ     002h
+d            equ     020h
+e            equ     004h
+f            equ     040h
+g            equ     008h
+h            equ     080h
+             EVEN                           ; align words on even boundry		
+LCD_Tab      db      a+b+c+d+e+f            ; Displays "0"
+             db      b+c                    ; Displays "1"
+             db      a+b+d+e+g              ; Displays "2"
+             db      a+b+c+d+g              ; Displays "3"
+             db      b+c+f+g                ; Displays "4"
+             db      a+c+d+f+g              ; Displays "5"
+             db      a+c+d+e+f+g            ; Displays "6"
+             db      a+b+c                  ; Displays "7"
+             db      a+b+c+d+e+f+g          ; Displays "8"
+             db      a+b+c+d+f+g            ; Displays "9"        		
+;------------------------------------------------------------------------------
+
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; RESET Vector
+            DW      RESET                   ;
+            END

@@ -1,0 +1,59 @@
+;******************************************************************************
+;   MSP-FET430P120 Demo - USART0, Ultra-Low Pwr UART 2400 Echo ISR, 32kHz ACLK
+;
+;   Description: Echo a received character, RX ISR used. Normal mode is LPM3,
+;   USART0 RX interrupt triggers TX Echo.
+;   Baud rate divider with 32768Hz XTAL @2400 = 32768Hz/2400 = 13.65 (000D 6Bh)
+;   ACLK = UCLK0 = LFXT1 = 32768Hz, MCLK = SMCLK = DCOCLK
+;   //* An external watch crystal on XIN XOUT is required for ACLK *//	
+;
+;               MSP430F123(2)
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P3.4|----------->
+;            |                 | 2400 - 8N1
+;            |             P3.5|<-----------
+;
+;   M. Buccini / M. Raju
+;   Texas Instruments Inc.
+;   May 2005
+;   Built with Code Composer Essentials Version: 1.0
+;******************************************************************************
+ .cdecls C,LIST,  "msp430x12x2.h"
+;------------------------------------------------------------------------------
+            .text                           ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0300h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP3     bis.b   #030h,&P3SEL            ; P3.4,5 = USART0 TXD/RXD
+SetupUART0  bis.b   #UTXE0+URXE0,&ME2       ; Enable USART0 TXD/RXD
+            bis.b   #CHAR,&UCTL0            ; 8-bit characters
+            bis.b   #SSEL0,&UTCTL0          ; UCLK = ACLK
+            mov.b   #00Dh,&UBR00            ; 32k/2400 - 13.65
+            mov.b   #000h,&UBR10            ; 32k 2400
+            mov.b   #06Bh,&UMCTL0           ; 32k 2400 modulation
+            bic.b   #SWRST,&UCTL0           ; **Initalize USART state machine**
+            bis.b   #URXIE0,&IE2            ; Enable USART0 RX interrupt
+                                            ;
+Mainloop    bis.b   #LPM3+GIE,SR            ; Enter LPM3, interrupts enabled
+            jmp     Mainloop                ; Do nothing
+                                            ;
+;------------------------------------------------------------------------------
+USART0RX_ISR;  Echo back RXed character, confirm TX buffer is ready first
+;------------------------------------------------------------------------------
+TX1         bit.b   #UTXIFG0,&IFG2          ; USART0 TX buffer ready?
+            jz      TX1                     ; Jump is TX buffer not ready
+            mov.b   &RXBUF0,&TXBUF0         ; TX -> RXed character
+            reti                            ;
+                                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            .sect   ".reset"                ;
+            .short  RESET                   ; POR, ext. Reset, Watchdog
+            .sect   ".int07"                ;
+            .short  USART0RX_ISR            ; USART0 receive
+            .end

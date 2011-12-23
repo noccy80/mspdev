@@ -1,0 +1,56 @@
+;*****************************************************************************
+;   MSP430x21x1 Demo - 21x1 Pull-up resistors demo
+;
+;   Description: This program demonstrates how to use the internal pull-ups
+;   on the 21x1 device. P1.2 is configured for using the pull-up. P1.0
+;   is configured as output to use the LED as an indicator. The P1.2 interrupt
+;   is enabled and the device is put into LPM4. When P1.2 goes low, and
+;   interrupt is generated and the P1_ISR executes. The ISR implements a
+;   software debounce delay, toggles P1.0 and returns.
+;   ACLK = n/a, MCLK = SMCLK = default DCO ~1.16 MHz
+;
+;
+;               MSP430F21x1
+;            -----------------
+;       /|\ |              XIN|-
+;        |  |                 |
+;        ---|RST          XOUT|-
+;           |                 |
+;           |             P1.2|---- \----
+;           |                 |         |
+;           |                 |        GND
+;
+;   H. Grewal / A. Dannenberg
+;   Texas Instruments, Inc
+;   July 2005
+;   Built with IAR Embedded Workbench Version: 3.30A
+;******************************************************************************
+#include  <msp430x21x1.h>
+;------------------------------------------------------------------------------
+            ORG     0F000h                  ;
+;------------------------------------------------------------------------------
+RESET       mov.w   #300h,SP                ; Initialize 'x1121 stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP1     bis.b   #001h,&P1DIR            ; P1.0 output
+            mov.b   #04h,&P1REN             ; Enable resistor on P1.2
+            mov.b   #04h,&P1OUT             ; Select pull-up
+            mov.b   #04h,&P1IE              ; Enable interrupt
+            clr.b   &P1IFG                  ; Clear IFG
+            mov.w   #LPM4+GIE,SR            ; Enable interrupts, LPM4
+;-----------------------------------------------------------------------------
+P1_ISR;     Toggle P1.0 Output
+;-----------------------------------------------------------------------------
+Wait        mov.w   #01FFFh,R15             ; Delay to R15
+L1          dec.w   R15                     ; Decrement R15
+            jnz     L1                      ; Delay over?
+            xor.b   #001h,&P1OUT            ; P1.0 = toggle
+            clr.b   &P1IFG                  ; IFG Cleared
+            reti                            ; Return from ISR
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors Used MSP430
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            ORG     0FFE4h                  ; P1.x Vector
+            DW      P1_ISR                  ;
+            END

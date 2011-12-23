@@ -1,0 +1,49 @@
+;******************************************************************************
+;   MSP430x47xx Demo - 32x32 Signed Multiply Accumalate
+;
+;   Description: Hardware multiplier is used to multiply-accumalate a set of
+;   numbers. The calculation is automatically initiated after the second operand 
+;   is loaded. Results are stored in RES0, RES1, RES2 and RES3.
+;
+;   ACLK = 32.768kHz, MCLK = SMCLK = default DCO
+;
+;                MSP430x47xx
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST              |
+;            |                 |
+;            |                 |
+;
+;  P. Thanigai/ K. Venkat
+;  Texas Instruments Inc.
+;  November 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x47x4.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+            mov.w   #01234h,&MPY32L         ; Load lower 16 bits of operand 1
+            mov.w   #01234h,&MPY32H         ; Load upper 16 bits of operand 1
+            mov.w   #05678h,&OP2L           ; Load lower 16 bits of operand 2
+            mov.w   #05678h,&OP2H           ; Load upper 16 bits of operand 2
+;----------second multiply operation-------------------------------------------
+            mov.w   #01234h,&MACS32L        ; Load lower 16 bits of operand 1
+            mov.w   #01234h,&MACS32H        ; Load upper 16 bits of operand 1
+            mov.w   #05678h,&OP2L           ; Load lower 16 bits of operand 2
+            mov.w   #05678h,&OP2H 
+            bis.w   #LPM4,SR                ; LPM4
+            nop                             ; set BREAKPOINT here
+
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

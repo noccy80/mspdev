@@ -1,0 +1,70 @@
+;******************************************************************************
+;   MSP-FET430P140 Demo - USART0, UART 115200 Echo ISR, HF XTAL ACLK
+;
+;   Description: Echo a received character, RX ISR used. Normal mode is LPM0,
+;   USART0 RX interrupt triggers TX Echo. Though not required, MCLK = LFXT1
+;   ACLK = MCLK = UCLK0 = LFXT1 = 8MHz
+;   Baud rate divider with 8MHz XTAL @115k = 8000000/115200 = 0069
+;   //* USART0 interrupt flags are in different SFR's from MSP430F14x/13x *//
+;   //* An external 8MHz XTAL on XIN XOUT is required for ACLK *//
+;   //* Min Vcc required varies with MCLK frequency - refer to datasheet *//		
+;
+;
+;                MSP430F149
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 8MHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P3.4|------------>
+;            |                 | 115200 - 8N1
+;            |             P3.5|<------------
+;
+;   M. Buccini / G. Morton
+;   Texas Instruments Inc.
+;   May 2005
+;   Built with Code Composer Essentials Version: 1.0
+;******************************************************************************
+ .cdecls C,LIST,  "msp430x14x.h"
+;------------------------------------------------------------------------------
+            .text                           ; Progam Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP3     bis.b   #030h,&P3SEL            ; P3.4,5 = USART0 TXD/RXD
+SetupBC     bis.b   #XTS,&BCSCTL1           ; LFXT1 = HF XTAL
+SetupOsc    bic.b   #OFIFG,&IFG1            ; Clear OSC fault flag
+            mov.w   #0FFh,R15               ; R15 = Delay
+SetupOsc1   dec.w   R15                     ; Additional delay to ensure start
+            jnz     SetupOsc1               ;
+            bit.b   #OFIFG,&IFG1            ; OSC fault flag set?
+            jnz     SetupOsc                ; OSC Fault, clear flag again
+            bis.b   #SELM_3,&BCSCTL2        ; MCLK = LFXT1
+SetupUART0  bis.b   #UTXE0+URXE0,&ME1       ; Enable USART0 TXD/RXD
+            bis.b   #CHAR,&UCTL0            ; 8-bit characters
+            mov.b   #SSEL0,&UTCTL0          ; UCLK = ACLK
+            mov.b   #045h,&UBR00            ; 8MHz 115200
+            mov.b   #000h,&UBR10            ; 8MHz 115200
+            mov.b   #000h,&UMCTL0           ; 8MHz no modulation 115200
+            bic.b   #SWRST,&UCTL0           ; **Initialize USART state machine**
+            bis.b   #URXIE0,&IE1            ; Enable USART0 RX interrupt
+                                            ;
+Mainloop    bis.b   #CPUOFF+GIE,SR          ; Enter LPM0, interrupts enabled
+            nop                             ; Needed only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+USART0RX_ISR;  Confirm TX buffer is ready, then Echo back RXed character
+;------------------------------------------------------------------------------
+TX1         bit.b   #UTXIFG0,&IFG1          ; USART0 TX buffer ready?
+            jz      TX1                     ; Jump is TX buffer not ready
+            mov.b   &RXBUF0,&TXBUF0         ; TX -> RXed character
+            reti                            ;
+                                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            .sect   ".reset"                ;
+            .short  RESET                   ; POR, ext. Reset, Watchdog
+            .sect   ".int09"                ;
+            .short  USART0RX_ISR            ; USART0 receive
+            .end

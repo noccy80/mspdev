@@ -1,0 +1,67 @@
+;******************************************************************************
+;   MSP430x47xx Demo - Timer_B, Toggle P5.1, Overflow ISR, 32kHz ACLK
+;
+;   Description: Toggle P5.1 using software and the Timer_B overflow ISR.
+;   In this example an ISR triggers when TA overflows. Inside the ISR P5.1
+;   is toggled. Toggle rate is exactly 0.5Hz.
+;   ACLK = LFXT1 = 32768Hz, MCLK = SMCLK = default DCO = 32 x ACLK = 1048576Hz
+;   //* An external watch crystal between XIN & XOUT is required for ACLK *//	
+;
+;                 MSP430x47xx
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;
+;  P. Thanigai/ K. Venkat
+;  Texas Instruments Inc.
+;  November 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x47x4.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+
+OFIFGcheck  bic.b   #OFIFG,&IFG1            ; Clear OFIFG
+            mov.w   #047FFh,R15             ; Wait for OFIFG to set again if
+OFIFGwait   dec.w   R15                     ; not stable yet
+            jnz     OFIFGwait
+            bit.b   #OFIFG,&IFG1            ; Has it set again?
+            jnz     OFIFGcheck              ; If so, wait some more
+
+SetupP5     bis.b   #BIT1,&P5DIR            ; P5.1 output
+SetupTB     mov.w   #TBSSEL_1+MC_2+TBIE,&TBCTL; ACLK, cont. mode, interrupt
+                                            ;													
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3, interrupts enabled
+            nop                             ; Required only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+TBX_ISR;    Common ISR for TBCCR1-4 and overflow
+;------------------------------------------------------------------------------
+            add.w   &TBIV,PC                ; Add Timer_B offset vector
+            reti                            ; Vector 0 - no interrupt
+            reti                            ; Vector 1 - TBCCR1
+            reti                            ; Vector 2 - TBCCR2
+            reti                            ; Vector 3 - CCR3
+            reti                            ; Vector 4 - CCR4
+            reti                            ; Vector 5 - CCR5
+            reti                            ; Vector 6 - CCR6
+TB_over     xor.b   #BIT1,&P5OUT            ; Vector 7 - overflow (Toggle P5.1)
+            reti                            ; Return from overflow ISR		
+                                            ;
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; RESET Vector
+            DW      RESET                   ;
+            ORG     TIMERB1_VECTOR          ; Timer_BX Vector
+            DW      TBX_ISR                 ;
+            END

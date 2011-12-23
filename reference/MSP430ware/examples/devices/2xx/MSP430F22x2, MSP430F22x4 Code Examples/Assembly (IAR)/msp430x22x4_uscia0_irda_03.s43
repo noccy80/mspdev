@@ -1,0 +1,182 @@
+;*******************************************************************************
+;   MSP430F22x4 Demo - USCI_A0 IrDA Physical Layer Comm, 8MHz SMCLK
+;
+;   Description: This example receives bytes through the USCI module
+;   configured for IrDA mode, and sends them out using the Timer_A UART
+;   to a PC running a terminal software. Likewise, data received from the PC
+;   through the Timer_A UART link is transmitted via IrDA.
+;
+;   ACLK = n/a, MCLK = SMCLK = BRCLK = CALxxx_8MHZ = 8MHz
+;
+;                                      MSP430F22x4
+;                                -----------------------
+;                               |                       |
+;                            /|\|                    XIN|-
+;                             | |                       |
+;                             --|RST                XOUT|-
+;                               |                       |
+;     GP2W0116YPS   /|\         |                       |
+;       -------      |          |                       |
+;      |    Vcc|-----+  IrDA    |               P2.4/TA2|--> 115,200 8N1
+;      #    LED|-----+ 9600 8N1 |               P2.3/TA1|<-- Terminal SW
+;      #    TxD|<---------------|P3.4/UCA0TXD           |
+;      #    RxD|--------------->|P3.5/UCA0RXD           |
+;      #     SD|-----+          |                       |
+;      |    GND|-----+          |                       |
+;       -------      |           -----------------------
+;                   ---
+;
+;   A. Dannenberg
+;   Texas Instruments Inc.
+;   April 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430x22x4.h"
+;-------------------------------------------------------------------------------
+BITTIME     EQU     69                      ; UART bit time = 8MHz / 115,200
+BITTIME_5   EQU     35                      ; UART half bit time
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    DATA16_N                ; RAM
+TXData      DS      2                       ; Timer_A UART TX data
+TxBitCnt    DS      1                       ; Timer_A UART TX bit counter
+RXData      DS      1                       ; Timer_A UART RX data
+RxBitCnt    DS      1                       ; Timer_A UART RX bit counter
+Flags       DS      1                       ; Flag register
+RXDataIR    DS      1                       ; Received IrDA data
+;-------------------------------------------------------------------------------
+FLAG_USCI   EQU     001h                    ; USCI data received
+FLAG_UART   EQU     002h                    ; Timer_A UART data received
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupBCS    mov.b   &CALDCO_8MHZ,&DCOCTL    ; Load 8MHz constants
+            mov.b   &CALBC1_8MHZ,&BCSCTL1   ;
+SetupP2     bis.b   #018h,&P2SEL            ; Use P2.3/P2.4 for Timer_A
+            bis.b   #010h,&P2DIR            ; P2.4 output
+SetupP3     bis.b   #030h,&P3SEL            ; Use P3.4/P3.5 for USCI_A0
+SetupUSCI0  bis.b   #UCSWRST,&UCA0CTL1      ; Set SW Reset
+            mov.b   #UCSSEL_2+UCSWRST,&UCA0CTL1
+                                            ; Use SMCLK, keep SW reset
+            mov.b   #52,&UCA0BR0            ; 8MHz/52=153.8KHz
+            mov.b   #0,&UCA0BR1             ;
+            mov.b   #UCBRF_1+UCOS16,&UCA0MCTL
+                                            ; Set 1st stage modulator to 1
+                                            ; 16-times oversampling mode
+            mov.b   #UCIRTXPL2+UCIRTXPL0+UCIRTXCLK+UCIREN,&UCA0IRTCTL
+                                            ; Pulse length = 6 half clock cyc
+                                            ; Enable BITCLK16, IrDA enc/dec
+            mov.b   #UCIRRXPL,&UCA0IRRCTL   ; Light = low pulse
+            bic.b   #UCSWRST,&UCA0CTL1      ; Resume operation
+            bis.b   #UCA0RXIE,&IE2          ; Enable RX int
+SetupTA     mov.w   #OUT,&TACCTL2           ; TXD Idle as Mark
+            mov.w   #TASSEL_2+MC_2,&TACTL   ; SMCLK, continuous mode
+SetupMisc   call    #RX_Ready               ; Ready Timer_A UART for RX
+            clr.b   &Flags                  ; Reset flag register
+                                            ;
+Mainloop    dint                            ; Disable interrupts
+            tst.b   &Flags                  ; Any events pending?
+            jnz     Proc                    ; Process events if any
+            bis.w   #CPUOFF+GIE,SR          ; Enter LPM0, interrupts enabled
+                                            ;
+Proc        eint                            ; Enable interrupts
+            bit.b   #FLAG_USCI,&Flags       ; USCI_A0 character received?
+            jnc     Check_UART              ; No, check Timer_A UART
+Check_USCI  bit.w   #CCIE,&TACCTL2          ; Yes, ensure Timer_A UART is ready
+            jc      Check_USCI              ;
+            mov.b   &RXDataIR,R15           ; Get RX'd data
+            call    #TX_Byte                ; And transmit using Timer_A UART
+            bic.b   #FLAG_USCI,&Flags       ; Clear flag
+            bis.b   #UCA0RXIE,&IE2          ; Re-enable RX int
+                                            ;
+Check_UART  bit.b   #FLAG_UART,&Flags       ; Timer_A UART character received?
+            jnc     Mainloop                ; No
+Check_UART1 bit.b   #UCA0TXIFG,&IFG2        ; Ensure TX buffer is ready
+            jnc     Check_UART1             ;
+            mov.b   &RXData,&UCA0TXBUF      ; Move RX'd character to USCI_A0
+            bic.b   #FLAG_UART,&Flags       ; Clear flag
+            call    #RX_Ready               ; Ready Timer_A UART for RX
+            jmp     Mainloop                ;
+;-------------------------------------------------------------------------------
+USCIRX_ISR; Read RXed character from USCI_A0, return from LPM0
+;-------------------------------------------------------------------------------
+            mov.b   &UCA0RXBUF,&RXDataIR    ; Get RXed character
+            bic.b   #UCA0RXIE,&IE2          ; Disable RX int
+            bis.b   #FLAG_USCI,&Flags       ; Indicate received character
+            bic.w   #CPUOFF,0(SP)           ; Return active after receiption
+            reti                            ; Return from ISR
+;-------------------------------------------------------------------------------
+RX_Ready;   Readies the Timer_A UART to receive on byte
+;-------------------------------------------------------------------------------
+            mov.b   #8,&RxBitCnt            ; Load Bit counter
+            mov.w   #SCS+CCIS0+CM1+CAP+CCIE,&TACCTL1
+                                            ; Sync, Neg Edge, Capture
+            ret                             ;
+;-------------------------------------------------------------------------------
+TX_Byte;    TX the byte stored in R15 using Timer_A UART
+;-------------------------------------------------------------------------------
+            mov.b   #10,&TxBitCnt           ; Load Bit counter, 8 data + ST/SP
+            mov.w   &TAR,&TACCR2            ; Current state of TA counter
+            add.w   #BITTIME,&TACCR2        ; Some time till first bit
+            bis.w   #0100h,R15              ; Add mark stop bit
+            rla.w   R15                     ; Add space start bit
+            mov.w   R15,&TXData             ; Load global variable
+            mov.w   #OUTMOD0+CCIE,&TACCTL2  ; TXD = mark = idle
+            ret                             ;
+;-------------------------------------------------------------------------------
+TAX_ISR;    Common ISR for TACCR1-2 and overflow
+;-------------------------------------------------------------------------------
+            add.w   &TAIV,PC                ; Add Timer_A offset vector
+            reti                            ; No interrupt
+            jmp     TACCR1_ISR              ; TACCR1
+            jmp     TACCR2_ISR              ; TACCR2
+            reti                            ; Reserved
+            reti                            ; Reserved
+            reti                            ; Overflow - not used
+;-------------------------------------------------------------------------------
+TACCR1_ISR; Timer_A UART RX
+;-------------------------------------------------------------------------------
+            add.w   #BITTIME,&TACCR1        ; Add Offset to TACCR1
+            bit.w   #CAP,&TACCTL1           ; Capture mode = start bit edge
+            jz      RX_Cont                 ; No
+            bic.w   #CAP,&TACCTL1           ; Switch to compare mode
+            add.w   #BITTIME_5,&TACCR1      ; Add Offset to TACCR1
+            reti                            ;
+RX_Cont     bit.w   #SCCI,&TACCTL1          ; Get bit waiting in receive latch
+            rrc.b   &RXData                 ;
+            dec.b   &RxBitCnt               ;
+            jnz     RX_Cont2                ; All bits RXed? Jump if not
+            bic.w   #CCIE,&TACCTL1          ; All bits RXed, disable interrupt
+            bis.b   #FLAG_UART,&Flags       ; Indicate received character
+            bic.w   #CPUOFF,0(SP)           ; Clear LPM0 bits from 0(SR)
+RX_Cont2    reti                            ;
+;-------------------------------------------------------------------------------
+TACCR2_ISR; Timer_A UART TX
+;-------------------------------------------------------------------------------
+            add.w   #BITTIME,&TACCR2        ; Add Offset to TACCR2
+            tst.b   &TxBitCnt               ; All bits TXed?
+            jnz     TX_Cont                 ; Jump if not
+            bic.w   #CCIE,&TACCTL2          ; All bits TXed, disable interrupt
+            bic.w   #CPUOFF,0(SP)           ; Clear LPM0 bits from 0(SP)
+            reti                            ;
+TX_Cont     bit.w   #01h,&TXData            ;
+            jz      TX_Zero                 ;
+            bic.w   #OUTMOD2,&TACCTL2       ; TX Mark
+            jmp     TX_Cont2                ;
+TX_Zero     bis.w   #OUTMOD2,&TACCTL2       ; TX Space
+TX_Cont2    rra.w   &TXData                 ;
+            dec.b   &TxBitCnt               ;
+            reti                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     USCIAB0RX_VECTOR        ; USCI A0/B0 Receive
+            DW      USCIRX_ISR              ;
+            ORG     TIMERA1_VECTOR          ; Timer A CC1-2, TA
+            DW      TAX_ISR                 ;
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET                   ;
+            END

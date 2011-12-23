@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<photos>
+
+	<photo>
+		<thumbnail>s_msp_exp430g2.jpg</thumbnail>
+		<filename>msp_exp430g2.jpg</filename>
+		<title>MSP-EXP430G2 (Launchpad)</title>
+		<description><![CDATA[<p></p><p>Integrated flash emulation tool, 14/20-pin DIP target socket, 2 buttons, 2 LEDs, and PCB connectors. Also comes with MSP430G2211 and MSP430G2231 devices.</p><p></p><p><a href="http://focus.ti.com/docs/toolsw/folders/print/msp-exp430g2.html" target="_parent">More Information</a> | <a href="https://estore.ti.com/Search.aspx?detail=1&k=MSP-EXP430G2" target="_parent">Buy Now</a></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(launchpad)]]></action>
+	</photo>
+	
+	<photo>
+		<thumbnail>s_msp_exp430f5529.jpg</thumbnail>
+		<filename>msp_exp430f5529.jpg</filename>
+		<title>MSP-EXP430F5529</title>
+		<description><![CDATA[<p>Experimenter board with 5-pad capacitive touch slider, USB interface, Dot Matrix LCD, microSD card, 3-axis accelerometer, RF Module connectors, LEDs, Integrated Flash Emulation Tool</p><p></p><p><a href="http://focus.ti.com/docs/toolsw/folders/print/msp-exp430f5529.html" target="_parent">More Information</a> | <a href="https://estore.ti.com/MSP-EXP430F5529-MSP430F5529-Experimenter-Board-P2413C43.aspx" target="_parent">Buy Now</a></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(EXP430F5529)]]></action>
+	</photo>
+	
+	<photo>
+		<thumbnail>s_msp_exp430fr5739.JPG</thumbnail>
+		<filename>msp_exp430fr5739.JPG</filename>
+		<title>MSP-EXP430FR5739</title>
+		<description><![CDATA[<p>FRAM-based experimenter's board, accelerometer, thermistor, LEDs, switches, connections for RF modules, integrated Flash Emulation Tool.</p><p></p><p><a href="http://focus.ti.com/docs/toolsw/folders/print/msp-exp430fr5739.html" target="_parent">More Information</a> | <a href="https://estore.ti.com/MSP-EXP430FR5739-MSP430FR57xx-Experimenters-Board--P2430C42.aspx" target="_parent">Buy Now</a></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(EXP430FR5739)]]></action>
+	</photo>
+	
+<!--	<photo>
+		<thumbnail>s_ez430-chronos.jpg</thumbnail>
+		<filename>ez430-chronos.jpg</filename>
+		<title>eZ430-Chronos</title>
+		<description><![CDATA[<p>Highly-integrated wireless sports watch development system.  Includes a CC430-based RFcapablewatch, a USB RF Access Point and a USB emulator.</p><p></p><p><a href="http://focus.ti.com/docs/toolsw/folders/print/ez430-chronos.html" target="_parent">More Information</a> | <a href="https://estore.ti.com/eZ430-Chronos-433-eZ430-Chronos-Wireless-Watch-Development-Tool-P1734.aspx" target="_parent">Buy Now</a></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(Chronos)]]></action>
+	</photo>
+-->	
+	<photo>
+		<thumbnail>s_msp-fet430uif.jpg</thumbnail>
+		<filename>msp-fet430uif.jpg</filename>
+		<title>MSP-FET430UIF</title>
+		<description><![CDATA[<p>The MSP-FET430UIF is a powerful flash emulation tool to quickly begin application development on the MSP430 MCU. It includes USB debugging interface used to program and debug the MSP430 in-system through the JTAG interface or the pin saving Spy Bi-Wire (2-wire JTAG) protocol. The flash memory can be erased and programmed in seconds with only a few keystrokes, and since the MSP430 flash is ultra-low power, no external power supply is required.</p><p></p><p><a href="http://focus.ti.com/docs/toolsw/folders/print/msp-fet430uif.html" target="_parent">More Information</a> | <a href="https://estore.ti.com/MSP-FET430UIF-MSP430-USB-Debugging-Interface-P616.aspx" target="_parent">Buy Now</a><p></p></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(fet430uif)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_msp_gang430.jpg</thumbnail>
+		<filename>msp_gang430.jpg</filename>
+		<title>MSP-GANG430</title>
+		<description><![CDATA[<p>MSP430 Production Programmers expedite the time to download firmware to your target device by programming several devices simultaneously.  Production programmers are easy to setup and can be used in conjunction with a PC using automation software or as a stand-alone programming station that programs multiple devices with a single button.</p><p></p><p><a href="http://focus.ti.com/docs/toolsw/folders/print/msp-gang430.html" target="_parent">More Information</a><p></p></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(gang430)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_TargetBoards.jpg</thumbnail>
+		<filename>TargetBoards.jpg</filename>
+		<title>Target Boards</title>
+		<description><![CDATA[<p>Starter Kits come with everything required to complete an entire project including a target board, USB debugging and programming interface, free IDE software, MSP430 samples, and cables. Most target boards include a socket for a specific package and pin count.  Please double check the recommended tool for the device you intent to use on the device's web page.</p><p></p><p><a href="http://focus.ti.com/mcu/docs/mcusplash.tsp?contentId=128825#SKptb" target="_parent">More Information</a><p></p></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(Target Boards)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_Grace.png</thumbnail>
+		<filename>Grace.png</filename>
+		<title>Grace</title>
+		<description><![CDATA[<p>Grace is our graphical coding environment for MSP430. With Grace, you can graphically configure your MSP430Gxx and MSP430F2xx peripherals. Check out the examples to the left to get started! <br>    -  Enable peripherals with a single click<br>    -  Configure ADC, timers, GPIO, serial communication and <br>        other modules by using buttons, drop-down menus & text <br>        fields<br>    -  Generates fully-commented, easy-to-read C code<br></p><p><a href="http://www.ti.com/grace" target="_parent">Grace wiki</a> | <a href="http://www.youtube.com/watch?v=xe3hlNskHlU" target="_parent">Video Overview</a> | <a href="http://www.youtube.com/watch?v=Qgh48vA2NoM" target="_parent">Video Tutorial</a><p></p></p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(Grace)]]></action>
+	</photo>
+</photos>

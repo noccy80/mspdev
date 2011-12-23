@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\PMAP_example1.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\PMAP_example2.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\PMAP_example3.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

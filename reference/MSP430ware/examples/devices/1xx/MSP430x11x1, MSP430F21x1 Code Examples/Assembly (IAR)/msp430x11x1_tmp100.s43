@@ -1,0 +1,148 @@
+;******************************************************************************
+;   MSP430x11x1 Demo - Software I2C Master Interface to TMP100
+;
+;   Description: I2C communication with a TMP100, in default condition, is
+;   demonstrated. If temperature read > 30C (01Eh), P1.0 is set, else reset.
+;   Only upper 8-bits from TMP100 temperature register are used, representing
+;   7Fh = 128C, 80h = -128C. Slave Acknowledge error checking not implemented.
+;   I2C timing assumed with MCLK ~800kHz.
+;   ACLK = n/a, MCLK = SMCLK = default DCO ~800kHz
+;
+;                                   MSP430F1121
+;                                -----------------
+;                    /|\ /|\ /|\|              XIN|-
+;                    10k 10k  | |                 |
+;      /|\  TMP100    |   |   --|RST          XOUT|-
+;       |   -------   |   |     |                 |
+;       +--|Vcc SDA|<-|---+---->|P2.0         P1.0|---> LED
+;       +--|A0     |  |         |                 |
+;         -|A1     |  |         |                 |
+;       +--|Vss SCL|<-+---------|P2.1             |
+;      \|/  -------             |                 |
+;
+;
+;
+;   CPU registers used
+#define     RXTXI2C  R7
+#define     ADDRI2C  R8
+#define     DATAI2C  R9
+#define     BITI2C   R10
+;
+;   Definitions for I2C bus
+SDA         EQU     001h                    ; P2.0 controls SDA line (pull-up)
+SCL         EQU     002h                    ; P2.1 controls SCL line (pull-up)
+Code        EQU     09Eh                    ; Device Code with A0=1, A1=float
+;Code         EQU    09Ch                    ; Device Code with A1=A0=1
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;*****************************************************************************
+#include  <msp430x11x1.h>
+;------------------------------------------------------------------------------
+            ORG     0F000h
+;------------------------------------------------------------------------------
+RESET       mov.w   #300h,SP                ; Initialize stackpointer
+            mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+            bis.b   #01h,&P1DIR             ;
+                                            ;
+Mainloop    mov.b   #0,ADDRI2C              ; ADDRI2C = Pointer
+            call    #Read_I2C               ;
+            bic.b   #01h,&P1OUT             ; P1.0 = 0
+            cmp.b   #01Eh,DATAI2C           ; DATAI2C > 30c?
+            jlo     Mainloop                ; Again
+            bis.b   #01h,&P1OUT             ; P1.0 = 1
+            jmp     Mainloop                ; Again
+;
+;///////////I2C Subroutines start//////////////////////////////////////////////
+;------------------------------------------------------------------------------
+Read_I2C;   enter ADDRI2C=00 - FF I2C device address to read
+;                 RXTXI2C=x
+;                 DATAI2C=x
+;           exit  ADDRI2C=x
+;                 RXTXI2C=x
+;                 DATAI2C=00 - FF I2C device data
+;------------------------------------------------------------------------------
+            mov.b   #Code,RXTXI2C           ; Control
+            call    #I2C_Start              ; Send Start, control and Ack
+            mov.b   ADDRI2C,RXTXI2C         ; Address
+            call    #I2C_TX                 ; Send address and Ack
+            mov.b   #Code,RXTXI2C           ; Control
+            bis.b   #01h,RXTXI2C            ; "read"
+            call    #I2C_Start              ; Send Start, control+1 and Ack
+            call    #I2C_RX                 ; Send Read
+            call    #I2C_RX_NAck            ; Send NAck
+            call    #I2C_Stop               ; Send Stop
+            ret                             ;
+                                            ;
+;------------------------------------------------------------------------------
+I2C_Start;  enter SDA=x, SCL=x
+;           exit  SDA=1, SCL=0
+;------------------------------------------------------------------------------
+            bic.b   #SCL+SDA,&P2DIR         ; SCL and SDA to input direction
+            bic.b   #SCL+SDA,&P2OUT         ; SCL=1, SDA=1
+            bis.b   #SDA,&P2DIR             ; SDA=0
+            bis.b   #SCL,&P2DIR             ; SCL=0
+;------------------------------------------------------------------------------
+I2C_TX;     enter SDA=1, SCL=0
+;           exit  SDA=1, SCL=0
+;------------------------------------------------------------------------------
+            mov     #08,BITI2C              ;
+I2C_TX_Bit  rla.b   RXTXI2C                 ; data bit -> carry
+            jc      I2C_TX1                 ;
+I2C_TX0     bis.b   #SDA,&P2DIR             ; SDA=0
+            jmp     I2C_TXx                 ;
+I2C_TX1     bic.b   #SDA,&P2DIR             ; SDA=1
+I2C_TXx     bic.b   #SCL,&P2DIR             ; SCL=1
+            nop                             ; delay to meet I2C spec
+            nop                             ;
+            bis.b   #SCL,&P2DIR             ; SCL=0
+            dec     BITI2C                  ;
+            jnz     I2C_TX_Bit              ; continue until 8 bits are sent
+            bic.b   #SDA,&P2DIR             ; SDA=1
+                                            ;
+I2C_TX_Ack  bic.b   #SCL,&P2DIR             ; SCL=1
+;            bit.b   #SDA,&P2IN              ; Slave_Ack --> carry
+;            jnc      I2C_Error              ; No carry = Ack error
+            nop                             ; delay to meet I2C spec
+            nop                             ;
+            bis.b   #SCL,&P2DIR             ; SCL=0
+            ret                             ; Return from subroutine
+                                            ;
+;------------------------------------------------------------------------------
+I2C_RX  ;   enter SDA=1, SCL=0
+;           exit  SDA=1, SCL=0
+;------------------------------------------------------------------------------
+            mov.b   #08,BITI2C              ; 8 bits to read
+I2C_RX_Bit  bic.b   #SCL,&P2DIR             ; SCL=1
+            bit.b   #SDA,&P2IN              ; SDA bit -> carry
+            rlc.b   DATAI2C                 ; store data bit
+            bis.b   #SCL,&P2DIR             ; SCL=0
+            dec     BITI2C                  ; all bits read?
+            jnz     I2C_RX_Bit              ; continue until 8 bits are read
+            ret                             ; Return from subroutine
+                                            ;
+I2C_RX_Ack  bis.b   #SDA,&P2DIR             ; SDA=0, Master Ack
+I2C_RX_NAck bic.b   #SCL,&P2DIR             ; SCL=1
+            nop                             ; delay to meet I2C spec
+            nop                             ;
+            bis.b   #SCL,&P2DIR             ; SCL=0
+            bic.b   #SDA,&P2DIR             ; SDA=1
+            ret                             ; Return from subroutine
+                                            ;
+;------------------------------------------------------------------------------
+I2C_Stop;   enter SDA=x, SCL=0
+;           exit  SDA=1, SCL=1
+;------------------------------------------------------------------------------
+            bis.b   #SDA,&P2DIR             ; SDA = 0
+            bic.b   #SCL,&P2DIR             ; SCL = 1
+            bic.b   #SDA,&P2DIR             ; SDA = 1
+I2C_End     ret                             ;
+                                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

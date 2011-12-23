@@ -1,0 +1,45 @@
+;******************************************************************************
+;   MSP430x24x Demo - 8x8 Unsigned Multiply Accumulate
+;
+;   Description: Hardware multiplier is used to multiply two numbers.
+;   The calculation is automatically initiated after the second operand is
+;   loaded. A second multiply accumulate operation is performed after that.
+;   Results are stored in RESLO and RESHI. SUMEXT contains the carry of the
+;   result.
+;
+;                 MSP430x249
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST              |
+;            |                 |
+;            |                 |
+;
+;   B. Nisarga
+;   Texas Instruments Inc.
+;   September 2007
+;   Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x24x.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+            mov.b   #12h,&0130h             ; Load first operand -unsigned mult
+            mov.b   #56h,&0138h             ; Load second operand
+
+            mov.b   #12h,&0134h             ; Load first operand -unsigned MAC
+            mov.b   #56h,&0138h             ; Load second operand
+
+            bis.w   #LPM4,SR                ; LPM4
+            nop                             ; Set breakpoint here
+
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

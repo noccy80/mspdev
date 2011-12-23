@@ -1,0 +1,45 @@
+#******************************************************************************
+#
+# Makefile - Rules for building the driver library.
+#
+# Copyright (c) 2011 Texas Instruments Incorporated.  All rights reserved.
+# TI Information - Selective Disclosure
+#
+#******************************************************************************
+
+#
+# The base directory for 430Ware.
+#
+ROOT=..
+
+#
+# Include the common make definitions.
+#
+include ${ROOT}/makedefs
+
+#
+# Where to find header files that do not live in the source directory.
+#
+IPATH=..
+
+#
+# The default rule, which causes the executables to be built.
+#
+all: ${COMPILER}
+all: ${COMPILER}/{OBJS)
+
+#
+# The rule to clean out all the build products.
+#
+clean:
+	@rm -rf ${COMPILER} ${wildcard *~}
+#
+# The rule to create the target directory.
+#
+${COMPILER}:
+	@mkdir -p ${COMPILER}
+
+#
+# Rules for building the driver library.
+#
+${COMPILER}/libdriver.a: ${COMPILER}/i2c.o

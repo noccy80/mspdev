@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<photos>
+	
+	<photo>
+		<thumbnail>s_driverlib.png</thumbnail>
+		<filename>driverlib.png</filename>
+		<title>DriverLib</title>
+		<description><![CDATA[<p>Full API for MSP430F5xx/6xx devices for configuring, enabling & using integrated peripherals. Each API function is fully documented through a User’s Guide, API Guide & code examples. Fly high above bitwise programming and become an MCU expert within minutes with Driver Library for MSP430 MCUs.</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(driverlib)]]></action>
+	</photo>
+	<photo>
+		<thumbnail>s_usb_dev_pkg.png</thumbnail>
+		<filename>usb_dev_pkg.png</filename>
+		<title>USB Developers Package</title>
+		<description><![CDATA[<p>The USB Developers Package for MSP430 is a software package containing all necessary source code and sample applications required for developing a USB-based MSP430 project. The package only supports MSP430 devices with integrated USB.<p>
+<a href="http://focus.ti.com/docs/toolsw/folders/print/msp430usbdevpack.html" target="_parent">More Information</a>
+</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(usb developers package)]]></action>
+	</photo>	
+</photos>

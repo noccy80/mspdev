@@ -1,0 +1,50 @@
+;*******************************************************************************
+;   MSP430F66xx Demo - DAC12_1, Output 0.75V on DAC1
+;
+;   Description: Using DAC12_1 and 2.5V ADC12REF reference with a gain of 1,
+;   output 2V on P6.7.
+;
+;
+;                MSP430F6638
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |        DAC1/P6.7|--> 0.75V
+;            |                 |
+;
+;   Priya Thanigai
+;   Texas Instruments Inc.
+;   March 2010
+;   Built with IAR Embedded Workbench Version: 4.20
+;******************************************************************************
+
+#include <msp430f6638.h>
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+
+SetupDAC12  mov.w   #DAC12IR+DAC12SREF_0+DAC12AMP_5+DAC12ENC,&DAC12_1CTL0 
+      
+; Delay for reference settle = 75us
+            mov.w   #01ffh,R15
+delay_L1    dec.w   R15
+            jnz     delay_L1
+            
+            mov.w   #07ffh,&DAC12_1DAT      ; 2.0V
+                                            ;
+Mainloop    bis.w   #CPUOFF,SR              ; Enter LPM0
+            nop                             ; Required only for debugger
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

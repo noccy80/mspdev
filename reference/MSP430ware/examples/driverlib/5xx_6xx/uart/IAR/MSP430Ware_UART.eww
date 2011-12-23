@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\UART_address_bit_multiprocessor_RX.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\UART_address_bit_multiprocessor_TX.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\UART_auto_baudrate_detection_RX.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\UART_auto_baudrate_detection_TX.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\UART_idle_line_multiprocessor_RX.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\UART_idle_line_multiprocessor_TX.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\UART_RX.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\UART_TX.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

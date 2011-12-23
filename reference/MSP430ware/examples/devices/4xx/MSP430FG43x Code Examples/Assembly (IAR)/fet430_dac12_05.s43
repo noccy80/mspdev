@@ -1,0 +1,79 @@
+;******************************************************************************
+;  MSP-FET430P430 Demo - DAC0 Output Voltage Ramp, DAC1 Constant,DAC ISR
+;
+;  Description: Using DAC12.0 outputs a 16 Step Ramp with 1 sample/sec
+;  using Timer_B2 trigger. Ramp is output on VeRef+. Normal mode is LPM3.
+;  DAC1 outputs a constant 1.5V on P6.7
+;  Use internal 2.5V Vref.
+;
+;               MSP430FG439
+;            -----------------
+;        /|\|              XIN|-
+;         | |                 |
+;         --|RST          XOUT|-
+;           |                 |
+;           |      DAC0/VeRef+|--> Ramp_positive
+;           |        DAC1/P6.7|--> 1.5V
+;
+;  H. Grewal / L. Westlund
+;  Texas Instruments Inc.
+;  Feb 2005
+;  Built with IAR Embedded Workbench Version: 3.30A
+;******************************************************************************
+
+#include  <msp430xG43x.h>
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov     #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupADC12  mov.w   #REF2_5V+REFON,&ADC12CTL0 ; Internal 2.5V ref on
+            mov.w   #13600,&TACCR0          ; Delay to allow Ref to settle
+            bis.w   #CCIE,&TACCTL0          ; Compare-mode interrupt.
+            mov.w   #TACLR+MC_1+TASSEL_2,&TACTL; Up mode, SMCLK
+            bis.w   #LPM0+GIE,SR            ; Enter LPM0, enable interrupts
+            bic.w   #CCIE,&TACCTL0          ; Disable timer interrupt
+            dint                            ; Disable Interrupts
+            mov.w   #OUTMOD_7,&TBCCTL2      ; Reset/set
+            mov.w   #16384,&TBCCR2          ; PWM Duty Cycle
+            mov.w   #32767,&TBCCR0          ; 1Hz Clock period
+            mov.w   #TBSSEL_1+MC_1,&TBCTL   ; ACLK, up mode
+SetupDAC121 mov.w   #DAC12IR+DAC12AMP_5+DAC12ENC,&DAC12_1CTL ; O/p range,Amp set
+            mov.w   #099Ah,&DAC12_1DAT      ; 1.5V
+SetupDAC120 mov.w   #DAC12IR+DAC12AMP_5+DAC12ENC+DAC12LSEL_3+DAC12OPS+DAC12IE,&DAC12_0CTL
+                                            ; Int ref gain 1
+            eint                            ; Interrupts enabled
+            inc.w   &DAC12_0DAT             ; Positive ramp
+            bis.w   #LPM3,SR                ; Enter LPM3
+;------------------------------------------------------------------------------
+TAX_ISR;    Common ISR for CCR0-4 and overflow
+;------------------------------------------------------------------------------
+            add.w   &TAIV,PC                ; Add TA interrupt offset to PC
+            jmp     TACCR0_ISR              ; CCR0
+            reti                            ; CCR1
+            reti                            ; CCR2
+            reti                            ; CCR3
+            reti                            ; CCR4
+TA_over     reti                            ; Timer_A overflow
+
+TACCR0_ISR  clr     &TACTL                  ; clear Timer_A control registers
+            bic     #LPM0,0(SP)             ; Exit LPMx, interrupts enabled
+            reti                            ;
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+DAC12_ISR;    Common ISR for DAC12 and DMA
+;------------------------------------------------------------------------------
+            bic     #DAC12IFG,&DAC12_0CTL
+            add     #256,&DAC12_0DAT
+            and.w   #0FFFh,&DAC12_0DAT      ;
+            reti
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors Used
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            ORG     0FFECh                  ; Timer_A0 Vector
+            DW      TAX_ISR                 ;
+            ORG     0FFE6h                  ; DAC12 Vector
+            DW      DAC12_ISR               ;
+            END

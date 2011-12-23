@@ -1,0 +1,54 @@
+;******************************************************************************
+;   MSP430x47xx Demo - Comparator A, Poll input CA0, result in P5.1
+;
+;   Description: The voltage at pin CA0 (Vcompare) is compared with reference
+;   voltage of diode ref.  LED is toggled when Vcompare crosses the ref voltage.
+;
+;
+;                 MSP430x47xx
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST           CA0|<--Vcompare
+;            |                 |
+;         <--|CAOUT/P2.6       |
+;            |             P5.1|-->LED
+;
+;  P. Thanigai/ K. Venkat
+;  Texas Instruments Inc.
+;  November 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x47x4.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+
+            mov.b   #CAON+CAREF_3+CARSEL, &CACTL1  ;Enable comp, ref = Diode ref
+            mov.b   #P2CA0, &CACTL2         ; Pin to CA0
+            bis.b   #CAPD6,&CAPD            ; Port pin buffer disable
+
+SetupP5     bis.b   #BIT1,&P5DIR            ; P5.1 = output direction
+SetupP2     bis.b   #BIT6,&P2SEL            ; P2.6 = CAOUT
+
+Mainloop:
+            bit.b   #CAOUT, &CACTL2             ; Test result
+            jz      CAOUT0                  ; jump if result = 0
+                                            ; Set LED on if result =1
+            bis.b   #BIT1,&P5OUT            ; Set P5.1
+            jmp     Mainloop
+CAOUT0
+            bic.b   #BIT1,&P5OUT            ; Clear P5.1
+            jmp     Mainloop
+
+;-----------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; RESET Vector
+            DW      RESET                   ;
+            END

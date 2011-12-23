@@ -1,0 +1,8 @@
+uart_address_bit_multiprocessor_RX.c
+uart_address_bit_multiprocessor_TX.c
+uart_auto_baudrate_detection_RX.c
+uart_auto_baudrate_detection_TX.c
+uart_idle_line_multiprocessor_RX.c
+uart_idle_line_multiprocessor_TX.c
+uart_tx.c
+uart_rx.c

@@ -1,0 +1,68 @@
+;******************************************************************************
+;  MSP430F66xx Demo - Timer_A3, Toggle P3.1/TA1.0, Up/Down Mode, 32kHz ACLK
+;
+;  Description: Toggle P3.1 using hardware TA1.0 output. Timer1_A is configured
+;  for up/down mode with CCR0 defining period, TA1.0 also output on P3.1. In
+;  this example, CCR0 is loaded with 5 and TA1.0 will toggle P3.1 at TACLK/2*5.
+;  Thus the output frequency on P3.1 will be the TACLK/20. No CPU or software
+;  resources required. Normal operating mode is LPM3.
+;  As coded with TACLK = ACLK, P3.1 output frequency = 32KHz/20 = 1.6384kHz
+;  ACLK = TACLK = XT1 = 32768Hz, MCLK = default DCO ~1.045MHz
+;
+;                MSP430F6638
+;             -----------------
+;        /|\ |            XIN|-
+;         |  |                 | 32kHz
+;         ---|RST  XOUT|-         
+;           |                   |
+;           |         P3.1/TA1.0|-->ACLK/20
+;
+;   Priya Thanigai
+;   Texas Instruments Inc.
+;   March 2010
+;   Built with IAR Embedded Workbench Version: 4.20
+;******************************************************************************
+
+#include <msp430f6638.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDTPW + WDTHOLD,&WDTCTL; Stop WDT    
+            bis.b   #BIT1,&P3DIR            ; P3.1 output
+            bis.b   #BIT1,&P3SEL            ; P3.1 option select
+            
+            ; Initialize LFXT1
+Test_LOCKIO bit.w   #LOCKIO,&BAKCTL
+            jz      Clock_Init
+            bic.w   #LOCKIO,&BAKCTL
+            jmp     Test_LOCKIO
+           
+Clock_Init  bic.w   #XT1OFF,&UCSCTL6        ; XT1 On
+            bis.w   #XCAP_3,&UCSCTL6        ; Internal load cap
+
+            ; Loop until XT1 fault flag is cleared
+do_while1   bic.w   #XT1LFOFFG,&UCSCTL7     ; Clear XT1 fault flags
+            bit.w   #XT1LFOFFG,&UCSCTL7     ; Test XT1 fault flag
+            jc      do_while1
+
+
+            mov.w   #OUTMOD_4,&TA1CCTL0     ; CCR0 toggle mode
+            mov.w   #5,&TA1CCR0 
+            mov.w   #TASSEL_1 + MC_3 + TACLR,&TA1CTL
+                                            ; ACLK, up-downmode, clear TAR
+
+            bis.w   #LPM3,SR                ; Enter LPM3
+            nop                             ; For debugger
+            
+;-------------------------------------------------------------------------------
+                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR                ; POR, ext. Reset
+            DW      RESET
+            END

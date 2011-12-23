@@ -1,0 +1,403 @@
+MSP430 C/C++ Optimizer                  v3.3.1
+Build Number 1KGCQ-KDADEMDK-RTARQ-TAV-ZACIF_T_T_R
+
+		======File-level Analysis Summary======
+
+
+extern void UCS_HFXT1Start() is called from 0 sites in this file.
+    It appears to be inlineable (size = 56 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned UCS_HFXT1StartWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 67 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_LFXT1Start() is called from 0 sites in this file.
+    It appears to be inlineable (size = 63 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned UCS_LFXT1StartWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 68 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_SMCLKOff() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_SMCLKOn() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_XT1Off() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_XT2Off() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_XT2Start() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned UCS_XT2StartWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 62 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_bypassXT1() is called from 0 sites in this file.
+    It appears to be inlineable (size = 57 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned UCS_bypassXT1WithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 72 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_bypassXT2() is called from 0 sites in this file.
+    It appears to be inlineable (size = 26 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned UCS_bypassXT2WithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 37 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned UCS_clearAllOscFlagsWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 29 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_clearFaultFlag() is called from 0 sites in this file.
+    It appears to be inlineable (size = 11 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_clockSignalInit() is called from 0 sites in this file.
+    It appears to be inlineable (size = 128 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_disableClockRequest() is called from 0 sites in this file.
+    It appears to be inlineable (size = 11 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_enableClockRequest() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned char UCS_faultFlagStatus() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned long UCS_getACLK() is called from 0 sites in this file.
+    It appears to be inlineable (size = 20 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSComputeCLKFrequency() (1 times)
+
+extern unsigned long UCS_getMCLK() is called from 0 sites in this file.
+    It appears to be inlineable (size = 16 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSComputeCLKFrequency() (1 times)
+
+extern unsigned long UCS_getSMCLK() is called from 0 sites in this file.
+    It appears to be inlineable (size = 20 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSComputeCLKFrequency() (1 times)
+
+extern void UCS_initFLL() is called from 1 sites in this file.
+    It appears to be inlineable (size = 173 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void UCS_initFLLSettle() is called from 0 sites in this file.
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	UCS_initFLL() (1 times)
+
+extern void UCS_setExternalClockSource() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned long privateUCSComputeCLKFrequency() is called from 3 sites in this file.
+    It appears to be inlineable (size = 149 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSSourceClockFromDCO() (2 times)
+
+extern unsigned long privateUCSSourceClockFromDCO() is called from 2 sites in this file.
+    It appears to be inlineable (size = 176 units)
+    It has 4 non-trivial scope blocks nested 4 deep.
+    It calls these functions:
+	<NONE>
+
+
+
+		======= End file-level Analysis =======
+
+
+==============================================================================
+
+extern unsigned long privateUCSSourceClockFromDCO() is called from 2 sites in this file.
+    It appears to be inlineable (size = 176 units)
+    It has 4 non-trivial scope blocks nested 4 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned long privateUCSComputeCLKFrequency() is called from 3 sites in this file.
+    It appears to be inlineable (size = 149 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSSourceClockFromDCO() (2 times)
+
+==============================================================================
+
+extern void UCS_setExternalClockSource() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_initFLL() is called from 1 sites in this file.
+    It appears to be inlineable (size = 173 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_initFLLSettle() is called from 0 sites in this file.
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	UCS_initFLL() (1 times)
+
+==============================================================================
+
+extern unsigned long UCS_getSMCLK() is called from 0 sites in this file.
+    It appears to be inlineable (size = 20 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSComputeCLKFrequency() (1 times)
+
+==============================================================================
+
+extern unsigned long UCS_getMCLK() is called from 0 sites in this file.
+    It appears to be inlineable (size = 16 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSComputeCLKFrequency() (1 times)
+
+==============================================================================
+
+extern unsigned long UCS_getACLK() is called from 0 sites in this file.
+    It appears to be inlineable (size = 20 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	privateUCSComputeCLKFrequency() (1 times)
+
+==============================================================================
+
+extern unsigned char UCS_faultFlagStatus() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_enableClockRequest() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_disableClockRequest() is called from 0 sites in this file.
+    It appears to be inlineable (size = 11 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_clockSignalInit() is called from 0 sites in this file.
+    It appears to be inlineable (size = 128 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_clearFaultFlag() is called from 0 sites in this file.
+    It appears to be inlineable (size = 11 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned UCS_clearAllOscFlagsWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 29 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned UCS_bypassXT2WithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 37 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_bypassXT2() is called from 0 sites in this file.
+    It appears to be inlineable (size = 26 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned UCS_bypassXT1WithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 72 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_bypassXT1() is called from 0 sites in this file.
+    It appears to be inlineable (size = 57 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned UCS_XT2StartWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 62 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_XT2Start() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_XT2Off() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_XT1Off() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_SMCLKOn() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_SMCLKOff() is called from 0 sites in this file.
+    It appears to be inlineable (size = 8 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned UCS_LFXT1StartWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 68 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_LFXT1Start() is called from 0 sites in this file.
+    It appears to be inlineable (size = 63 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned UCS_HFXT1StartWithTimeout() is called from 0 sites in this file.
+    It appears to be inlineable (size = 67 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void UCS_HFXT1Start() is called from 0 sites in this file.
+    It appears to be inlineable (size = 56 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+<<NULL MIX DOMAIN>>
+
+== END OF INFO OUTPUT==

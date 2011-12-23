@@ -1,0 +1,39 @@
+;*******************************************************************************
+;   MSP430G2xx1 Demo - Software Toggle P1.0
+;
+;   Description: Toggle P1.0 by xor'ing P1.0 inside of a software loop.
+;   ACLK = n/a, MCLK = SMCLK = default DCO
+;
+;                MSP430G2xx1
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P1.0|-->LED
+;
+;   D. Dang
+;   Texas Instruments Inc.
+;   October 2010
+;   Built with IAR Embedded Workbench Version: 5.10
+;*******************************************************************************
+#include  "msp430g2231.h"
+;-------------------------------------------------------------------------------
+            ORG     0F800h                  ; Program Reset
+;-------------------------------------------------------------------------------
+RESET       mov.w   #0280h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP1     bis.b   #001h,&P1DIR            ; P1.0 output
+                                            ;				
+Mainloop    xor.b   #001h,&P1OUT            ; Toggle P1.0
+Wait        mov.w   #050000,R15             ; Delay to R15
+L1          dec.w   R15                     ; Decrement R15
+            jnz     L1                      ; Delay over?
+            jmp     Mainloop                ; Again
+                                            ;
+;-------------------------------------------------------------------------------
+;           Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

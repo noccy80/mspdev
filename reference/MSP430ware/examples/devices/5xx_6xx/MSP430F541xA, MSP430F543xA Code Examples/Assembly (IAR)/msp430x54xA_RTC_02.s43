@@ -1,0 +1,97 @@
+;*******************************************************************************
+;  MSP430F54xA Demo - RTC_A in real time clock mode
+;
+;  Description: This program demonstrates the RTC mode by triggering an
+;  interrupt every second and minute. This code toggles P1.0 every second.
+;  This code recommends an external LFXT1 crystal for RTC accuracy.
+;  ACLK = LFXT1 = 32768Hz, MCLK = SMCLK = default DCO = 32 x ACLK = 1048576Hz
+;
+;                MSP430F54xA
+;             -----------------
+;        /|\ |              XIN|-
+;         |  |                 | 32kHz
+;         ---|RST          XOUT|-
+;            |                 |
+;            |            P1.0 |--> Toggles every second
+;            |                 |
+;
+;  W. Goh
+;  Texas Instruments Inc.
+;  April 2010
+;  Built with IAR Embedded Workbench Version: 4.21.8
+;*******************************************************************************
+
+#include <msp430x54xA.h>
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+            bis.b   #0x01,&P1DIR            ; P1.0 Output
+
+            bis.b   #0x03,&P7SEL            ; Select XT1
+            bic.w   #XT1OFF,&UCSCTL6        ; XT1 On
+            bis.w   #XCAP_3,&UCSCTL6        ; Internal load cap
+
+            ; Loop until XT1,XT2 & DCO stabilizes
+do_while    bic.w   #XT2OFFG + XT1LFOFFG + XT1HFOFFG + DCOFFG,&UCSCTL7
+                                            ; Clear XT2,XT1,DCO fault flags
+            bic.w   #OFIFG,&SFRIFG1         ; Clear fault flags
+            bit.w   #OFIFG,&SFRIFG1         ; Test oscillator fault flag
+            jc      do_while
+
+            ; Configure RTC_A
+            bis.w   #RTCTEVIE + RTCRDYIE + RTCBCD + RTCHOLD + RTCMODE,&RTCCTL01
+                                            ; RTC enable, BCD mode, RTC hold
+                                            ; enable RTC read ready interrupt
+                                            ; enable RTC time event interrupt
+
+            mov.w   #0x2010,&RTCYEAR        ; Year = 0x2010
+            mov.b   #0x4,&RTCMON            ; Month = 0x04 = April
+            mov.b   #0x05,&RTCDAY           ; Day = 0x05 = 5th
+            mov.b   #0x01,&RTCDOW           ; Day of week = 0x01 = Monday
+            mov.b   #0x10,&RTCHOUR          ; Hour = 0x10
+            mov.b   #0x32,&RTCMIN           ; Minute = 0x32
+            mov.b   #0x45,&RTCSEC           ; Seconds = 0x45
+
+            mov.w   #0x2,&RTCADOWDAY        ; RTC Day of week alarm = 0x2
+            mov.b   #0x20,&RTCADAY          ; RTC Day Alarm = 0x20
+            mov.b   #0x10,&RTCAHOUR         ; RTC Hour Alarm
+            mov.b   #0x23,&RTCAMIN          ; RTC Minute Alarm
+
+            bic.w   #RTCHOLD,&RTCCTL01      ; Start RTC calendar mode
+
+            bis.b   #LPM3 + GIE,SR          ; Enter LPM3 w/ interrupt
+            nop
+;-------------------------------------------------------------------------------
+RTC_ISR ;   RTC Interrupt Handler
+;-------------------------------------------------------------------------------
+            add     &RTCIV,PC
+            reti                            ; No interrupts
+            jmp     RTCRDYIFG_HND           ; RTCRDYIFG
+            jmp     RTCEVIFG_HND            ; RTCEVIFG
+            reti                            ; RTCAIFG
+            reti                            ; RT0PSIFG
+            reti                            ; RT1PSIFG
+            reti                            ; Reserved
+            reti                            ; Reserved
+            reti                            ; Reserved
+            reti
+RTCRDYIFG_HND
+            xor.b   #BIT0,&P1OUT            ; Toggle P1.0 every second
+            reti
+RTCEVIFG_HND
+            nop                             ; Interrupts every minute
+            reti
+;-------------------------------------------------------------------------------
+            ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RTC_VECTOR              ; RTC Vector
+            DW      RTC_ISR
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

@@ -1,0 +1,162 @@
+MSP430 C/C++ Optimizer                  v3.3.1
+Build Number 1KGCQ-KDADEMDK-RTARQ-TAV-ZACIF_T_T_R
+
+		======File-level Analysis Summary======
+
+
+extern void Flash_bankErase() is called from 0 sites in this file.
+    It appears to be inlineable (size = 41 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	_disable_interrupts() (1 times)
+
+extern unsigned Flash_eraseCheck() is called from 0 sites in this file.
+    It appears to be inlineable (size = 24 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void Flash_memoryFill32() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void Flash_segmentErase() is called from 0 sites in this file.
+    It appears to be inlineable (size = 33 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	_disable_interrupts() (1 times)
+
+extern unsigned char Flash_status() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void Flash_write16() is called from 0 sites in this file.
+    It appears to be inlineable (size = 42 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void Flash_write32() is called from 0 sites in this file.
+    It appears to be inlineable (size = 42 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void Flash_write8() is called from 0 sites in this file.
+    It appears to be inlineable (size = 42 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+
+These functions may be recursive:
+	Flash_bankErase()
+	Flash_segmentErase()
+
+These external functions are called but not defined here:
+	_disable_interrupts()
+
+
+		======= End file-level Analysis =======
+
+
+==============================================================================
+
+extern void Flash_write8() is called from 0 sites in this file.
+    It appears to be inlineable (size = 42 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+ADVICE: In function Flash_write8() in flash.c
+	in the 'while' loop with loop variable 'numberOfBytes' at lines 151-159
+	for the statement *Flash_ptr = *Data_ptr; at line 157
+
+	Consider declaring 'Data_ptr' as unsigned char * restrict Data_ptr
+	or declaring 'Flash_ptr' as  unsigned char * restrict Flash_ptr
+	to assert that 'Data_ptr' in the address of *Data_ptr;
+	and            'Flash_ptr' in the address of *Flash_ptr;
+	do not access the same object in memory.
+
+==============================================================================
+
+extern void Flash_write32() is called from 0 sites in this file.
+    It appears to be inlineable (size = 42 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+ADVICE: In function Flash_write32() in flash.c
+	in the 'while' loop with loop variable 'numberOfBytes' at lines 233-241
+	for the statement *Flash_ptr = *Data_ptr; at line 239
+
+	Consider declaring 'Data_ptr' as unsigned long * restrict Data_ptr
+	or declaring 'Flash_ptr' as  unsigned long * restrict Flash_ptr
+	to assert that 'Data_ptr' in the address of *Data_ptr;
+	and            'Flash_ptr' in the address of *Flash_ptr;
+	do not access the same object in memory.
+
+==============================================================================
+
+extern void Flash_write16() is called from 0 sites in this file.
+    It appears to be inlineable (size = 42 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+ADVICE: In function Flash_write16() in flash.c
+	in the 'while' loop with loop variable 'numberOfBytes' at lines 192-200
+	for the statement *Flash_ptr = *Data_ptr; at line 198
+
+	Consider declaring 'Data_ptr' as unsigned * restrict Data_ptr
+	or declaring 'Flash_ptr' as  unsigned * restrict Flash_ptr
+	to assert that 'Data_ptr' in the address of *Data_ptr;
+	and            'Flash_ptr' in the address of *Flash_ptr;
+	do not access the same object in memory.
+
+==============================================================================
+
+extern unsigned char Flash_status() is called from 0 sites in this file.
+    It appears to be inlineable (size = 9 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void Flash_segmentErase() is called from 0 sites in this file.
+    It appears to be inlineable (size = 33 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void Flash_memoryFill32() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned Flash_eraseCheck() is called from 0 sites in this file.
+    It appears to be inlineable (size = 24 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void Flash_bankErase() is called from 0 sites in this file.
+    It appears to be inlineable (size = 41 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+<<NULL MIX DOMAIN>>
+
+== END OF INFO OUTPUT==

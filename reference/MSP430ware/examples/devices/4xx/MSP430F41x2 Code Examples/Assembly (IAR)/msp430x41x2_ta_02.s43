@@ -1,0 +1,51 @@
+;******************************************************************************
+;   MSP430F41x2 Demo - Timer_A, Toggle P5.1, CCR0 Up Mode ISR, DCO SMCLK
+;
+;   Description: Toggle P5.1 using software and TA_0 ISR. Timer_A is
+;   configured for up mode, thus the timer overflows when TAR counts to CCR0.
+;   In this example, CCR0 is loaded with 20000.
+;   ACLK = n/a, MCLK = SMCLK = TACLK = default DCO
+;
+;                MSP430F41x2
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;
+;  P. Thanigai
+;  Texas Instruments Inc.
+;  February 2009
+;  Built with IAR Embedded Workbench V4.11
+;******************************************************************************
+#include  <msp430x41x2.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+SetupWDT    mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP5     bis.b   #002h,&P5DIR            ; P5.1 output
+SetupC0     mov.w   #CCIE,&CCTL0            ; CCR0 interrupt enabled
+            mov.w   #20000,&CCR0            ;
+SetupTA     mov.w   #TASSEL_2+MC_1,&TACTL   ; SMCLK, up mode
+                                            ;						
+Mainloop    bis.w   #CPUOFF+GIE,SR          ; CPU off, interrupts enabled
+            nop                             ; Required for debugger
+                                            ;
+;-----------------------------------------------------------------------------
+TA0_ISR;    Toggle P5.1
+;-----------------------------------------------------------------------------
+            xor.b   #002h,&P5OUT            ; Toggle P5.1
+            reti                            ;		
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            ORG     TIMER0_A0_VECTOR          ; Timer_A0 Vector
+            DW      TA0_ISR                 ;
+            END

@@ -1,0 +1,48 @@
+;******************************************************************************
+;   MSP-FET430P140 Demo - Basic Clock, Output Buffered SMCLK, ACLK and MCLK
+;
+;   Description: Output buffered MCLK, SMCLK and ACLK.
+;   ACLK = LFXT1 = 32768Hz, MCLK = DCO Max, SMCLK = XT2
+;   //* XTAL's REQUIRED - NOT INSTALLED ON FET *//
+;   //* Min Vcc required varies with MCLK frequency - refer to datasheet *//	
+;
+;                 MSP430F149
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |            XT2IN|-
+;            |                 | XTAL (455k - 8MHz)
+;            |RST        XT2OUT|-
+;            |                 |
+;            |             P5.4|-->MCLK = DCO Max
+;            |             P5.5|-->SMCLK = XT2
+;            |             P5.6|-->ACLK = 32kHz
+;
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;******************************************************************************
+#include  <msp430x14x.h>
+;-----------------------------------------------------------------------------
+            ORG     01100h                  ; Program Start
+;-----------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupBC     mov.b   #DCO0 + DCO1 + DCO2,DCOCTL ; Max DCO
+            mov.b   #RSEL0 + RSEL1 + RSEL2,&BCSCTL1 ; XT2on, max RSEL
+            bis.b   #SELS,&BCSCTL2          ; SMCLK = XT2
+SetupP5     bis.b   #070h,&P5DIR            ; P5.6,5,4 output
+            bis.b   #070h,&P5SEL            ; P5.6,5,4 option
+                                            ;													
+Mainloop    jmp      Mainloop               ;
+                                            ;
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors Used MSP430x13x/14x/15x/16x
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

@@ -1,0 +1,46 @@
+;*******************************************************************************
+;   MSP430F22x4 Demo - OA1, Unity-Gain Buffer Mode
+;
+;   Description: Configure OA1 for Unity-Gain Buffer mode.
+;   ACLK = n/a, MCLK = SMCLK = default DCO
+;
+;                 MSP430F22x4
+;              -------------------
+;          /|\|                XIN|-
+;           | |                   |
+;           --|RST            XOUT|-
+;             |                   |
+;      "+" -->|P2.4/A4/OA1I0      |
+;             |                   |
+;             |       P2.3/A3/OA1O|--> OA1 Output
+;             |                   |    Gain is 1
+;
+;   A. Dannenberg
+;   Texas Instruments Inc.
+;   March 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430x22x4.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+                                            ;
+SetupOA     mov.b   #OAPM_1+OAADC1,&OA1CTL0 ; Slow slew rate,
+                                            ; "+" connected to OA1IO (default),
+                                            ; Output connected to A3/OA1O
+            mov.b   #OAFC_2,&OA1CTL1        ; Unity gain buffer mode,
+            mov.b   #018h,&ADC10AE0         ; P2.4/3 analog function select
+                                            ;
+Mainloop    bis.w   #LPM3,SR                ; Enter LPM3
+            nop                             ; Required only for debug
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

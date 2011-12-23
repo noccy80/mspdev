@@ -1,0 +1,92 @@
+;******************************************************************************
+;   MSP-FET430P169 Demo -  DMA0, Rpt'd Block, I2C Master Intf. to DAC8571, DCO
+;   Master = '169, Slave = DAC8571
+;
+;   Description: Using the DMA0, 16-bit sine data is transmitted to the
+;   external DAC. The DAC8571 is configured and sent continuous data without
+;   a stop or repeated start condition. Data is handled in bytes by the I2C
+;   module and the CPU is normally in LPM0.
+;   ACLK = n/a, MCLK = SMCLK = I2CCLOCK = DCO ~ 750kHz
+;
+;                    MSP430x169                         DAC8571
+;                  ---------------                   ------------
+;                 |            SDA|<--------------->|SDA         |
+;                 |     I2C    SCL|---------------->|SCL  I2C    |
+;                 |   MASTER      |                 |    SLAVE   |
+;                 |               |              GND|A0          |
+;
+;
+;   DAC8571 I2C address = 0x4C (A0 = GND)
+;
+;   Z. Albus
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;******************************************************************************
+#include  <msp430x16x.h>
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+            mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupP3     bis.b   #0Ah,&P3SEL             ; Assign I2C pins to module
+SetupI2C    bis.b   #TXDMAEN+I2C+SYNC,&U0CTL; Enable DMA for TX, I2C mode
+            bic.b   #I2CEN,&U0CTL           ; Disable I2C
+            mov.b   #I2CRM+I2CSSEL1,&I2CTCTL; S/W controls data flow, SMCLK
+            mov.w   #04Ch,&I2CSA            ; Slave address
+            bis.b   #I2CEN,&U0CTL           ; Enable I2C
+SetupDMA    mov.w   #DMA0TSEL_4,&DMACTL0    ; I2C Transmit Ready Trigger
+            mov.w   #Sine_Tab,&DMA0SA       ; Source block address
+            mov.w   #I2CDRB,&DMA0DA         ; Destination single address
+            mov.w   #020h,&DMA0SZ           ; Block size
+            mov.w   #DMADT_4+DMASRCINCR_3+DMADSTBYTE+DMASRCBYTE+DMAEN,&DMA0CTL
+                                            ; Rpt, inc src, byte-byte
+Main        bis.b   #MST,&U0CTL             ; Master
+            bis.b   #I2CTRX+I2CSTT,&I2CTCTL ; Write, ST
+            mov.b   #010h,&I2CDRB           ; Write DAC control
+            bis.w   #LPM0,SR                ; Enter LPM0
+End_Main    nop                             ; Required for debug
+                                            ;
+;-----------------------------------------------------------------------------
+;           16 Point 16-bit Sine Table
+            ORG     0FE00h
+;-----------------------------------------------------------------------------
+Sine_Tab    DB      0FFh                    ; MSB Word 0
+            DB      0FFh                    ; LSB
+            DB      0F6h                    ; MSB Word 1
+            DB      040h                    ; LSB
+            DB      0DAh                    ; MSB Word 2
+            DB      081h                    ; LSB
+            DB      0B0h                    ; MSB Word 3
+            DB      0FAh                    ; LSB
+            DB      07Fh                    ; MSB Word 4
+            DB      0FFh                    ; LSB
+            DB      04Fh                    ; MSB Word 5
+            DB      003h                    ; LSB
+            DB      025h                    ; MSB Word 6
+            DB      07Ch                    ; LSB
+            DB      009h                    ; MSB Word 7
+            DB      0BDh                    ; LSB
+            DB      000h                    ; MSB Word 8
+            DB      000h                    ; LSB
+            DB      009h                    ; MSB Word 9
+            DB      0BDh                    ; LSB
+            DB      025h                    ; MSB Word 10
+            DB      07Ch                    ; LSB
+            DB      04Fh                    ; MSB Word 11
+            DB      003h                    ; LSB
+            DB      07Fh                    ; MSB Word 12
+            DB      0FEh                    ; LSB
+            DB      0B0h                    ; MSB Word 13
+            DB      0FAh                    ; LSB
+            DB      0DAh                    ; MSB Word 14
+            DB      081h                    ; LSB
+            DB      0F6h                    ; MSB Word 15
+            DB      040h                    ; LSB
+                                            ;
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+             ORG     0FFFEh                  ; POR, ext. Reset, Watchdog, Flash
+             DW      RESET                   ;
+             END

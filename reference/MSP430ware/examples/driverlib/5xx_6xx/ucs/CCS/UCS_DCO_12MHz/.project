@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>UCS_DCO_12MHz</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
+		<nature>com.ti.ccstudio.managedbuild.core.ccsNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>ucs_DCO_12MHz.c</name>
+			<type>1</type>
+			<locationURI>MSP430WARE_APP_HOME/examples/driverlib/5xx_6xx/ucs/ucs_DCO_12MHz.c</locationURI>
+		</link>
+		<link>
+			<name>driverlib.lib</name>
+			<type>1</type>
+			<locationURI>MSP430WARE_APP_HOME/driverlib/5xx_6xx/CCS/driverlib.lib</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

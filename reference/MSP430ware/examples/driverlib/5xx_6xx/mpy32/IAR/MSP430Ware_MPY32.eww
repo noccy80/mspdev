@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\mpy32_ex1.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex10.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex11.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex12.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex13.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex14.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex15.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex2.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex3.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex4.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex5.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex6.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex7.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex8.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\mpy32_ex9.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

@@ -1,0 +1,57 @@
+;*******************************************************************************
+;   MSP430F22x4 Demo - Configure RST/NMI as NMI
+;
+;   Description: Configure RST/NMI as NMI, hi/lo edge. Flash P1.0 inside of
+;   NMI_ISR if NMI occurs. General enable interrupt in status register does
+;   not need to be set for NMI. NMIIE does need to be re-set, as NMI_ISR
+;   automatically clears NMI enable to prevent unintentional stack overflow
+;   that could result from, bounce or uncontrolled NMI's.
+;   ACLK = n/a, MCLK = SMCLK = DCO ~1.2MHz
+;
+;                MSP430F22x4
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST/NMI      XOUT|-
+;            |                 |
+;
+;   A. Dannenberg
+;   Texas Instruments Inc.
+;   December 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430x22x4.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+SetupWDT    mov.w   #WDTPW+WDTHOLD+WDTNMI+WDTNMIES,&WDTCTL ; WDT off NMI hi/lo
+            bis.b   #01h,&P1DIR             ; P1.0 = output
+            bic.b   #01h,&P1OUT             ; P1.0 = reset
+            bis.b   #NMIIE,&IE1             ; Enable NMI
+                                            ;
+Mainloop    jmp     Mainloop                ; Endless Loop
+                                            ;
+;-------------------------------------------------------------------------------
+NMI_ISR   ; Flash P1.0
+;-------------------------------------------------------------------------------
+            bis.b   #01h,&P1OUT             ; P1.0 = set
+Wait        push.w  #020000                 ; Delay value --> TOS
+Wait1       dec.w   0(SP)                   ; Decrement TOS
+            jnz     Wait1                   ; Delay over?
+            incd.w  SP                      ; Clean up stack
+            bic.b   #01h,&P1OUT             ; P1.0 = reset
+            bic.b   #NMIIFG,&IFG1           ; reclear NMI flag in case bounce
+            bis.b   #NMIIE,&IE1             ; Re-enable NMI interrupt
+            reti                            ; Done
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     NMI_VECTOR              ; NMI vector
+            DW      NMI_ISR
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

@@ -1,0 +1,40 @@
+;***********************************************************************************************
+; Note that : 
+; -It mixes with types of instructions: type I,II, JMP, Emulations 
+; -It mixes with address modes
+; -Here are some numbers( Just for internal reference not for official publication )There are :
+;   (A) Memory Access Point of View
+;       # of fetch from Flash: 11+4*8 = 43        -64%
+;       # of Read from RAM:    12                 -18%
+;       # of Write to RAM:     12                 -18%
+;   (B) Type of Instruction Point of View
+;       # of instructions:     6+8*3 = 30
+;         ALU inst:            2+2*8 = 18         -60%
+;         Data Read inst:      4+1*8 = 12         -40%
+;         Data Write inst:                        -40%
+;         Control/Jump :       8                  -26%
+; -The loop in the example contains successive read from memory, then data process, and after 
+;  that write back to a single address. 
+; this test is used to obtain the active power numbers as seen in device D/s
+;**********************************************************************************************
+#include "msp430fr5739.h"
+		        PUBLIC	ACTIVE_MODE_TEST                        
+                        
+		        RSEG    CODE
+                        EVEN
+                                                         ;  Format | Fetch  | ramR   |ramW   |           
+ACTIVE_MODE_TEST    	MOV     #0x2000, R4              ;      1  | 2      | 0      | 0     |       
+                        MOV     #0x4, 0(R4)              ;      1  | 2      | 0      | 1     | 
+                        MOV     &0x2000, &0x2002         ;      1  | 3      | 1      | 1     | 
+                        ADD     @R4, 2(R4)               ;      1  | 2      | 1      | 1     |
+                        SWPB    @R4+                     ;      2  | 1      | 1      | 1     |
+                        MOV     @R4, R5                  ;      1  | 1      | 1      | 0     |                               
+
+IDD_AM_L1               ; run 8 times
+                        XOR     @R4+, &0x2020            ;      1  | 2      | 1      | 1     |
+                        DEC     R5                       ;     E1  | 1      | 0      | 0     | 
+                        JNZ     IDD_AM_L1                ;     JMP | 1      | 0      | 0     | 
+                        xor.b   #BIT0,&P1OUT             ; show output
+                        JMP     ACTIVE_MODE_TEST
+						
+		        END				

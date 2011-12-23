@@ -1,0 +1,54 @@
+;******************************************************************************
+;   MSP430x471xx Demo - Software Port Interrupt on P2.7 from LPM4
+;
+;   Description: A hi/low transition on P2.7 will trigger P2_ISR which,
+;   toggles P5.1. Normal mode is LPM4 ~ 0.1uA. LPM4 current can be measured
+;   with the LED removed, all unused P1.x/P2.x configured as output or inputs
+;   pulled high or low, and ensure the P2.7 interrupt input does not float.
+;   ACLK = 32.768kHz, MCLK = SMCLK = default DCO
+;
+;                MSP430x471xx
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST              |
+;      /|\   |                 |
+;       --o--|P2.7         P5.1|-->LED
+;      \|/
+;
+;  K. Venkat
+;  Texas Instruments Inc.
+;  May 2009
+;  Built with IAR Embedded Workbench Version: 4.11B
+;******************************************************************************
+#include  <msp430x471x7.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP5     bis.b   #BIT1,&P5DIR            ; P5.1 output
+            bis.b   #BIT7,&P2IE             ; P2.7 Interrupt enabled
+            bis.b   #BIT7,&P2IES            ; P2.7 hi/low edge
+            bic.b   #BIT7,&P2IFG            ; P2.7 IFG Cleared
+                                            ;
+Mainloop    bis.w   #LPM4+GIE,SR            ; LPM4, enable interrupts
+            nop                             ; Required only for debugger
+                                            ;
+;-----------------------------------------------------------------------------
+P2_ISR;     Toggle P5.1 Output
+;-----------------------------------------------------------------------------
+            xor.b   #BIT1,&P5OUT            ; P5.1 = toggle
+            bic.b   #BIT7,&P2IFG            ; P2.7 IFG Cleared
+            reti                            ; Return from ISR
+                                            ;
+;-----------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            ORG     PORT2_VECTOR            ; P1.x Vector
+            DW      P2_ISR                  ;
+            END

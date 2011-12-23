@@ -1,0 +1,57 @@
+;******************************************************************************
+;   MSP-FET430P440 Demo - Timer_B, Toggle P5.1, Overflow ISR, 32kHz ACLK
+;
+;   Description: This program toggles P5.1 using software and Timer_B
+;   overflow ISR. In this example an ISR triggers when TB overflows.
+;   Inside the TBX_ISR, P5.1 is toggled.  Toggle rate is exactly 0.5Hz.
+;   ACLK = LFXT1 = 32768Hz, MCLK = SMCLK = default DCO = 32 x ACLK = 1048576Hz
+;   ;* An external watch crystal between XIN & XOUT is required for ACLK *//	
+;
+;                 MSP430F449
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;
+;   M. Buccini / A. Dannenberg
+;   Texas Instruments Inc.
+;   May 2005
+;   Built with Code Composer Essentials Version: 1.0
+;******************************************************************************
+ .cdecls C,LIST, "msp430x44x.h"
+;------------------------------------------------------------------------------
+            .text                  			; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+SetupP5     bis.b   #002h,&P5DIR            ; P5.1 output
+SetupTB     mov.w   #TBSSEL_1+MC_2+TBIE,&TBCTL  ; ACLK, contmode, interrupt
+                                            ;													
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3, interrupts enabled
+            nop                             ; Required only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+TBX_ISR;    Common ISR for TBCCR1-4 and overflow
+;------------------------------------------------------------------------------
+            add.w   &TBIV,PC                ; Add Timer_B offset vector
+            reti                            ; CCR0 - no source
+            reti                            ; CCR1
+            reti                            ; CCR2
+            reti                            ; CCR3
+            reti                            ; CCR4
+            reti                            ; CCR5
+            reti                            ; CCR6
+TB_over     xor.b   #002h,&P5OUT            ; Toggle P5.1
+            reti                            ; Return from overflow ISR		
+                                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            .sect   ".reset"                ; MSP430 RESET Vector
+            .short  RESET                   ;
+            .sect   ".int12"                ; Timer_BX Vector
+            .short  TBX_ISR                 ;
+            .end

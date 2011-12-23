@@ -1,0 +1,60 @@
+;******************************************************************************
+;   MSP-FET430P140 Demo - DMA2, Rpt'd Blk to DAC1, 8-Bit Sine, TBCCR2, DCO
+;
+;   Description: DMA2 is used to transfer a sine look-up table byte-by-byte
+;   as a repeating block to DAC12_1. The effect is a sine wave output. Timer_B
+;   operates in upmode with CCR2 loading DAC12_1 on the rising edge, CCR2_CCIFG
+;   triggering the next DMA2 transfer. Use external reference on VeRef+.
+;   ACLK = n/a, MCLK = SMCLK = TBCLK = default DCO ~ 800kHz
+;   //* MSP430F169 Device Required *//
+;
+;                MSP430F169
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;   Ext Ref->|VeRef+  DAC1/P6.7|--> ~ 1kHz sine wave output
+;
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;******************************************************************************
+#include  <msp430x16x.h>
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Progam Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop watchdog timer
+SetupDMA2   mov.w   #Sin_tab,&DMA2SA        ; Source block address
+            mov.w   #DAC12_1DAT,&DMA2DA     ; Destination single address
+            mov.w   #020h,&DMA2SZ           ; Block size
+            mov.w   #DMA2TSEL_2,&DMACTL0    ; DAC12IFG trigger
+            mov.w   #DMASBDB+DMADT_4+DMASRCINCR_3+DMAEN,&DMA2CTL; Rpt, inc src, word-word
+SetupDAC12  mov.w   #DAC12SREF_2+DAC12RES+DAC12LSEL_3+DAC12IR+DAC12AMP_5+DAC12ENC,&DAC12_1CTL
+                                            ;
+SetupC1     mov.w   #OUTMOD_7,&TBCCTL2      ; Reset/set
+            mov.w   #01,&TBCCR2             ; PWM Duty Cycle	
+SetupC0     mov.w   #025-1,&TBCCR0          ; Clock period of CCR0
+SetupTB     mov.w   #TBSSEL_2+MC_1,&TBCTL   ; SMCLK, up mode
+                                            ;
+Mainloop    bis.b   #CPUOFF,SR              ; Enter LPM0
+            nop                             ; Needed only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+; 8-bit Sine Lookup table with 32 steps
+;------------------------------------------------------------------------------
+Sin_tab     DB 128, 152, 176, 198, 218, 234, 245, 253
+            DB 255, 253, 245, 234, 218, 198, 176, 152
+            DB 128, 103,  79,  57,  37,  21,  10,   2
+            DB   0,   2,  10,  21,  37,  57,  79, 103
+
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+             ORG     0FFFEh                  ; POR, ext. Reset, Watchdog, Flash
+             DW      RESET                   ;
+             END
+

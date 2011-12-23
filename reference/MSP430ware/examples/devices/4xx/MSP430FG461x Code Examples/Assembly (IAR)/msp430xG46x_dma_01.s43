@@ -1,0 +1,50 @@
+;*******************************************************************************
+;   MSP430xG461x Demo - DMA0, Repeated Burst to-from RAM, Software Trigger
+;
+;   Description: A 16 word block from 1400-141fh is transfered to 1420h-143fh
+;   using DMA0 in a burst block using software DMAREQ trigger.
+;   After each transfer, source, destination and DMA size are
+;   reset to inital software setting because DMA transfer mode 5 is used.
+;   P5.1 is toggled durring DMA transfer only for demonstration purposes.
+;   ** RAM location 0x1400 - 0x143f used - make sure no compiler conflict **
+;   ACLK = 32kHz, MCLK = SMCLK = default DCO 1048576Hz
+;
+;                MSP430xG461x
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;
+;   A. Dannenberg/ K.Venkat
+;   Texas Instruments Inc.
+;   Dec 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430xG46x.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP5     bis.b   #002h,&P5DIR            ; P1.0  output
+SetupDMA0   movx.a  #1400h,&DMA0SA          ; Start block address
+            movx.a  #1420h,&DMA0DA          ; Destination block address
+            mov.w   #0010h,&DMA0SZ          ; Block size
+            mov.w   #DMADT_5+DMASRCINCR_3+DMADSTINCR_3+DMAEN,&DMA0CTL; Rpt, inc
+            bis.w   #DMAEN,&DMA0CTL         ; Enable DMA0
+                                            ;
+Mainloop    bis.b   #02h,&P5OUT             ; P5.1 = 1, LED on
+            bis.w   #DMAREQ,&DMA0CTL        ; Trigger block transfer
+            bic.b   #02h,&P5OUT             ; P5.1 = 0, LED off
+            jmp     Mainloop                ; Again
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset, Watchdog
+            DW      RESET
+            END

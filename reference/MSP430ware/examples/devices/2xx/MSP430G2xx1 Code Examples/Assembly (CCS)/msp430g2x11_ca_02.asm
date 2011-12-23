@@ -1,0 +1,49 @@
+;*******************************************************************************
+;   MSP430G2x11 Demo - Comp_A, Detect Threshold, Set P1.0 if P1.1 > 0.25*Vcc
+;
+;   Description: Use comparator_A to detect a voltage threshold. Using an
+;   external potentiometer, an unknown analog voltage is applied to P1.1.
+;   Comparator_A compares the unknown voltage to an internal reference
+;   voltage, in this example 0.25*VCC.  If the interesting voltage is higher
+;   than 0.25*Vcc, P1.0 is set, if not, P1.0 is reset.
+;   ACLK = n/a, MCLK = SMCLK = default
+;
+;                MSP430G2x11
+;             -----------------
+;        /|\ |              XIN|-
+;         |  |                 |
+;         ---|RST          XOUT|-
+;         |  |                 |
+;         R<-|P1.1/CA1     P1.0|--> LED
+;         |  |                 |			
+;         ---|VSS
+;
+;   D. Dang
+;   Texas Instruments Inc.
+;   October 2010
+;   Built with Code Composer Essentials Version: 4.2.0
+;*******************************************************************************
+ .cdecls C,LIST,  "msp430g2211.h"
+;------------------------------------------------------------------------------
+            .text                           ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0280h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP1     bis.b   #001h,&P1DIR            ; P1.0 = output
+            mov.b   #CARSEL+CAREF0+CAON,&CACTL1   ; 0.25Vcc = -comp, on
+            mov.b   #P2CA4,&CACTL2          ; P1.1/CA1 = +comp
+                                            ;	
+Mainloop    bit.b   #CAOUT,&CACTL2          ; Test comparator_A output
+            jz      OFF                     ; jmp--> if CAOUT reset
+                                            ;
+ON          bis.b   #001h,&P1OUT            ; P1.0 = 1
+            jmp     Mainloop                ;
+OFF         bic.b   #001h,&P1OUT            ; P1.0 = 0
+            jmp     Mainloop                ;
+                                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            .sect   ".reset"                ; MSP430 RESET Vector
+            .short  RESET                   ;
+            .end

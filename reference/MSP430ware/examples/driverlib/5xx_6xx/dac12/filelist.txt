@@ -1,0 +1,18 @@
+#******************************************************************************
+#
+# filelist.txt - List of files to be included in the release.
+#
+# Copyright (c) 2007 Texas Instruments Incorporated.  All rights reserved.
+# TI Information - Selective Disclosure
+#
+# This lists all files in this directory that should be included in a release.
+# Files associated with unannounced parts can be listed with proper marking
+# (the typical unannounced begin/end) but internal use only files should not be
+# listed and protected.
+#
+#******************************************************************************
+#DAC12
+dac12_ex1_1V5Out.c
+dac12_ex2_0V75Out.c
+dac12_ex3_positiveRamp_Int.c
+dac12_ex4_grouped.c

@@ -1,0 +1,1 @@
+This is a suggested application coding framework for a "state-dependent" USB application.  It correlates with Sec. 12 of the Programmer's Guide.  It is heavily-commented, to convey the design rationale and tradeoffs.  

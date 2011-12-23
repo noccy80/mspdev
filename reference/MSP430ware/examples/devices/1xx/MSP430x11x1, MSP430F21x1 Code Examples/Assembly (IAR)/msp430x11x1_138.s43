@@ -1,0 +1,52 @@
+;*****************************************************************************
+;   MSP430x11x1 Demo  - Software Parallel Interface to HC138
+;
+;   Description: Transfer 3-bit binary value to HC138 using A, B, and C.
+;   Mainloop will increment 3-bits on P2.0 - P2.2 directly interfacing to
+;   A-C inputs, rotating Y0 - Y7 outputs.
+;   ACLK = n/a, MCLK = SMCLK = default DCO ~800k
+;
+;		 MSP430F1121     ^     HC138
+;             -----------------  |  ----------
+;            |                 | |-|G1        |  8
+;            |             P2.2|-->|C       Yx|--\->
+;            |             P2.1|-->|B         |
+;            |             P2.0|-->|A     /G2x|--|
+;            |                 |   |          |  V
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;*****************************************************************************
+#include  <msp430x11x1.h>
+;-----------------------------------------------------------------------------
+            ORG     0F000h                  ; Program Start
+;-----------------------------------------------------------------------------
+RESET       mov.w   #0300h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupP2     bic.b   #07h,&P2OUT             ; A,B,C = 0
+            bis.b   #07h,&P2DIR             ; A,B,C outputs
+                                            ;
+Mainloop    push.b  &P2OUT                  ; P2OUT --> TOS
+            inc.b   0(SP)                   ; Increment TOS
+            and.b   #07h,0(SP)              ; Expose three LSBs on TOS
+TX_HC138    bis.b   @SP+,&P2OUT             ; P2.0 - 2 configured only
+            call    #Delay                  ; Wait
+            jmp     Mainloop                ; Repeat
+                                            ;
+;-----------------------------------------------------------------------------
+Delay;      Software delay
+;-----------------------------------------------------------------------------
+            push.w  #0FFFFh                 ; Delay to TOS
+L1          dec.w   0(SP)                   ; Decrement TOS
+            jnz     L1                      ; Delay over?
+            incd.w  SP                      ; Clean-up Stack
+            ret                             ;
+                                            ;
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

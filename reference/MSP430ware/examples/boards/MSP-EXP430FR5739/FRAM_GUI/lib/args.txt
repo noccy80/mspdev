@@ -1,0 +1,3 @@
+
+FRAM_GUI
+FRAM_GUI.jar,core.jar,serial.jar,RXTXcomm.jar

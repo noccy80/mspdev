@@ -1,0 +1,56 @@
+;*******************************************************************************
+;   MSP430xG461x Demo - DAC12_1, Output 2.0V on DAC1
+;
+;   Description: Using DAC12_1 and 2.5V ADC12REF reference with a gain of 1,
+;   output 2V on P6.7.
+;
+;
+;                MSP430xG461x
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |        DAC1/P6.7|--> 2V
+;            |                 |
+;
+;   A. Dannenberg/ K.Venkat
+;   Texas Instruments Inc.
+;   Dec 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430xG46x.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupADC12  mov.w   #REF2_5V+REFON,&ADC12CTL0  ; Internal 2.5V ref on
+            mov.w   #13600,&TACCR0          ; Delay to allow Ref to settle
+            bis.w   #CCIE,&TACCTL0          ; Compare-mode interrupt.
+            mov.w   #TACLR+MC_1+TASSEL_2,&TACTL; up mode, SMCLK
+            bis.w   #LPM0+GIE,SR            ; Enter LPM0, enable interrupts
+            bic.w   #CCIE,&TACCTL0          ; Disable timer interrupt
+            dint                            ; Disable Interrupts
+SetupDAC12  mov.w   #DAC12IR+DAC12AMP_5+DAC12ENC,&DAC12_1CTL ; Int ref gain 1
+            mov.w   #0CCCh,&DAC12_1DAT      ; 2.0V
+                                            ;
+Mainloop    bis.w   #CPUOFF,SR              ; Enter LPM0
+            nop                             ; Required only for debugger
+                                            ;
+;-------------------------------------------------------------------------------
+TIMERA0_ISR;
+;-------------------------------------------------------------------------------
+            clr.w   &TACTL                  ; Clear Timer_A control registers
+            bic.w   #LPM0,0(SP)             ; Exit LPMx, interrupts enabled
+            reti                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     TIMERA0_VECTOR          ; Timer_A0 Vector
+            DW      TIMERA0_ISR
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

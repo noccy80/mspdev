@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta content="HTML Tidy for Windows (vers 15 August 2007), see www.w3.org" name="generator">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><!-- /* * Copyright 2007 by Texas Instruments Incorporated. * All rights reserved. Property of Texas Instruments Incorporated. * Restricted rights to use, duplicate or disclose this code are * granted through contract. * * */ -->
+
+
+
+<title>MSP430 Peripheral Driver Library</title><!-- For now, we use the doxygen style sheet --><link href="docs/html/doxygen.css" rel="stylesheet" type="text/css"></head>
+<body>
+<table width="100%">
+<tbody>
+<tr>
+<td bgcolor="black" width="1"><a href="http://www.ti.com"><img src="doc/tilogo.gif" alt="Texas Instruments" border="0"></a></td>
+<td bgcolor="red"><img src="doc/titagline.gif"></td>
+</tr>
+</tbody>
+</table>
+<h1>MSP430ware &nbsp;1.00.00.00</h1>
+<h2>Release Notes&nbsp;</h2>
+Document Revision: 111711.1130<br>
+<br>
+<h2><a name="Introduction" id="Introduction">Introduction</a></h2>
+<p>This is the MSP430_5xx_6xx Peripheral Driver Library. &nbsp;
+&nbsp;MSP430ware will allow you to develop your applications faster
+by
+providing all pertinent MSP430 related examples/documentation in one
+package and providing a peripheral driver library&nbsp; for the
+MSP430
+peripherals. &nbsp;This&nbsp;peripheral library's intent is to
+allow
+application development at an API level instead at the device register
+level. &nbsp; Allowing developers to concentrate on their
+applications
+instead of the nuances of the particular MSP430 device they are using.
+&nbsp;</p>
+This document is divided into the following sections:
+<ul>
+<li><a href="#Documentation">Documentation</a></li>
+<li><a href="#Whats_New">What's New</a></li>
+<li><a href="#Installation">Installation and Usage</a></li>
+<li><a href="#Host_Support">Host Support</a></li>
+<li><a href="#Dependencies">Dependencies</a></li>
+<li><a href="#Device_Support">Device Support</a></li>
+<li><a href="#Validation">Validation Information</a></li>
+<li><a href="release_notes.html#Upgrade">Upgrade
+and
+Compatibility Information</a></li>
+<li><a href="#Known_Issues">Known Issues</a></li>
+<li><a href="#Versioning">Versioning</a></li>
+<li><a href="#Technical_Support">Technical Support
+and Product Updates</a></li>
+</ul>
+<h2><a name="Documentation" id="Documentation">Documentation</a></h2>
+<li style="margin-left: 40px;"><a href="doc/driverlib/html/index.html">MSP430ware Peripheral
+Driver Library API Index</a></li>
+<li style="margin-left: 40px;"><a href="doc/driverlib/MSP430ware_Users_Guide-1_00_00_00.pdf">MSP430ware
+Peripheral
+Driver Library User's Guide</a></li>
+<h2><a name="Whats_New" id="Whats_New">What's
+New</a></h2>
+<p>Following have been updated since the previous build</p>
+<ul>
+<li>Initial Release of MSP430ware</li>
+</ul>
+<p>The MSP430ware contains the following components. </p>
+<table border="1">
+<tbody>
+<tr>
+<td>doc </td>
+<td>Device and MSP430 Peripheral Driver Library
+documentation</td>
+</tr>
+<tr>
+<td>driverlib </td>
+<td>MSP430 Peripheral
+Driver Library source code. &nbsp;A pre-built&nbsp;version of
+the library and the vendor's project files may
+be
+found in the compiler vendor's subdirectory (i.e. CCS will contain the
+CCS build of the Driver library)</td>
+</tr>
+<tr>
+<td>examples/boards</td>
+<td>Board and User Experience Code</td>
+</tr>
+<tr>
+<td>examples/devices/?xx </td>
+<td>Device specific example code (non-MSP430 Peripheral
+Driver Library based examples)</td>
+</tr>
+<tr>
+<td>examples/driverlib</td>
+<td>MSP430 Peripheral Driver Library peripheral specific
+code examples</td>
+</tr>
+<tr>
+<td>examples/grace </td>
+<td>Future Grace Examples</td>
+</tr>
+<tr>
+<td>grlib </td>
+<td><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"> </span>Future
+MSP430 Graphics Library</td>
+</tr>
+<tr>
+<td>inc </td>
+<td>MSP430 Driver Library include files</td>
+</tr>
+<tr>
+<td>SimpliciTI </td>
+<td><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"></span>Future
+location for TI's SimpliciTI RF communication stack</td>
+</tr>
+<tr><td>TIRex</td><td>CCS Resource Explorer files</td></tr><tr><td>Licenses</td><td>MSP430ware license text file</td></tr><tr>
+<td>usblib430</td>
+<td>MSP430 USB Stack</td>
+</tr>
+</tbody>
+</table>
+<br>
+<h2><a name="Installation" id="Installation">Installation
+and Usage</a></h2>
+<p class="MsoNormal" style="margin: 5pt 0in;">Download
+and run MSP430ware-1.00.00.00-Setup.exe. &nbsp;Follow the
+installation instructions. &nbsp;By default, MSP430ware will be
+installed in
+c:/ti/msp430/MSP430ware_1_00_00_00. &nbsp; Please see
+examples/driverlib/5xx_6xx/{peripheral} as a starting point for using MSP430ware. </p>
+<br>
+<h2><a name="Upgrade_Info" id="Host_Support">Upgrade
+Information</a></h2>
+<h2><a name="Host_Support" id="Host_Support">Host
+Support</a></h2>
+<p>This release supports installation and development on
+Microsoft Windows XP Workstations.</p>
+<h2><a name="Dependencies" id="Dependencies">Dependencies</a></h2>
+CCS 5.1<br>
+IAR 5.20.1
+<h2><a name="Device_Support" id="Device_Support">Device
+Support</a></h2>
+This release supports the Texas Instruments MSP430_5xx_6xx
+&nbsp;device family.<br>
+<h2><a name="Validation" id="Validation">Validation
+Information</a></h2>
+<p>This release is a Beta version and has had only basic
+testing.<br>
+</p>
+<h2><a name="Upgrade" id="Upgrade">Upgrade
+and Compatibility Information</a></h2>
+Initial release<br><br>This
+release uses the header files in the deprecated\IAR and deprecated\CCS
+folders instead of the default IAR and CCS header files.<br>The
+hw_memmap.h takes care of this mapping and as long as the user includes
+this header file in their examples, the correct header file is mapped
+in.<br><br>In future releases, when the default msp430 specific header
+files of CCS and IAR get updated, the deprecated folder will be removed
+from the MSP430ware package. The user examples will NOT be affected by
+any of these changes, since&nbsp;hw_memmap.h will re-direct to the
+correct files.<br><br>To update MSP430ware via CCS 5.1 please follow these instructions.<br><br>1. &nbsp;Start CCS<br>2. &nbsp;Help-&gt;Install New Software...<br>3. &nbsp;In the "Work with:" drop down, select<br>&nbsp;&nbsp;&nbsp; MSP430ware Updates - http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430ware/update/latest/<br>4. Check MSP430ware (after pressing "+" next to Code Composer Studio)<br><div style="margin-left: 40px;"><img style="width: 536px; height: 429px;" alt="update MSP430ware image" src="doc/update_MSP430ware.jpg"><br></div><br>5. &nbsp;Press Next and accept the license agreement<br>6. &nbsp;Press Finish<br>7. &nbsp;After the update downloads, CCS will ask for a restart. <br>8. &nbsp;Run through the installation and CCS will then come up with the new version of MSP430ware.<br>
+<h2><a name="Examples" id="Examples">Examples</a></h2>
+<p>The
+examples may be built with either IAR or CCS. &nbsp;To build the
+examples navigate to
+examples/driverlib/5xx_6xx/&lt;peripheral&gt;
+and double
+click the .eww project files for IAR or .project file for CCS.&nbsp;</p>
+Rebuilding the library<br>
+<br>
+The
+library may be rebuilt by navigating to driverlib/5xx_6xx/IAR or
+driverlib/5xx_6xx/CCS directory and double clicking on driverlib.eww of
+IAR or driverlib.prj for CCS. &nbsp;
+&nbsp;
+<p>The driverlib is by default built for the large data model. If your 
+application requires a different data model, please navigate to the IAR or CCS
+project/folder in driverlib/5xx_6xx/ and change the data model in the project 
+settings and rebuild the library from the IDE.
+</p>
+
+<h2><a name="Known_Issues" id="Known_Issues">Known
+Issues</a></h2>
+<ul>
+<li>This is a GA release of MSP430 Peripheral Driver
+Library. &nbsp;The following peripherals are supported in this
+release:</li>
+<ul>
+<li>ADC10</li>
+<li>ADC12</li>
+<li>Comp_B</li>
+<li>CRC</li>
+<li>DAC12</li>
+<li>DMA</li>
+<li>Flash</li>
+<li>I2C</li>
+<li>LDO-PWR</li>
+<li>MPY32</li>
+<li>Port Mapping Controller</li>
+<li>Power Management Module</li>
+<li>RAM Controller</li>
+<li>REF</li>
+<li>RTC</li>
+<li>SPI</li>
+<li>Timer</li>
+<li>TLV</li>
+<li>UART</li>
+<li>UCS</li>
+<li>WDT</li>
+</ul>
+</ul></ul>
+<h3><br>
+</h3>
+<h3>Outstanding Defects</h3>
+<br>
+<hr><br>
+<h2><a name="Versioning" id="Versioning">Versioning</a></h2>
+<p>This is build 1.00.00.00 of&nbsp; MSP430ware.</p>
+
+<h2><small><small><a name="Technical_Support" id="Technical_Support">Technical
+Support and Product Updates</a></small></small></h2>
+
+<h2><small><small>Support</small></small></h2>
+<ul>
+<li><small><small>For questions and support, please visit <a href="http://support.ti.com/">support.ti.com</a>.</small></small></li>
+<li><small><small>or e-mail us directly at&nbsp;<font face="Times New Roman" size="3"><span style="font-size: 12pt;"><a title="mailto:msp430ware@list.ti.com" href="mailto:msp430ware@list.ti.com">msp430ware@list.ti.com.</a><o:p></o:p></span></font></small></small></li>
+</ul>
+<h2><small><small>Additional Resources</small></small></h2>
+<small><small>For more information, visit <a href="http://www.ti.com">www.ti.com</a>.
+</small></small></body></html>

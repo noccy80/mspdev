@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\comp_ex1.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\comp_ex2.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\comp_ex3.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\comp_ex4.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\comp_ex5.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\comp_ex6.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

@@ -1,0 +1,64 @@
+;******************************************************************************
+;  MSP430FR57x Demo - TimerB, Toggle P1.0, CCR0 UP Mode ISR, 32KHz ACLK 
+;
+;  Description: Toggle P1.0 using software and TB ISR. TimerB is
+;  configured for UP mode, thus the timer overflows when TBR counts
+;  to CCR0. 
+;  ACLK = TACLK = 32768Hz, MCLK = SMCLK  = default DCO = ~666KHz
+;
+;           MSP430FR5739
+;         ---------------
+;     /|\|               |
+;      | |               |
+;      --|RST            |
+;        |               |
+;        |           P1.0|-->LED
+;
+;   Tyler Witt
+;   Texas Instruments Inc.
+;   August 2011
+;   Built with IAR Embedded Workbench v6.0
+;******************************************************************************
+#include "msp430fr5739.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+	    bis.w   #BIT4+BIT5,&PJSEL0	    ; Setup XT1
+	    mov.b   #0xA5,&CSCTL0_H
+	    mov.w   #SELA_0+SELS_3+SELM_3,&CSCTL2 ; ACLK = XT1; MCLK = DCO
+	    mov.w   #DIVA_0+DIVS_3+DIVM_3,&CSCTL3 ; set all dividers
+	    bis.w   #XT1DRIVE_0,&CSCTL4
+	    bic.w   #XT1OFF,&CSCTL4
+OSCFlag	    bic.w   #XT1OFFG,&CSCTL5	    ; Clear XT1 fault flag
+	    bic.w   #OFIFG,&SFRIFG1
+	    cmp.w   #001h,&OFIFG	    ; Test oscillator fault flag
+	    jz	    OSCFlag
+
+	    bis.b   #BIT0,&P1DIR	    ; Set P1.0 to output direction
+	    bis.b   #BIT0,&P1OUT
+
+	    mov.w   #CCIE,&TB1CCTL0
+	    mov.w   #12500,&TB1CCR0
+	    mov.w   #TBSSEL_1+MC_1,&TB1CTL  ; ACLK, cont mode, clear TBR
+			                    ; enable interrupt
+
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3 w/ interrupt
+	    nop				    ; for debug
+			
+;-------------------------------------------------------------------------------
+TB1_ISR;    ISR for Timer B1
+;-------------------------------------------------------------------------------
+	    xor.b   #BIT0,&P1OUT
+	    reti
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            ORG     TIMER1_B0_VECTOR        ; Timer B Vector
+            DW      TB1_ISR
+            END

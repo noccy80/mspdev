@@ -1,0 +1,79 @@
+;******************************************************************************
+;  MSP-FET430P140 Demo - DMA0, ADC12 A10 Block Xfer to RAM, TBCCR1, DCO
+;
+;  Description: A 0x20 word block of data is sampled and recorded into RAM
+;  from the ADC12 channel 10 the integrated temperature sensor using the
+;  Record() function. Timer_B CCR1 begins the ADC12 sample period, CCR0 the hold
+;  and conversion start. Timer_B operates in the up mode with CCR0 defining the
+;  sample period. DMA0 will automatically transfer each ADC12 conversion code
+;  to memory when complete. At the end of the recording block, DMA0 will issue
+;  an interrupt existing the function.
+;  In the example the RAM block use to record the ADC12 data begins at 0x220.
+;  P1.0 is toggled during DMA transfer only for demonstration purposes.
+;  ACLK = n/a, MCLK = SMCLK = default DCO ~ 800k	
+;   //* MSP430F169 Device Required *//
+;
+;               MSP430F169
+;            -----------------
+;        /|\|              XIN|-
+;         | |                 |
+;         --|RST          XOUT|-
+;           |                 |
+;           |A10          P1.0|-->LED
+;
+;
+;   H. Grewal
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;******************************************************************************
+#include  <msp430x16x.h>
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Progam Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop watchdog timer
+            bis.b   #01h,&P1DIR             ; Set P1.0 to output direction
+Mainloop    call    #record
+                    nop                     ; Needed only for debugger
+            jmp     Mainloop
+record      mov.b   #SREF_1+INCH_10,&ADC12MCTL0 ; Channel A10, Vref+
+            mov     #0h,&ADC12IFG
+            mov     #SHS_3+CONSEQ_2,&ADC12CTL1 ; S&H TB.OUT1, rep. single chan
+            mov.w   #REF2_5V+REFON+ADC12ON+ENC,&ADC12CTL0 ; VRef ADC12 on, enabled
+            mov     #03600h,R15             ; Delay for needed ref start-up.
+L$1         dec     R15                     ; See datasheet for details.
+            jnz     L$1                     ;
+            mov     #100,&TBCCR0            ; Init TBCCR0 w/ sample prd
+            mov     #70,&TBCCR1             ; Trigger for ADC12 SC
+            mov     #OUTMOD_7,&TBCCTL1      ; Reset OUT1 on EQU1, set on EQU0
+SetupDMAx   mov.w   #ADC12MEM0_,&DMA0SA     ; Src address = ADC12 module
+            mov.w   #0220h,&DMA0DA          ; Dst address = RAM memory
+            mov.w   #020h,&DMA0SZ           ; Size in words
+            mov.w   #DMA0TSEL_6,&DMACTL0    ; ADC12IFGx triggers DMA0
+
+            mov.w   #DMADSTINCR_3+DMAIE+DMAEN,&DMA0CTL; Config
+            bis.b   #01h,&P1OUT             ; Start recording and enter LPM0
+            mov     #TBSSEL_2+MC_1+TBCLR,&TBCTL ;SMCLK, clear TBR, up mode
+            bis.b   #CPUOFF+GIE,SR          ; Enter LPM0, enable interrupts
+            bic     #CONSEQ_2,&ADC12CTL1    ; Stop conversion immediately
+            bic     #ENC,&ADC12CTL0         ; Disable ADC12 conversion
+            mov     #0h, &ADC12CTL0         ; Switch off ADC12 & ref voltage
+            mov     #0h, &TBCTL             ; Disable Timer_B
+            bic.b   #01h,&P1OUT             ; Clear P1.0 (LED Off)
+            ret
+;------------------------------------------------------------------------------
+DMA_ISR;    Common ISR for DMA/DAC12
+;------------------------------------------------------------------------------
+            bic     #DMAIFG,&DMA0CTL        ; Clear DMA0 interrupt flag
+            bic     #LPM0,0(SP)             ; Exit LPMx, interrupts enabled
+            reti                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+             ORG     0FFFEh                  ; POR, ext. Reset, Watchdog, Flash
+             DW      RESET                   ;
+             ORG     0FFE0h                  ; DMA Vector
+             DW      DMA_ISR                 ;
+             END
+

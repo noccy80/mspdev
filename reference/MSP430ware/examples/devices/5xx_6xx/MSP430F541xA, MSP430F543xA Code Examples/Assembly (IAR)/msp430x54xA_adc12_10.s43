@@ -1,0 +1,178 @@
+;******************************************************************************
+;  MSP430F543xA Demo - ADC12_A, Sample A10 Temp and Convert to oC and oF
+;
+;  Description: A single sample is made on A10 with reference to internal
+;  1.5V Vref. Software sets ADC12SC to start sample and conversion - ADC12SC
+;  automatically cleared at EOC. ADC12 internal oscillator times sample
+;  and conversion. In Mainloop MSP430 waits in LPM4 to save power until
+;  ADC10 conversion complete, ADC12_ISR will force exit from any LPMx in
+;  Mainloop on reti.
+;  ACLK = n/a, MCLK = SMCLK = default DCO ~ 1.045MHz, ADC12CLK = ADC12OSC
+;
+;  Uncalibrated temperature measured from device to devive will vary due to
+;  slope and offset variance from device to device - please see datasheet.
+;
+;                MSP430F5438A
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |A10              |
+;
+;   D. Dang
+;   Texas Instruments Inc.
+;   December 2009
+;   Built with IAR Embedded Workbench Version: 4.21.8
+;******************************************************************************
+#include "msp430x54xA.h"
+
+#define      count      R4
+
+;-------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
+            RSEG    DATA16_I                ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+int_deg_c   DS16    1
+int_deg_f   DS16    1
+temp   DS16    1
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDTPW + WDTHOLD,&WDTCTL; Stop WDT
+
+			mov.w   #REFMSTR + REFVSEL_0 + REFON, &REFCTL0
+											; Enable internal 1.5V reference
+            mov.w   #ADC12ON + ADC12SHT0_8,&ADC12CTL0
+                                            ; Set sample time
+            mov.w   #ADC12SHP,&ADC12CTL1    ; Enable sample timer
+            mov.b   #ADC12INCH_10 + ADC12SREF_1,&ADC12MCTL0
+                                            ; ADC input ch A10 = temp sensor
+            mov.w   #0x0001,&ADC12IE        ; ADC_IFG upon conversion result-ADCMEM0
+
+delay_loop  mov.w   #30,R15                 ; Delay loop for Ref to settle
+            sub.w   R15,R15					; based on default DCO frequency.
+            JNZ     delay_loop				; See datasheet for typical settling time
+
+            bis.w   #ADC12ENC,&ADC12CTL0    ; Enable conversions
+
+while_loop  bis.w   #ADC12SC,&ADC12CTL0     ; Start conversion - sw trigger
+
+            bis.w   #LPM4 + GIE,SR          ; Enter LPM0, enable interrupts
+            nop                             ; Only for debugging purposes
+	                                    	
+            calla   #Trans2TempC            ; Transform voltage to temperature
+            calla   #BIN2BCD4               ; R13 = TempC = 0000 - 0145 BCD
+            mov.w   R13,&int_deg_c          ; int_deg_c = temperature oC
+
+            calla   #Trans2TempF            ; Transform voltage to temperature
+            calla   #BIN2BCD4               ; R13 = TempF = 0000 - 0292 BCD
+            mov.w   R13,&int_deg_f          ; int_deg_f = temperature oF
+                                            ;
+            jmp     while_loop              ; SET BREAKPOINT HERE
+                                            ;
+;-------------------------------------------------------------------------------
+Trans2TempC;Subroutine coverts R12 = R12/4096*666-302
+;           Temperature in Celsius
+;     		oC = ((temp/4096*1500mV) - 680mV)*(1/2.25mV) = (temp*666/4096) - 302
+;           Input:  R12  0000 - 0FFFh, R11 working register
+;           Output: R12  0000 - 091h
+;-------------------------------------------------------------------------------
+            mov.w   temp,&MPY               ;
+            mov.w   #666,&OP2               ; C
+            nop								; wait for result to be ready 
+            nop        
+            mov.w   &RESHI,R12              ;
+            mov.w   &RESLO,R11              ;
+            rlc.w   R11                     ; /4096
+            rlc.w   R12                     ;
+            rlc.w   R11                     ;
+            rlc.w   R12                     ;
+            rlc.w   R11                     ;
+            rlc.w   R12                     ;
+            rlc.w   R11                     ;
+            rlc.w   R12                     ;
+            sub.w   #302,R12                ; C
+            reta                            ;
+                                            ;
+;-------------------------------------------------------------------------------
+Trans2TempF;Subroutine coverts R12 = R12/4096*1199-512
+;           oF = (9/5)*oC +32 = (9/5)*[(temp*666/4096) - 302] + 32
+;              = temp*1199/4096 - 512  
+;           Input:  R12  0000 - 0FFFh, R11 working register
+;           Output: R12  0000 - 0262
+;-------------------------------------------------------------------------------
+            mov.w   temp,&MPY               ;
+            mov.w   #1199,&OP2               ; F
+            mov.w   &RESHI,R12              ;
+            mov.w   &RESLO,R11              ;
+            nop								; wait for result to be ready 
+            nop               
+            rlc.w   R11                     ; /4096
+            rlc.w   R12                     ;
+            rlc.w   R11                     ;
+            rlc.w   R12                     ;
+            rlc.w   R11                     ;
+            rlc.w   R12                     ;
+            rlc.w   R11                     ;
+            rlc.w   R12                     ;
+            sub.w   #512,R12                ; F
+            reta                            ;
+                                            ;
+;-------------------------------------------------------------------------------
+BIN2BCD4  ; Subroutine converts binary number R12 -> Packed 4-digit BCD R13
+;           Input:  R12  0000 - 0FFFh, R15 working register
+;           Output: R13  0000 - 4095
+;-------------------------------------------------------------------------------
+            mov.w   #16,R15                 ; Loop Counter
+            clr.w   R13                     ; 0 -> RESULT LSD
+BIN1        rla.w   R12                     ; Binary MSB to carry
+            dadd.w  R13,R13                 ; RESULT x2 LSD
+            dec.w   R15                     ; Through?
+            jnz     BIN1                    ; Not through
+            reta                            ;
+                                            ;
+;-------------------------------------------------------------------------------
+ADC12_ISR
+;-------------------------------------------------------------------------------
+            add.w   &ADC12IV,PC             ; Add offset to PC
+            reti                            ; Vector 0:  No interrupt
+            reti                            ; Vector 2:  ADC overflow
+            reti                            ; Vector 4:  ADC timing overflow
+            jmp     ADC12IFG0_HND           ; Vector 6:  ADC12IFG0
+            reti                            ; Vector 8:  ADC12IFG1
+            reti                            ; Vector 10: ADC12IFG2
+            reti                            ; Vector 12: ADC12IFG3
+            reti                            ; Vector 14: ADC12IFG4
+            reti                            ; Vector 16: ADC12IFG5
+            reti                            ; Vector 18: ADC12IFG6
+            reti                            ; Vector 20: ADC12IFG7
+            reti                            ; Vector 22: ADC12IFG8
+            reti                            ; Vector 24: ADC12IFG9
+            reti                            ; Vector 26: ADC12IFG10
+            reti                            ; Vector 28: ADC12IFG11
+            reti                            ; Vector 30: ADC12IFG12
+            reti                            ; Vector 32: ADC12IFG13
+            reti                            ; Vector 34: ADC12IFG14
+
+ADC12IFG0_HND
+            mov.w   &ADC12MEM0,temp         ; Move A0 results, IFG is cleared
+            bic.w   #LPM0,0(SP)             ; Exit active from ISR
+            reti                            ; Return from interrupt
+
+;-------------------------------------------------------------------------------
+                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     ADC12_VECTOR                ; ADC12 isr vector
+            DW      ADC12_ISR
+            ORG     RESET_VECTOR                ; POR, ext. Reset
+            DW      RESET
+            END
+

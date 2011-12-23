@@ -1,0 +1,18 @@
+#******************************************************************************
+#
+# filelist.txt - List of files to be included in the release.
+#
+# Copyright (c) 2007 Texas Instruments Incorporated.  All rights reserved.
+# TI Information - Selective Disclosure
+#
+# This lists all files in this directory that should be included in a release.
+# Files associated with unannounced parts can be listed with proper marking
+# (the typical unannounced begin/end) but internal use only files should not be
+# listed and protected.
+#
+#******************************************************************************
+#DMA
+dma_ex1_repeatedBlock.c
+dma_ex2_repeatedBlock_UART.c
+dma_ex3_singleTransfer_SPI.c
+dma_ex4_singleTransfer_ADC12.c

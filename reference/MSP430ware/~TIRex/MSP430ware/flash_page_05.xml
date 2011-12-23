@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+	<item>
+		<content><![CDATA[<span class="title">We want to hear from you</span>
+<p align="justify">Thanks for using MSP430ware! This is still a work in progress and we are hard at work trying to make MSP430 the easiest microcontroller to develop with. We would love to hear your feedback so please send them our way! This tool is made specifically for you, so keep the feedback coming!<p>
+Read the <a href="../../release_notes_driverlib_1_00_00_00.html">Release Notes</a> to see what has changed.
+How do I provide feedback/questions/suggestions?
+<li>Send an email to <a href="mailto:msp430ware@list.ti.com" target="_parent">msp430ware@list.ti.com</a>
+If you want to report a bug or suggestions, please provide your comments, any screenshots if applicable & a detailed description</li><p>
+We look forward to hearing from you!
+ - MSP430 team<p>
+</p>]]>
+		</content>
+	</item>
+</items>

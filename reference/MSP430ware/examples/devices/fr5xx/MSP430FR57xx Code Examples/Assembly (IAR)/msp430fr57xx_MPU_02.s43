@@ -1,0 +1,65 @@
+;******************************************************************************
+;  MSP430FR57x Demo - MPU Write protection violation - PUC
+;
+;  Description: The MPU segment boundaries are defined by:
+;  Border 1 = 0xC800 [segment #: 4]
+;  Border 2 = 0xD000 [segment #: 8]
+;  Segment 1 = 0xC200 - 0xC7FF
+;  Segment 2 = 0xC800 - 0xCFFF
+;  Segment 3 = 0xD000 - 0xFFFF
+;  Segment 2 is write protected. Any write to an address in the segment 2 range
+;  causes a PUC. The LED toggles due to repeated PUCs. A delay is included
+;  so the debugger can gain access via JTAG.
+;
+;  ACLK = n/a, MCLK = SMCLK = TACLK = default DCO = ~625 KHz
+;
+;           MSP430FR5739
+;         ---------------
+;     /|\|               |
+;      | |               |
+;      --|RST            |
+;        |               |
+;        |           P1.0|-->LED
+;
+;   Tyler Witt
+;   Texas Instruments Inc.
+;   September 2011
+;   Built with IAR Embedded Workbench v6.0
+;******************************************************************************
+#include "msp430fr5739.h"
+#define  ptr    R5
+#define  data   R6
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+            bis.b   #BIT0,&P1DIR	    ; Configure P1.0 for LED
+	    bit.w   #MPUSEG2IFG,&MPUCTL1
+            jz	    Delay
+	    xor.b   #BIT0,&P1OUT	    ; Toggle LED
+Delay	    mov.w   #15000,R15
+L1	    dec.w   R15
+	    jnz     L1
+SetupMPU    mov.w   #MPUPW,&MPUCTL0	    ;Write PWD to acces MPU registers
+	    mov.w   #0x0804,&MPUSEG	    ; B1 = 0xC800; B2 = 0xD000
+		                            ; Borders are assigned to segments
+	    bic.w   #MPUSEG2WE,&MPUSAM	    ; Segment 2 is protected from write
+	    bis.w   #MPUSEG2VS,&MPUSAM	    ; Violation select on write access
+	    mov.w   #MPUPW+MPUENA,&MPUCTL0  ; Enable MPU protection
+	                                    ; MPU registers locked until BOR
+	    mov.w   #0x88,data
+	    mov.w   #0xC802,ptr
+	    mov.w   data,0(ptr)
+
+Mainloop    jmp		Mainloop	    ; Code never gets here
+	    nop
+			
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

@@ -1,0 +1,40 @@
+;******************************************************************************
+;   MSP430x261x Demo - Write a Word to Port A (Port7+Port8)
+;
+;   Description: Writes a Word(FFFFh) to Port A and stays in LPM4
+;   ACLK = 32.768kHz, MCLK = SMCLK = default DCO
+;
+;                MSP430F241x
+;                MSP430F261x
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST              |
+;            |                 |
+;            |                 |
+;
+;   B. Nisarga
+;   Texas Instruments Inc.
+;   September 2007
+;   Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x26x.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupPA     bis.w   #0FFFFh,&PADIR          ; PA.x output
+            bis.w   #0FFFFh,&PAOUT          ; Set all PA pins HI
+                                            ;
+Mainloop    bis.w   #LPM4,SR                ; LPM4
+            nop                             ; Required only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

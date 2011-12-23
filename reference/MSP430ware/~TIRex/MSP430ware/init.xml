@@ -1,0 +1,38 @@
+
+<content>
+	<meta>
+		<title>MSP430ware</title>
+		<subtitle>1.00.00.00</subtitle>
+		<copyright>Copyright © Texas Instruments</copyright>
+		<contact>msp430ware@list.ti.com</contact>
+		<credit>Designed by flashmo.com</credit>
+		<default_index>0</default_index>
+	</meta>
+	<items>
+		<item>
+			<label>Welcome</label>
+			<url>flash_page_01.xml</url>
+			<action><!-- <![CDATA[liveaction:SetFilterTextAction(Welcome)]]> --></action>
+		</item>
+		<item>
+			<label>Devices</label>
+			<url>flash_photo_list_02.xml</url>
+			<action><!-- <![CDATA[liveaction:SetFilterTextAction(Devices)]]> --></action>
+		</item>
+		<item>
+			<label>Development Tools</label>
+			<url>flash_photo_list_03.xml</url>
+			<action><!-- <![CDATA[liveaction:SetFilterTextAction(Development Tools)]]> --></action>
+		</item>
+		<item>
+			<label>Libraries</label>
+			<url>flash_photo_list_04.xml</url>
+			<action><!-- <![CDATA[liveaction:SetFilterTextAction(Libraries)]]> --></action>
+		</item>
+		<item>
+			<label>Contact Us</label>
+			<url>flash_page_05.xml</url>
+			<action><!-- <![CDATA[liveaction:SetFilterTextAction(Contact Us)]]> --></action>
+		</item>
+	</items>
+</content>

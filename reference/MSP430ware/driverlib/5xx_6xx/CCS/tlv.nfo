@@ -1,0 +1,87 @@
+MSP430 C/C++ Optimizer                  v3.3.1
+Build Number 1KGCQ-KDADEMDK-RTARQ-TAV-ZACIF_T_T_R
+
+		======File-level Analysis Summary======
+
+
+extern unsigned TLV_getDeviceType() is called from 0 sites in this file.
+    It appears to be inlineable (size = 4 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void TLV_getInfo() is called from 3 sites in this file.
+    It appears to be inlineable (size = 59 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned char TLV_getInterrupt() is called from 0 sites in this file.
+    It appears to be inlineable (size = 63 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	TLV_getMemory() (1 times)
+	TLV_getInfo() (1 times)
+
+extern unsigned TLV_getMemory() is called from 2 sites in this file.
+    It appears to be inlineable (size = 48 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	TLV_getInfo() (1 times)
+
+extern unsigned TLV_getPeripheral() is called from 0 sites in this file.
+    It appears to be inlineable (size = 78 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	TLV_getMemory() (1 times)
+	TLV_getInfo() (1 times)
+
+
+
+		======= End file-level Analysis =======
+
+
+==============================================================================
+
+extern void TLV_getInfo() is called from 3 sites in this file.
+    It appears to be inlineable (size = 59 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned TLV_getMemory() is called from 2 sites in this file.
+    It appears to be inlineable (size = 48 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	TLV_getInfo() (1 times)
+
+==============================================================================
+
+extern unsigned TLV_getPeripheral() is called from 0 sites in this file.
+    It appears to be inlineable (size = 78 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	TLV_getInfo() (1 times)
+	TLV_getMemory() (1 times)
+
+==============================================================================
+
+extern unsigned char TLV_getInterrupt() is called from 0 sites in this file.
+    It appears to be inlineable (size = 63 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	TLV_getInfo() (1 times)
+	TLV_getMemory() (1 times)
+
+==============================================================================
+
+extern unsigned TLV_getDeviceType() is called from 0 sites in this file.
+    It appears to be inlineable (size = 4 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+<<NULL MIX DOMAIN>>
+
+== END OF INFO OUTPUT==

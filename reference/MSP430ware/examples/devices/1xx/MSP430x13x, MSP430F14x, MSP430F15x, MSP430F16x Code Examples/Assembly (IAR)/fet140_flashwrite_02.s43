@@ -1,0 +1,85 @@
+;****************************************************************************
+;  MSP-FET430P140 Demo - Flash In-System Programming, BlockWrite
+;
+;  Description: This program first copies the FlashWrite routine to RAM, then
+;  erases flash seg A, then it increments all values in seg A using
+;  block write mode.
+;
+;  Assumed default MCLK = DCO ~800kHz.
+;  Minimum RAM requirement = 512 bytes 
+;
+;  ** Set Breakpoint on JMP at end of Mainloop to avoid Stressing Flash **
+;
+;               MSP430F169
+;            -----------------
+;        /|\|              XIN|-
+;         | |                 |
+;         --|RST          XOUT|-
+;           |                 |
+;
+;
+;  H. Grewal / L. Westlund
+;  Texas Instruments Inc.
+;  Dec 2005
+;  Built with IAR Embedded Workbench Version: 3.30A
+;******************************************************************************
+
+#include  <msp430x16x.h>
+#define     value   R4
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Progam Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+            clr.b   value                   ; value = value to write to flash
+            call    #CopyRoutine            ; Copy FlashWrite Routine to RAM
+Mainloop    mov.w   #01000h,R6              ; Write pointer
+            mov.w   #FWKEY+FSSEL1+FN0,&FCTL2; MCLK/2 for Flash Timing Generator
+            mov.w   #FWKEY+ERASE,&FCTL1     ; Set Erase bit
+            mov.w   #FWKEY,&FCTL3           ; Clear Lock bit
+            clr     0(R6)                   ; Dummy write to erase Flash segment
+            call    #0300h                  ; Execute FlashWrite from RAM
+            inc.b   value                   ; Increment value written to Flash
+            jmp     Mainloop                ; Repeat, SET BREAKPOINT HERE
+
+;------------------------------------------------------------------------------
+CopyRoutine ; Copy FlashWrite Routine to RAM
+;------------------------------------------------------------------------------
+            mov.w   #WriteFlash, R5         ; Set pointer to WriteFlash Routine
+            mov.w   #0300h, R6              ; Set pointer to RAM
+CR_loop     mov.w   0(R5), 0(R6)            ; Copy word to RAM
+            cmp.w   #END_wf, R5             ; Check for end of FlashWrite
+            jz      END_found               ; Jump out if at end of WriteFlash
+            incd.w  R5                      ; Double-increment WriteFlash ptr
+            incd.w  R6                      ; Double-increment RAM pointer
+            jmp     CR_loop                 ; Repeat
+END_found   ret                             ;
+
+;------------------------------------------------------------------------------
+WriteFlash  ; Write one block starting at 1000h.
+; The location for this routine will change to 0500h when copied to RAM
+;------------------------------------------------------------------------------
+            mov.w   #64,R5                  ; Use as write counter
+            dint                            ; Disable interrupts
+L1          bit     #BUSY,&FCTL3            ; Test BUSY
+            jnz     L1                      ; Loop while busy
+            mov.w   #FWKEY+BLKWRT+WRT,&FCTL1; Enable block write
+L2          mov.b   value,0(R6)             ; Write location
+L3          bit     #WAIT,&FCTL3            ; Test WAIT
+            jz      L3                      ; Loop while WAIT=0
+            inc     R6                      ; Point to next word
+            dec     R5                      ; Decrement write counter
+            jnz     L2                      ; End of block?
+            mov.w   #FWKEY,&FCTL1           ; Clear WRT,BLKWRT
+L4          bit     #BUSY,&FCTL3            ; Test BUSY
+            jnz     L4                      ; Loop while busy
+            mov.w   #FWKEY+LOCK,&FCTL3      ; Set LOCK
+            eint                            ; Enable interrupts
+END_wf      ret                             ; Exits Routine
+
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

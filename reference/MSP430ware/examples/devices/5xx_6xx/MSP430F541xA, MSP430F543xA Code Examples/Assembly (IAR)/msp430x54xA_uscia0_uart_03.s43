@@ -1,0 +1,74 @@
+;******************************************************************************
+;   MSP430F54xA Demo - USCI_A0, Ultra-Low Pwr UART 9600 Echo ISR, 32kHz ACLK
+;
+;   Description: Echo a received character, RX ISR used. Normal mode is LPM3,
+;   USCI_A0 RX interrupt triggers TX Echo.
+;   ACLK = REFO = 32768Hz, MCLK = SMCLK = DCO ~1.045MHz
+;   Baud rate divider with 32768Hz XTAL @9600 = 32768Hz/9600 = 3.41
+;   See User Guide for baud rate divider table
+;
+;                MSP430F5438A
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST              |
+;            |                 |
+;            |     P3.4/UCA0TXD|------------>
+;            |                 | 9600 - 8N1
+;            |     P3.5/UCA0RXD|<------------
+;
+;   D. Dang
+;   Texas Instruments Inc.
+;   December 2009
+;   Built with IAR Embedded Workbench Version: 4.21.8
+;******************************************************************************
+
+#include "msp430x54xA.h"
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDTPW + WDTHOLD,&WDTCTL; Stop WDT    
+            mov.b   #0x30,&P3SEL            ; P3.4,5 = USCI_A0 TXD/RXD
+            bis.b   #UCSWRST,&UCA0CTL1      ; **Put state machine in reset**
+            bis.b   #UCSSEL_1,&UCA0CTL1     ; CLK = ACLK
+            mov.b   #0x03,&UCA0BR0          ; 32kHz/9600=3.41 (see User's Guide)
+            mov.b   #0x00,&UCA0BR1
+            mov.b   #UCBRS_3 + UCBRF_0,&UCA0BR1
+                                            ; Modulation UCBRSx=3, UCBRFx=0
+            bic.b   #UCSWRST,&UCA0CTL1      ; **Initialize USCI state machine**
+            bis.b   #UCRXIE,&UCA0IE         ; Enable USCI_A0 RX interrupt
+
+            bis.b   #LPM3 + GIE,SR          ; Enter LPM3, interrupts enabled
+            nop                             ; For debugger
+
+;-------------------------------------------------------------------------------
+USCI_A0_ISR
+;-------------------------------------------------------------------------------
+            ; Echo back RXed character, confirm TX buffer is ready first
+            add.w   &UCA0IV,PC      
+            reti                            ; Vector 0 - no interrupt
+            jmp     RXIFG_HND               ; Vector 2 - RXIFG
+            reti                            ; Vector 4 - TXIFG
+
+RXIFG_HND
+wait_TX_rdy bit.b   #UCTXIFG,&UCA0IFG       ; USCI_A0 TX buffer ready? 
+            jnc     wait_TX_rdy
+            mov.b   &UCA0RXBUF,&UCA0TXBUF   ; RXBUF -> TXBUF
+            reti                            ; Return from interrupt 
+
+;-------------------------------------------------------------------------------
+                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     USCI_A0_VECTOR    
+            DW      USCI_A0_ISR
+            ORG     RESET_VECTOR                ; POR, ext. Reset
+            DW      RESET
+            END
+            

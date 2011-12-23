@@ -1,0 +1,110 @@
+;*****************************************************************************
+;   MSP430x11x1 Demo - Flash In-System Programming, Copy SegA to SegB, Blk
+;
+;   Description: This program first copies the Block-Write-Routine from
+;   flash to RAM, the it fills the buffer in RAM with the data for the Flash.
+;   Now the program erases flash seg A, then it copies the contents of the
+;   buffer in RAM into Flash seg A with block writes. Two 64 bit block writes
+;   are needed to fill the conplete seg A.
+;   Assumed MCLK 550kHz - 900kHz.
+;
+;                MSP430Fxxx
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;
+;
+;   P.Forstner
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;*****************************************************************************
+#include  <msp430x11x1.h>
+
+#define     value   R4
+
+              ORG   0200h                     ; RAM start
+SegA_RAM      DS    128                       ; RAM space for SegA data
+WriteSegA_RAM DS    WriteSegA_End - WriteSegA ; RAM area for block write pgm
+
+;------------------------------------------------------------------------------
+            ORG     0F000h                    ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #300h,SP                  ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL    ; Stop WDT
+            call    #CopyWriteSegA2RAM        ; copy Flash write routine to RAM
+            clr.b   value                     ; value = value to write to flash
+
+Mainloop    call    #FillSegA_RAM             ; fill RAM buffer with Flash data
+            call    #WriteSegA_RAM            ; Copy "value" to segment A
+            inc.b   value                     ;
+            cmp.b   #10h, value               ;
+            jnz     Mainloop                  ; Repeat for max. 16 times
+
+EndLoop     jmp     EndLoop                   ; Stop the program
+                                              ;
+;------------------------------------------------------------------------------
+CopyWriteSegA2RAM ;Copy subroutine WriteSegA to RAM; R11 used as working reg.
+;------------------------------------------------------------------------------
+            mov.w   #(WriteSegA_End - WriteSegA), R11 ;byte counter in R11
+CopyLoop
+            mov.b   (WriteSegA-1)(R11), (WriteSegA_RAM-1)(R11)
+            dec.w   R11
+            jnz     CopyLoop
+            ret
+
+;------------------------------------------------------------------------------
+FillSegA_RAM ;File RAM buffer with data for Flash; R11 used as working reg.
+;------------------------------------------------------------------------------
+            push    value
+            mov.w   #128, R11                 ;byte counter in R11
+FillLoop
+            mov.b   value, (SegA_RAM-1)(R11)
+            inc.b   value
+            dec.w   R11
+            jnz     FillLoop
+            pop     value
+            ret
+
+;------------------------------------------------------------------------------
+WriteSegA ;Input = value, holds value to write to Seg A;
+          ;R5,R6 used as working reg.
+;------------------------------------------------------------------------------
+            mov.w   #0,R5                     ; byte counter
+Timing      mov.w   #FWKEY+FSSEL0+FN0,&FCTL2  ; Timing generator = MCLK/2
+Erase_SegA  mov.w   #FWKEY,&FCTL3             ; Lock = 0
+WaitUnLock  bit     #BUSY,&FCTL3              ; Unlock done?
+            jnz     WaitUnLock                ; if no >> wait
+
+            mov.w   #FWKEY+ERASE,&FCTL1       ; Erase bit = 1
+            mov.w   #0,&01080h                ; Dummy write to SegA to erase
+WaitErase   bit     #BUSY,&FCTL3              ; erase done?
+            jnz     WaitErase                 ; if no >> wait
+
+Prog_SegA   mov.w   #FWKEY+WRT+BLKWRT,&FCTL1  ; Block Write Mode
+Prog_L1     mov.w   SegA_RAM(R5),01080h(R5)   ; write word
+WaitWrt     bit     #WAIT,&FCTL3              ; write done?
+            jz      WaitWrt                   ; if no >> wait
+            mov.w   &FCTL3,R15
+            add.w   #2, R5                    ; next word
+            bit.w   #63,R5                    ; 64 bytes block written?
+            jnz     Prog_L1                   ;
+            mov.w   #FWKEY,&FCTL1             ; Stop Block Write Mode
+WaitBlkEnd  bit     #BUSY,&FCTL3              ; Block Write finished?
+            jnz     WaitBlkEnd                ; if no >> wait
+
+            cmp.w   #128,R5                   ; complete Segment A programmed?
+            jnz     Prog_SegA                 ; if no >> program next 64 bytes
+
+            mov.w   #FWKEY+LOCK,&FCTL3        ; Lock = 1
+            ret                               ;
+WriteSegA_End                                 ;
+
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

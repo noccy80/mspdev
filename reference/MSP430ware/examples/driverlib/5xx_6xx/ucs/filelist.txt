@@ -1,0 +1,4 @@
+ucs_DCO_12MHz.c
+ucs_XT1_sources_ACLK.c
+ucs_XTsources_DCOInternal.c
+ucs_VLO_sources_ACLK.c

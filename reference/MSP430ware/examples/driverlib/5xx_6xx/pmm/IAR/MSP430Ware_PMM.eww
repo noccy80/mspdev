@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\PMM_exampleFastWakeUp.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\PMM_exampleLowCurrentConsumption.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\PMM_Vcore3.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

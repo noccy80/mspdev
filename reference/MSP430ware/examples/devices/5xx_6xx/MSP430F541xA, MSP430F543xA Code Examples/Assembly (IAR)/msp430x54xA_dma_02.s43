@@ -1,0 +1,79 @@
+;******************************************************************************
+;   MSP430F543xA Demo - DMA0, Single Transfer in Block Mode UART1 9600, ACLK
+;
+;   Description: DMA0 is used to transfer a string as a block to USCI_A0.
+;   USCIA0TXIFG WILL trigger DMA0. "Hello World" is TX'd via 9600 baud on
+;   USCI_A0. Watchdog in interval mode triggers block transfer every 1000ms.
+;   Level senstive trigger used for USCIA0TXIFG to prevent loss of inital edge
+;   sensitive triggers - USCIA0TXIFG which is set at POR.
+;   ACLK = UCLK 32768Hz, MCLK = SMCLK = default DCO 1048576Hz
+;   Baud rate divider with 32768hz XTAL @9600 = 32768Hz/9600 = 3.41 (0003h 4Ah)
+;
+;                 MSP430F5438A
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32768Hz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P3.4|------------> "Hello World"
+;            |                 | 9600 - 8N1
+;
+;   D. Dang
+;   Texas Instruments Inc.
+;   December 2009
+;   Built with IAR Embedded Workbench Version: 4.21.8
+;******************************************************************************
+
+#include "msp430x54xA.h"
+
+;-------------------------------------------------------------------------------
+#define      LF      0x0a
+#define      CR      0x0d
+;-------------------------------------------------------------------------------
+ 
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+String1     DB      CR,LF,"Hello World"
+
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDT_ADLY_1000,&WDTCTL  ; WDT 1000ms, ACLK, interval timer
+            bis.w   #WDTIE,&SFRIE1          ; Enable WDT interrupt
+SetupP3     bis.b   #0x30,&P3SEL            ; P3.4,5 = USCI_A0 TXD/RXD
+SetupUSCIA0 bis.b   #UCSWRST,&UCA0CTL1      ; 8-bit characters
+            mov.b   #UCSSEL_1,&UCA0CTL1     ; CLK = ACLK
+            mov.b   #0x03,&UCA0BR0          ; 32k/9600=3.41
+            mov.b   #0x00,&UCA0BR1          ;
+            mov.b   #UCBRS_3+UCBRF_0,&UCA0MCTL ; Modulation
+            bic.b   #UCSWRST,&UCA0CTL1      ; Release USCI state machine
+SetupDMA0   mov.w   #DMA0TSEL_17,&DMACTL0   ; USCI_A0 TXIFG trigger
+            movx.a  #String1,&DMA0SA        ; Source block address
+            movx.a  #UCA0TXBUF,&DMA0DA      ; Destination single address
+            mov.w   #13,&DMA0SZ             ; Block size
+            mov.w   #DMASRCINCR_3+DMASBDB,&DMA0CTL ; Repeat, inc src
+                                            ;
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3 w/ interrupts
+            nop                             ; Required only for debugger
+                                            ;
+;-------------------------------------------------------------------------------
+WDT_ISR ;    Trigger DMA block transfer
+;-------------------------------------------------------------------------------
+            bis.w   #DMAEN,&DMA0CTL         ; Enable
+            bic.b   #UCTXIFG,&UCA0IFG       ; Toggle TX IFG to trigger first
+            bis.b   #UCTXIFG,&UCA0IFG       ; DMA transfer...
+            reti                            ;
+            
+;-------------------------------------------------------------------------------
+                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     WDT_VECTOR                  ; WatchDog Timer Vector
+            DW      WDT_ISR
+            ORG     RESET_VECTOR                ; POR, ext. Reset
+            DW      RESET
+            END
+            

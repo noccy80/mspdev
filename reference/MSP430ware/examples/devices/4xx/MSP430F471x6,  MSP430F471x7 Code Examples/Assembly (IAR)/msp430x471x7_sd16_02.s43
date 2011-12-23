@@ -1,0 +1,144 @@
+;*****************************************************************************
+;  MSP430x471x7 Demo - SD16, Single Conversion on a Group of 7 Channels
+;
+;  Description: This program uses the SD16 module to perform a single
+;  conversion on a group of 7 channels (0 to 6). A SD16 interrupt 
+;  occurs when the conversions have completed. Test by applying voltages 
+;  to the four input channels and setting a breakpoint at the line indicated
+;  below. Run program until it reaches the breakpoint, then use the
+;  debugger's watch window to view the conversion results. Results for all
+;  seven channels are stored in the array "results". NOTE: array won't
+;  contain values until after reaching breakpoint for the second time.
+;  ACLK = LFXT1 = 32768 Hz, MCLK = SMCLK = DCO = 32 x ACLK = 1048576 Hz
+;  //* An external watch crystal on XIN XOUT is required for ACLK     *//	
+;  //* For minimum Vcc required for SD16 module - see datasheet        *//
+;  //* 100nF cap btw Vref and AVss is recommended when using 1.2V ref *//
+;
+;                MSP430x471x7
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;   Vin1+ -->|A0.0+            |
+;   Vin1- -->|A0.0-            |
+;   Vin2+ -->|A1.0+            |
+;   Vin2- -->|A1.0-            |
+;   Vin3+ -->|A2.0+            |
+;   Vin3- -->|A2.0-            |
+;   Vin4+ -->|A3.0+            |
+;   Vin4- -->|A3.0-            |
+;   Vin5+ -->|A4.0+            |
+;   Vin5- -->|A4.0-            |
+;   Vin6+ -->|A5.0+            |
+;   Vin6- -->|A5.0-            |
+;   Vin7+ -->|A6.0+            |
+;   Vin7- -->|A6.0-            |
+;            |            VREF |----
+;            |                 |   |
+;            |                 |  -+- 100nF
+;            |                 |  -+-
+;            |                 |   |
+;            |            AVss |---+
+;            |                 |
+;
+;   K. Venkat
+;   Texas Instruments Inc.
+;   May 2009
+;   Built with IAR Embedded Workbench Version: 4.11B
+;******************************************************************************
+#include  <msp430x471x7.h>
+
+;-----------CPU Registers Used-------------------------------------------------
+;           R5 - SD16MEM0 conversion result
+;           R6 - SD16MEM1 conversion result
+;           R7 - SD16MEM2 conversion result
+;           R8 - SD16MEM3 conversion result
+;           R9 - SD16MEM4 conversion result
+;           R10 - SD16MEM5 conversion result
+;           R11 - SD16MEM6 conversion result
+;           R15 - Temporary working register
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+            mov.w   #10000,R15              ;
+Xtal_Wait   dec.w   R15                     ; Delay for 32 kHz crystal to
+            jnz     Xtal_Wait		    ; stabilize
+SetupSD16   mov.w   #SD16REFON+SD16SSEL0,&SD16CTL ; 1.2V ref, SMCLK
+            bis.w   #SD16SNGL+SD16GRP,&SD16CCTL0  ; Single conv, group
+            bis.w   #SD16SNGL+SD16GRP,&SD16CCTL1  ; Single conv, group
+            bis.w   #SD16SNGL+SD16GRP,&SD16CCTL2  ; Single conv, group
+            bis.w   #SD16SNGL+SD16GRP,&SD16CCTL3  ; Single conv, group
+            bis.w   #SD16SNGL+SD16GRP,&SD16CCTL4  ; Single conv, group
+            bis.w   #SD16SNGL+SD16GRP,&SD16CCTL5  ; Single conv, group
+            bis.w   #SD16SNGL+SD16IE,&SD16CCTL6   ; Single conv, enable int.
+                                            ; CH3 is master of channel group
+            mov.w   #03600h,R15             ; Delay needed for 1.2V ref startup
+L$1         dec.w   R15                     ;
+            jnz     L$1                     ;
+            eint                            ; Enable global interrupts
+Mainloop    bis.w   #SD16SC,&SD16CCTL6      ; Start conversion for all channels
+            bis.w   #LPM0+GIE,SR            ; Enter LPM0 (disable CPU), wait for
+                                            ; conversions to complete
+            nop                             ; Required for debug only
+            jmp     Mainloop                ; SET BREAKPOINT HERE
+                                            ;
+;------------------------------------------------------------------------------
+SD16A_ISR   ; SD16 Interrupt Service Routine
+;------------------------------------------------------------------------------
+            add.w   &SD16IV,PC              ; Add offset to PC
+            reti                            ; Vector 0: No interrupt
+            jmp     SD_OV                   ; Vector 2: Overflow
+            jmp     SD_CH0                  ; Vector 4: CH0 IFG
+            jmp     SD_CH1                  ; Vector 6: CH1 IFG
+            jmp     SD_CH2                  ; Vector 8: CH2 IFG
+            jmp     SD_CH3                  ; Vector 10: CH3 IFG
+            jmp     SD_CH4                  ; Vector 12: CH4 IFG
+            jmp     SD_CH5                  ; Vector 14: CH5 IFG
+                                            ;
+;-----------SD16 Channel 3 Interrupt Handler-----------------------------------
+SD_CH6      mov.w   &SD16MEM6,R11           ; Save CH2 conversion result
+            mov.w   &SD16MEM5,R10           ; Save CH2 conversion result
+            mov.w   &SD16MEM4,R9            ; Save CH1 conversion result
+            mov.w   &SD16MEM3,R8            ; Save CH2 conversion result
+            mov.w   &SD16MEM2,R7            ; Save CH2 conversion result
+            mov.w   &SD16MEM1,R6            ; Save CH1 conversion result
+            mov.w   &SD16MEM0,R5            ; Save CH0 conversion result
+            bic.w   #LPM0,0(SP)             ; Return active
+SD_CH6_END  reti                            ; Return from interrupt
+                                            ;
+;-----------SD16 Memory Overflow Interrupt Handler-----------------------------
+SD_OV       reti                            ; Return from interrupt
+                                            ;
+;-----------SD16 Channel 0 Interrupt Handler-----------------------------------
+SD_CH0      reti                            ; Return from interrupt
+                                            ;
+;-----------SD16 Channel 1 Interrupt Handler-----------------------------------
+SD_CH1      reti                            ; Return from interrupt
+                                            ;
+;-----------SD16 Channel 2 Interrupt Handler-----------------------------------
+SD_CH2      reti                            ; Return from interrupt
+
+;-----------SD16 Channel 3 Interrupt Handler-----------------------------------
+SD_CH3      reti                            ; Return from interrupt
+                                            ;
+;-----------SD16 Channel 4 Interrupt Handler-----------------------------------
+SD_CH4      reti                            ; Return from interrupt
+                                            ;
+;-----------SD16 Channel 5 Interrupt Handler-----------------------------------
+SD_CH5      reti                            ; Return from interrupt
+                                            ;                                            
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; RESET Vector
+            DW      RESET                   ;
+            ORG     SD16A_VECTOR            ; SD16 Vector
+            DW      SD16A_ISR               ;
+            END

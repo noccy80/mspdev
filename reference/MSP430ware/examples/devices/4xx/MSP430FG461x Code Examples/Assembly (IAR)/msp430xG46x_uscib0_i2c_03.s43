@@ -1,0 +1,98 @@
+;*******************************************************************************
+;   MSP430xG461x Demo - USCI_B0 I2C Master Interface to DAC8571, Write
+;
+;   Description: Using UCB0TXIE, a continuous sine wave is output to the
+;   external DAC using a 16-point look-up table. Only one start condition
+;   is executed. Data is handled by the ISR and the CPU is normally in LPM0.
+;   ACLK = 32kHz, MCLK = SMCLK = TACLK = BRCLK = 1MHz
+;
+;                MSP430xG461x                       DAC8571
+;            ------------------                   ------------
+;          -|XIN   P3.1/UCB0SDA|<--------------->|SDA         |
+;     32kHz |      P3.2/UCB0SCL|---------------->|SCL  I2C    |
+;          -|XOUT              |                 |    SLAVE   |
+;           |     I2C MASTER   |              GND|A0          |
+;
+;
+;   DAC8571 I2C address = 0x4C (A0 = GND)
+;
+;   A. Dannenberg/ K. Venkat
+;   Texas Instruments Inc.
+;   Dec 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430xG46x.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupP3     bis.b   #06h,&P3SEL             ; Assign I2C pins to USCI_B0
+SetupUCB0   bis.b   #UCSWRST,&UCB0CTL1      ; Enable SW reset
+            mov.b   #UCMST+UCMODE_3+UCSYNC,&UCB0CTL0
+                                            ; I2C Master, synchronous mode
+            mov.b   #UCSSEL_2+UCSWRST,&UCB0CTL1
+                                            ; Use SMCLK, keep SW reset
+            mov.b   #11,&UCB0BR0            ; fSCL = SMCLK/11 = 95.3kHz
+            mov.b   #00,&UCB0BR1
+            mov.w   #04ch,&UCB0I2CSA        ; Set slave address
+            bic.b   #UCSWRST,&UCB0CTL1      ; Clear SW reset, resume operation
+            bis.b   #UCB0TXIE,&IE2          ; Enable TX ready interrupt
+
+Main        clr.w   R12                     ; Clear byte counter
+            bis.b   #UCTR+UCTXSTT,&UCB0CTL1 ; I2C TX, start condition
+            mov.b   #010h,&UCB0TXBUF        ; Write DAC control byte
+            bis.w   #LPM0+GIE,SR            ; Enter LPM0 w/ interrupt
+            nop                             ; Required for debug
+;-------------------------------------------------------------------------------
+USCIAB0TX_ISR;
+;-------------------------------------------------------------------------------
+            mov.b   Sine_Tab(R12),&UCB0TXBUF; Transmit data byte
+            inc.w   R12                     ;
+            and.w   #01Fh,R12               ; Do not exceed table
+            reti                            ; Return ISR
+;-------------------------------------------------------------------------------
+;           16 Point 16-bit Sine Table
+;-------------------------------------------------------------------------------
+Sine_Tab    DB      0FFh                    ; MSB Word 0
+            DB      0FFh                    ; LSB
+            DB      0F6h                    ; MSB Word 1
+            DB      040h                    ; LSB
+            DB      0DAh                    ; MSB Word 2
+            DB      081h                    ; LSB
+            DB      0B0h                    ; MSB Word 3
+            DB      0FAh                    ; LSB
+            DB      07Fh                    ; MSB Word 4
+            DB      0FFh                    ; LSB
+            DB      04Fh                    ; MSB Word 5
+            DB      003h                    ; LSB
+            DB      025h                    ; MSB Word 6
+            DB      07Ch                    ; LSB
+            DB      009h                    ; MSB Word 7
+            DB      0BDh                    ; LSB
+            DB      000h                    ; MSB Word 8
+            DB      000h                    ; LSB
+            DB      009h                    ; MSB Word 9
+            DB      0BDh                    ; LSB
+            DB      025h                    ; MSB Word 10
+            DB      07Ch                    ; LSB
+            DB      04Fh                    ; MSB Word 11
+            DB      003h                    ; LSB
+            DB      07Fh                    ; MSB Word 12
+            DB      0FEh                    ; LSB
+            DB      0B0h                    ; MSB Word 13
+            DB      0FAh                    ; LSB
+            DB      0DAh                    ; MSB Word 14
+            DB      081h                    ; LSB
+            DB      0F6h                    ; MSB Word 15
+            DB      040h                    ; LSB
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     USCIAB0TX_VECTOR        ; USCI_B0 I2C Data Int Vector
+            DW      USCIAB0TX_ISR
+            ORG     RESET_VECTOR            ; POR, ext. Reset, Watchdog
+            DW      RESET
+            END

@@ -1,0 +1,23 @@
+#******************************************************************************
+#
+# filelist.txt - List of files to be included in the release.
+#
+# Copyright (c) 2007 Texas Instruments Incorporated.  All rights reserved.
+# TI Information - Selective Disclosure
+#
+# This lists all files in this directory that should be included in a release.
+# Files associated with unannounced parts can be listed with proper marking
+# (the typical unannounced begin/end) but internal use only files should not be
+# listed and protected.
+#
+#******************************************************************************
+#ADC10
+adc10_ex12_repeatSeq.c
+adc10_ex14_windowComp.c
+adc10_ex1_avccRef.c
+adc10_ex2_intRef.c
+adc10_ex4_signedData.c
+adc10_ex5_battMonitor.c
+adc10_ex6_refToggle.c
+adc10_ex7_repeatSingle_DMA.c
+adc10_ex8_sequence_DMA.c

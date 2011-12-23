@@ -1,0 +1,75 @@
+;*****************************************************************************
+;   MSP430x11x1 Demo  - Software SPI Interface to HC595 Shift Register
+;
+;   Description: Transfer byte data in Data (R4) serially to HC595 and
+;   latch data using RCLK. Data in incremented in the mainloop, effectively
+;   incrementing HC595 QA - QH outputs.
+;   ACLK = n/a, MCLK = SMCLK = default DCO ~800k
+;
+;                MSP430F1121     ^      HC595
+;             -----------------  |  ----------
+;            |                 | |-|/SRCLK    |  8
+;            |             P2.2|-->|RCLK    Qx|--\->
+;            |             P2.1|-->|SER       |
+;            |             P2.0|-->|SRCLK  /OE|--|
+;            |                 |   |          |  V
+;
+#define     Data     R4
+RCLK        EQU      004h                   ; P2.2 Data Out
+SER         EQU      002h                   ; P2.1 Data Out
+SRCLK       EQU      001h                   ; P2.0 Serial Clock
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;*****************************************************************************
+#include  <msp430x11x1.h>
+;-----------------------------------------------------------------------------
+            ORG     0F000h                  ; Program Start
+;-----------------------------------------------------------------------------
+RESET       mov.w   #0300h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupP2     bic.b   #SRCLK+SER+RCLK,&P2OUT  ; Reset Clock, data and latch
+            bis.b   #SRCLK+SER+RCLK,&P2DIR  ; Clock, data and latch as output
+            mov.b   #0FFh,Data              ;
+                                            ;
+Mainloop    inc.b   Data                    ; Increment data to be transfered
+            call    #TX_HC595               ; Data --> HC595
+            call    #Delay                  ; Wait
+            jmp     Mainloop                ; Repeat
+                                            ;
+;-----------------------------------------------------------------------------
+TX_HC595;   Shift data from Data (R4) --> HC595.
+;-----------------------------------------------------------------------------
+            push.b  Data                    ; Save Data - TOS
+            push.b  #08                     ; 8 bits to TX - TOS
+TX_loop     bic.b   #SER,&P2OUT             ; SER reset
+            rla.b   Data                    ; Data MSB -> Carry
+            jnc     Clk_1                   ;
+Out_1       bis.b   #SER,&P2OUT             ; SER set
+Clk_1       bis.b   #SRCLK,&P2OUT           ; SRCLK set
+Clk_0       bic.b   #SRCLK,&P2OUT           ; SRCLK reset
+            dec.b   0(SP)                   ; All 8 bits sent?
+            jnz     TX_loop                 ;
+Latch_1     bis.b   #RCLK,&P2OUT            ; Latch data out
+Latch_0     bic.b   #RCLK,&P2OUT            ;
+            incd.w  SP                      ; bit counter off stack
+            pop.b   Data                    ; Original data
+            ret                             ; Return from subroutine
+                                            ;
+;-----------------------------------------------------------------------------
+Delay;      Software delay
+;-----------------------------------------------------------------------------
+            push.w  #0FFFFh                 ; Delay to TOS
+L1          dec.w   0(SP)                   ; Decrement TOS
+            jnz     L1                      ; Delay over?
+            incd.w  SP                      ; Clean TOS
+            ret                             ;
+                                            ;
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

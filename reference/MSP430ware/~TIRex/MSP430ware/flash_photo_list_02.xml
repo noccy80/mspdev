@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<photos>
+
+	<photo>
+		<thumbnail>s_f1xx_chip.png</thumbnail>
+		<filename>f1xx_chip.png</filename>
+		<title>MSP430F1xx</title>
+		<description><![CDATA[<p><b>MSP430x1xx Series 16 bit Microcontroller</b> – Flash or ROM based Ultra-Low Power 16 bit microcontroller offering 8 MIPS, 1.8 - 3.6V operation, up to 60 KB Flash, and a wide range of high-performance analog and intelligent digital peripherals.</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(msp430f1xx)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_f2xx_chip.png</thumbnail>
+		<filename>f2xx_chip.png</filename>
+		<title>MSP430F2xx</title>
+		<description><![CDATA[<p><b>MSP430F2xx Series 16 bit Microcontroller</b> – Flash-based Ultra-Low Power 16 bit microcontroller featuring up to 16 MIPS with 1.8V - 3.6V operation. Includes the Very-Low power Oscillator (VLO), internal pull-up/pull-down resistors, and low-pin count options.</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(msp430f2xx)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_g2xx_chip.png</thumbnail>
+		<filename>g2xx_chip.png</filename>
+		<title>MSP430G2xx</title>
+		<description><![CDATA[<p><b>MSP430G2xx 16 bit Microcontroller Series </b>– The cost effective MSP430G2xx 16 bit Microcontroller Value series features flash-based Ultra-Low Power MCUs up to 16 MIPS with 1.8V - 3.6V operation. Includes the Very-Low power Oscillator (VLO), internal pull-up/pull-down resistors, and low-pin count options.</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(msp430g2xx)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_f4xx_chip.png</thumbnail>
+		<filename>f4xx_chip.png</filename>
+		<title>MSP430F4xx</title>
+		<description><![CDATA[<p><b>MSP430x4xx 16 bit Microcontroller Series</b> – LCD Flash or ROM based 16 bit microcontroller devices offer 8-16 MIPS, integrated LCD controller, 1.8V-3.6V operation, with FLL, and SVS. Ideal for low power metering and medical applications. </p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(msp430f4xx)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_f5xx_f6xx_chip.png</thumbnail>
+		<filename>f5xx_f6xx_chip.png</filename>
+		<title>MSP430F5xx/6xx</title>
+		<description><![CDATA[<p><b>MSP430F5xx/6xx 16 bit Microcontroller Series</b> – The new Flash-based 16 bit Microcontroller family featuring ultra-low active power consumption with up to 25 MIPS, 1.8V-3.6V operation. Includes an innovative Power Management Module for optimal power consumption. These devices feature integrated USB and LCD modules.</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(msp430f(5|6)xx)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_fr57xx_chip.png</thumbnail>
+		<filename>fr57xx_chip.png</filename>
+		<title>MSP430FRxx</title>
+		<description><![CDATA[<p><b> MSP430FR5xx 16-bit Microcontroller Series featuring Embedded FRAM - Welcome to the future of embedded memory</b> - These devices feature embedded FRAM, which enables 1000x faster write speeds and 250x lower power when compared to Flash-based devices. This new family of devices also provides the lowest active power consumption. Devices operate up to 24MHz.</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(msp430fr5xx)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_cc430_chip.png</thumbnail>
+		<filename>cc430_chip.png</filename>
+		<title>CC430</title>
+		<description><![CDATA[<p><b>CC430 bit RF Microcontroller Series featuring embedded RF</b> - The CC430 16 bit RF microcontroller family provides tight integration between the microcontroller core, peripherals, software, and RF transceiver, creating true system-on-chip solutions that are easy to use. Features <1GHz RF transceiver, with 1.8V-3.6V operation. </p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(cc430)]]></action>
+	</photo>
+
+	<photo>
+		<thumbnail>s_l092_chip.png</thumbnail>
+		<filename>l092_chip.png</filename>
+		<title>L092</title>
+		<description><![CDATA[<p><b>The MSP430C09x and MSP430L092 Microcontroller Series</b> - The L092 is a unique low voltage 16 bit microcontroller, which has the capability of operating down to 0.9V natively. These devices are available in configurations with two 16-bit timers, an ultra-low-voltage 8-bit analog-to-digital (A/D) converter, an 8-bit digital-to-analog (D/A) converter, and up to 11 I/O pins.</p>]]></description>
+		<action><![CDATA[liveaction:SetFilterTextAction(l092)]]></action>
+	</photo>
+
+</photos>

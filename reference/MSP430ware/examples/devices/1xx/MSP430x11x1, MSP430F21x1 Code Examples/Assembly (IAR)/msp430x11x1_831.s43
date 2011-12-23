@@ -1,0 +1,63 @@
+;*****************************************************************************
+;   MSP430x11x1 Demo - Software SPI Interface to TLV0831
+;
+;   Description: This program will read a TLV0831 ADC and store the 8-bit
+;   digital code in RAM byte 200h. The TLV0831 is sampled in a loop.
+;   ACLK = n/a, MCLK = SMCLK = default DCO ~800k
+;
+;                       MSP430F1121
+;                     ----------------
+;                /|\|              XIN|-
+;                 | |                 |
+;                 --|RST          XOUT|-
+;                   |                 |
+;      TLV0831      |                 |
+;    ----------     |                 |
+;   |        CS|<---|P2.0             |
+; ~>| IN+   CLK|<---|P2.1             |
+;   |        DO|--->|P2.3             |
+;
+;
+CS          EQU    001h                     ; P2.0 Chip Select
+CLK         EQU    002h                     ; P2.1 Clock
+DO          EQU    008h                     ; P2.3 Data Out
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;*****************************************************************************
+#include  <msp430x11x1.h>
+;-----------------------------------------------------------------------------
+            ORG     0F000h                  ; Program Start
+;-----------------------------------------------------------------------------
+RESET       mov     #0300h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupP2     bis.b   #CS,&P2OUT              ; CS, Set
+            bis.b   #CS+CLK,&P2DIR          ; CS and Clk Output direction
+                                            ;
+Mainloop    call    #Meas_0831              ; Call subroutine
+            jmp     Mainloop                ; Repeat
+                                            ;
+;---------------------------------------------------------------------
+Meas_0831;  Subroutine to read TLV0831, data is shifted into RAM byte
+;           200h - temporary use of stack for bit-counter.
+;---------------------------------------------------------------------
+            bic.b   #CS,&P2OUT              ; Chip Select low
+            push.b  #09                     ; 9 bits = 1 start+8 data
+ADC_Loop    bis.b   #CLK,&P2OUT             ; Clock high
+            bic.b   #CLK,&P2OUT             ; Clock low
+            bit.b   #DO,&P2IN               ; DO -> C (carry)
+            rlc.b   &200h                   ; C -> 200h
+            dec.b   0(SP)                   ; All shifted in?
+            jnz     ADC_Loop                ; If not --> ADC_Loop
+            incd.w  SP                      ; Clean up stack
+            bis.b   #CS,&P2OUT              ; Chip Select high
+            ret                             ; Return from Subroutine
+                                            ;
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     0FFFEh                  ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

@@ -1,0 +1,40 @@
+;******************************************************************************
+;   MSP430x47xx Demo - Write a byte to Port 7
+;
+;   Description: Writes a byte(FFh) to Port 7 and stays in LPM4
+;   ACLK = 32.768kHz, MCLK = SMCLK = default DCO
+;
+;                MSP430x47xx
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST              |
+;            |                 |
+;            |                 |
+;            |                 |
+;
+;  P. Thanigai/ K. Venkat
+;  Texas Instruments Inc.
+;  November 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x47x4.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP7     bis.b   #0FFh,&P7DIR            ; P7.x output
+            bis.b   #0FFh,&P7OUT            ; Set all P7 pins HI
+                                            ;
+Mainloop    bis.w   #LPM4,SR                ; LPM4
+            nop                             ; Required only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

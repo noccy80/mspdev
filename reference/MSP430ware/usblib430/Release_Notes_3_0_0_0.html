@@ -1,0 +1,620 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html template="true"><head><title>MSP430 USB Developers&nbsp; Package 3.0.0.0 Release Notes</title><!-- For now, we use the doxygen style sheet -->
+
+
+<link href="" rel="stylesheet" type="text/css">
+<style type="text/css">
+</style>
+<style type="text/css">
+</style></head>
+<body><br>
+<h1><a class="mozTocH1" name="mozTocId69074"></a><a name="MSP430_USB_Developers_Package_3.0.0.0"></a>MSP430
+USB Developers&nbsp; Package 3.0.0.0 Release Notes</h1>
+This release note is divided into the following sections:<br><ul><li><a href="#mozTocId399717">Introduction</a></li><li><a href="#mozTocId32357">Documentation</a></li><li><a href="#mozTocId68026">What's New</a></li><li><a href="#mozTocId997969">Upgrading and Compatibility Information</a></li><li><a href="#mozTocId249428">Host Support</a></li><li><a href="#mozTocId24433">Hardware</a></li><li><a href="#mozTocId523034">IDEs</a></li><li><a href="#mozTocId142242">Known Issues</a></li><li><a href="#mozTocId782778">Benchmarks</a></li><li><a href="#mozTocId619741">Versioning</a></li><li><a href="#mozTocId655871">Technical Support and Product Updates</a></li></ul>
+
+
+<hr style="width: 100%; height: 2px;">
+<h2><a class="mozTocH2" name="mozTocId399717"></a><a name="Introduction"></a>Introduction</h2>
+
+MSP430 USB Developers Package Version 3.0.0.0 is a full release with
+support for CDC, HID, MSC and composite devices.<br>
+<br>
+MSP430 USB Developers Package provides APIs that make it easy to
+implement a simple USB data connection between an MSP430 and a USB
+host. It includes support for three common USB device classes:<br>
+<br>
+&#8226; Communications Device Class (CDC)<br>
+&#8226; Human Interface Device class (HID)<br>
+&#8226; Mass Storage Class (MSC)<br>
+<br>
+This release has changes that require users of the previous release
+(1.00.00.05) to update their applications. They must read the &#8220;Updating
+and Compatibility Information&#8221; below, and follow the instructions to
+port their application to this new release.<br>
+<br>
+<a style="text-decoration: underline; color: rgb(102, 51, 255);" href="#MSP430_USB_Developers_Package_3.0.0.0">back to
+top</a><br>
+<hr style="width: 100%; height: 2px;">
+<h2><a class="mozTocH2" name="mozTocId32357"></a><a name="Documentation"></a>Documentation</h2>
+A complete Programmer&#8217;s Guide is provided with this release.&nbsp;
+Please reference it for all information concerning the API stacks and
+Descriptor Tool. <br>
+<br>
+<a style="text-decoration: underline; color: rgb(102, 51, 255);" href="./Programmers_Guide_MSP430_USB_API.pdf" target="_blank">Programmers_Guide_MSP430_USB_API</a><br style="text-decoration: underline; color: rgb(102, 51, 255);">
+<br style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a style="text-decoration: underline; color: rgb(102, 51, 255);" href="#MSP430_USB_Developers_Package_3.0.0.0">back to
+top</a><br>
+<hr style="width: 100%; height: 2px;">
+<h2><a class="mozTocH2" name="mozTocId68026"></a>What's New</h2>
+MSP430 USB Developers Package 3.0.0.0 Release (this release).<br>
+<ul>
+<li>This release is based on MSP430 USB
+Developers Package 1.00.00.05</li>
+<li>Addition of MSC device
+class. See the Programmers Guide for more details.</li>
+<li>New keyboard example added under
+HID-Traditional examples. (Example &#8220;H8&#8221;)</li>
+<li>Defect fixes -- see list below.</li>
+<li>Structure of example projects/files</li>
+<ul>
+<li>&nbsp;Previously, a set of examples (i.e., C1 thru
+C6) shared the same
+CCS/IAR project, and the user needed to manually place the
+application-specific code files into that project.&nbsp; In this
+new release, the examples have improved to include a separate CCS and
+IAR project for each example.(C1 thru C6 use separate
+projects).&nbsp; For IAR, a&nbsp; workspace is provided for
+each set of examples. (All CDC examples are included in a single IAR
+workspace.)</li>
+</ul>
+<li>&nbsp;Deletions</li>
+<ul>
+<li>The directory called &#8220;Common&#8221; has been removed.&nbsp;
+It has been
+replaced by the directory F5xx_F6xx_Core_Lib. F5xx_F6xx_Core_Lib is
+available for download outside of the USB API, and can be downloaded or
+upgraded at <a href="http://focus.ti.com/mcu/docs/litabsmultiplefilelist.tsp?sectionId=96&amp;tabId=1502&amp;literatureNumber=slaa448a&amp;docCategoryId=1&amp;familyId=342">F5xx_F6xx_Core_Lib</a>.</li></ul><li>Renaming of files and functions</li>
+<ul>
+<li>USB_constructs.c/h have been renamed to
+usbConstructs.c/h, and
+functions within these files have also been renamed . The new names are
+more appropriate for functions that are part of the application space
+and NOT part of the USB API.</li>
+<ul>
+<li>hid_sendDataWaitTilDone() -&gt;
+hidSendDataWaitTillDone()</li>
+<li>hid_sendDataInBackground() -&gt;
+hidSendDataInBackground()</li>
+<li>hid_receiveDataInBuffer() -&gt;
+hidReceiveDataInBuffer()</li>
+<li>cdc_sendDataWaitTilDone() -&gt;
+cdcSendDataWaitTilDone()</li>
+<li>cdc_receiveDataInBuffer() -&gt;
+cdcReceiveDataInBuffer()</li>
+</ul>
+<li>usb_eventHandling.c had been renamed to
+usbEventHandling.c. The
+handler function names within remain the same.</li></ul><li>Structure of USB stack</li><ul><li>&nbsp;Previously, the directory &#8220;USB_Common&#8221; included
+files that were not
+user-modifiable, files that were user-modifiable, and files that were
+generated by the Descriptor Tool.&nbsp; In this new release, these
+have been separated into different locations. This will ease
+integration of the API with the user&#8217;s application, as well as
+long-term maintenance. Specifically, application files
+(usbConstructs.c/h and usbEventHandling.c) have been pulled out into
+the application space; and Descriptor Tool output&nbsp;
+(descriptor.c/h, UsbIsr.c and the INF file) has been placed in a
+separate directory called &#8220;USB_config&#8221;.&nbsp;</li><li>Because of these changes, the CCS and IAR project files
+need to have
+the following include paths:</li><ul>
+
+
+
+
+<li>The directory containing USB_API, typically the project
+directory</li>
+<li>USB_config directory</li>
+<li>F5xx_F6xx_Core_Lib directory</li>
+
+
+
+</ul><li>Any existing application source files need to have their
+include
+statements changed. More details are provided in &#8220;Porting Steps&#8221; below.<br>
+</li>
+</ul>
+</ul>
+
+
+
+<h3>Defects Fixed in v3.0.0.0:</h3>
+1708 - Update Core Library used by USB Stack<br>
+1723 - Add wrappers to source to allow C++ compile<br>
+1751 - Desc Tool: when saving INF, the file browser doesn't see INF
+files already in the directory<br>
+<br>
+<a style="text-decoration: underline; color: rgb(102, 51, 255);" href="#MSP430_USB_Developers_Package_3.0.0.0">back to
+top</a>
+<hr style="width: 100%; height: 2px;"><h2><a class="mozTocH2" name="mozTocId997969"></a>Upgrading and Compatibility Information</h2>
+
+This release has many significant changes from MSP430 USB Developers
+Package 1.00.00.05.&nbsp; It is important to understand the
+information below in order to successfully use this release.<br>
+<h3>Porting instructions for CCS based project from 1.00.00.05 to
+3.0.0.0</h3>
+<ol>
+<li>Make a BACKUP of your old
+application. This is important as we will refer to files in the BACKUP
+later.</li>
+<li>Close CCS if open.</li>
+<li>Remove the
+following directories from your project folder - Common, USB_CDC_API,
+USB_HID_API, USB_Common. </li>
+<li>If your project
+contains folders F550x and F552x, then these directories MUST be
+deleted. The previous example sets included a separate CCS build
+configuration for each device family, and thus included these
+directories.&nbsp; However CCS now makes it very easy to move a
+project from one device to another; instructions are included at the
+end of this section.</li>
+<li>File
+msp430f5529.cmd MUST be deleted from the project. The previous
+1.00.00.05 version of the product shipped device-specific cmd and ccxml
+files. These files may be deleted. CCS-provided files are used in
+v3.0.0.0. Note the nk_msp430f5529.cmd may have to added back manually.</li>
+<li>Delete
+USB_constructs.c and USB_constructs.h</li>
+<li>Copy the following
+folders from v3.0.0.0 install into your project folder &#8211; &#8220;USB_API&#8221; and
+&#8220;F5xx_F6xx_Core_Lib&#8221;. These folders and files are present in ALL CDC
+and HID examples.&nbsp; Their content from example to example is
+identical, so they can be copied from any of the examples (for example,
+C1_example).</li>
+<li>Copy
+usbConstructs.c and usbConstructs.h into your project. Merge any
+changes to USB_constructs.c that were made in BACKUP to usbConstructs.c.</li>
+<li>Copy msp430USB.cmd
+into your project.</li>
+<li>Copy usbEventHandling.c into your project. Merge any
+changes made in usb_eventHandling.c from BACKUP.
+</li>
+<li>Create a new folder called &#8220;USB_config&#8221; within your
+project. (This folder can have a different name, but the API&#8217;s
+documentation refers to this folder as &#8220;USB_config&#8221;.)&nbsp; This
+folder will contain the Descriptor Tool output generated in the next
+step.</li>
+<li>Run the Descriptor Tool in v3.0.0.0. Open the *.dat file
+from the BACKUP. This file can be saved by the Descriptor Tool,
+allowing the inputs to be re-loaded into the GUI at a later time for
+re-generation of the output files. If the *.dat file is missing, you
+will need to manually input the Descriptor Tool settings. </li>
+<li>Save a new *.dat file (File-&gt;SaveAs) in your
+application. It can be used to easily move to new versions of the
+Descriptor Tool in the future.</li>
+<li>Press the &#8220;Generate Output&#8221; button to generate new source
+files.&nbsp; Place them into the newly created &#8220;USB_config&#8221;
+directory.&nbsp; NOTE: If creating an HID-Traditional device,
+descriptor.c and descriptor.h will need some information migrated from
+the BACKUP versions &#8211; see the Programmer&#8217;s Guide&#8217;s chapter on creating
+HID-Traditional devices. </li>
+<li>Open your project in CCS.</li>
+<li>Before building the project, you will need to set the
+following include paths in Project-&gt;Properties-&gt;C/C++
+Build-&gt;MSP430 Compiler-&gt;Include Options.&nbsp; These
+are required to compile any project using this API.&nbsp; NOTE: You
+will need to set these paths one by one, by clicking on the green plus.<br>
+</li>
+</ol>
+<div style="margin-left: 40px;">
+${PROJECT_ROOT}<br>
+${PROJECT_ROOT}/USB_config<br>
+${PROJECT_ROOT}/F5xx_F6xx_Core_Lib<br>
+</div>
+<ol start="17">
+<li>Additionally, the following include paths may
+be added, for the application to call the API functions.</li>
+</ol>
+<div style="margin-left: 40px;">
+${PROJECT_ROOT}/USB_API/USB_Common<br>
+${PROJECT_ROOT}/USB_API/USB_CDC_API<br>
+${PROJECT_ROOT}/USB_API/USB_HID_API<br>
+${PROJECT_ROOT}/USB_API/USB_MSC_API<br>
+</div>
+<ol start="18">
+<li>You may need to change some include paths in your
+application source files, as per the new directory structure. You might
+choose to eliminate all paths from your include statements and use
+include paths in your project settings as described above. Here is a
+mapping of the changes that may be required.</li>
+</ol>
+<table style="text-align: left; height: 287px; width: 1015px; margin-left: 37px;" border="1" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">Old Include Paths</td>
+<td align="undefined" valign="undefined">New
+Include Paths</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\device.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_Common/device.h" <br>
+OR<br>
+#include "device.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\types.h"&nbsp;</td>
+<td align="undefined" valign="undefined">
+#include "USB_API/USB_Common/types.h" <br>
+OR<br>
+#include "types.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include
+"USB_Common\descriptors.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"descriptors.h"</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "USB_Common\usb.h"</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_Common/usb.h"<br>
+OR<br>
+#include "usb.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\hal_UCS.h"</td>
+<td align="undefined" valign="undefined">#include
+"HAL_UCS.h" (2)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\hal_pmm.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"HAL_PMM.h" (2)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "USB_CDC_API\UsbCdc.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_CDC_API/UsbCdc.h"<br>
+OR<br>
+#include "UsbCdc.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "USB_HID_API\UsbCdc.h"</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_HID_API/UsbHid.h"<br>
+OR<br>
+#include "UsbHid.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Usb_constructs.h"</td>
+<td align="undefined" valign="undefined">#include
+"usbConstructs.h"&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<br>
+<div style="margin-left: 40px;">(0) Note the change from
+backslashes to forward-slashes<br>
+(1) Needs step 17 above<br>
+(2) Note the change from lower case to upper
+case&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;<br>
+</div>
+<ol start="19"><li>Change the following function calls.</li></ol>
+<table style="text-align: left; height: 200px; width: 1056px; margin-left: 36px;" border="1" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">Old</td>
+<td align="undefined" valign="undefined">New</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">hid_sendDataWaitTilDone()</td>
+<td align="undefined" valign="undefined">hidSendDataWaitTillDone()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">hid_sendDataInBackground()</td>
+<td align="undefined" valign="undefined">hidSendDataInBackground()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">hid_receiveDataInBuffer()</td>
+<td align="undefined" valign="undefined">hidReceiveDataInBuffer()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">cdc_sendDataWaitTilDone()</td>
+<td align="undefined" valign="undefined">cdcSendDataWaitTilDone()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">cdc_sendDataInBackground()</td>
+<td align="undefined" valign="undefined">cdcSendDataInBackground()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">cdc_receiveDataInBuffer()</td>
+<td align="undefined" valign="undefined">cdcReceiveDataInBuffer()</td>
+</tr>
+</tbody>
+</table>
+<br><ol start="20"><li>Change the following values in source
+files.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</li></ol>
+<div style="margin-left: 40px;">
+&nbsp;XT1LFOFFG = 0<br>
+&nbsp;XT1HFOFFG = 0<br></div><ol start="21"><li>Now rebuild the project.</li></ol><h3>Porting instructions for IAR based project from 1.00.00.05 to 3.0.0.0</h3>
+<ol><li>Make a BACKUP of
+your old application. This is important as we will refer to files in
+the BACKUP later.</li><li>Close IAR if open.</li><li>Remove the
+following directories from your project folder - Common, USB_CDC_API,
+USB_HID_API, USB_Common.</li><li>Delete
+USB_constructs.c and USB_constructs.h</li><li>Copy the following
+folders from v3.0.0.0 install into your project folder &#8211; &#8220;USB_API&#8221; and
+&#8220;F5xx_F6xx_Core_Lib&#8221;. These folders and files are present in ALL CDC
+and HID examples.&nbsp; Their content from example to example is
+identical, so they can be copied from any of the examples (for example,
+C1_example).</li><li>Copy
+usbConstructs.c and usbConstructs.h into your project. Merge any
+changes to USB_constructs.c that were made in BACKUP to usbConstructs.c.</li><li>Copy
+usbEventHandling.c into your project. Merge any changes made in
+usb_eventHandling.c from BACKUP.</li><li>Create a new
+folder called &#8220;USB_config&#8221; within your project. (This folder can have a
+different name, but the API&#8217;s documentation refers to this folder as
+&#8220;USB_config&#8221;.)&nbsp; This folder will contain the Descriptor Tool
+output generated in the next step.</li><li>Run the Descriptor
+Tool in v3.0.0.0. Open the *.dat file from the BACKUP. This file can be
+saved by the Descriptor Tool, allowing the inputs to be re-loaded into
+the GUI at a later time for re-generation of the output
+files.&nbsp; If the *.dat file is missing, you will need to
+manually input the Descriptor Tool settings. </li><li>Save a new *.dat file (File-&gt;SaveAs) in your
+application. It can be used to easily move to new versions of the
+Descriptor Tool in the future.</li><li>Press the &#8220;Generate Output&#8221; button to generate new source
+files.&nbsp; Place them into the newly created &#8220;USB_config&#8221;
+directory.&nbsp; NOTE: If creating an HID-Traditional device,
+descriptor.c and descriptor.h will need some information migrated from
+the BACKUP versions &#8211; see the Programmer&#8217;s Guide&#8217;s chapter on creating
+HID-Traditional devices. </li><li>Open your project in IAR. Clean up your
+project.&nbsp; Delete old directories - Common, USB_common,
+USB_CDC_API, USB_HID_API.&nbsp; Add new ones - USB_API, USB_config,
+F5xx_F6xx_Core_Lib.&nbsp; Add files - usbConstructs.c and
+usbEventHandling.c. </li><li>Before building the project you will need to set the
+following include paths in Project-&gt;Options-&gt;C/C++
+Compiler-&gt;Preprocessor-&gt;Additional Include Directories:
+These are required to compile any project using this API. </li></ol>
+
+
+
+
+
+
+
+<div style="margin-left: 40px;">
+$PROJ_DIR$<br>
+$PROJ_DIR$/USB_config<br>
+$PROJ_DIR$/F5xx_F6xx_Core_Lib<br></div>
+<ol start="14"><li>Additionally the following include paths may be
+added, for the application to call the API functions.</li></ol><div style="margin-left: 40px;">
+$PROJ_DIR$/USB_API/USB_Common<br>
+$PROJ_DIR$/USB_API/USB_CDC_API<br>
+$PROJ_DIR$/USB_API/USB_HID_API<br>
+$PROJ_DIR$/USB_API/USB_MSC_API<br></div>
+<ol start="15"><li>You may need to change some include paths in
+your application source files as per the new directory structure. You
+might choose to eliminate all paths from your include statements and
+use include paths in your project settings as described above. Here is
+a mapping of the changes that may be required.&nbsp;</li></ol>
+<table style="text-align: left; height: 287px; width: 1015px; margin-left: 37px;" border="1" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">Old Include Paths</td>
+<td align="undefined" valign="undefined">New
+Include Paths</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\device.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_Common/device.h" <br>
+OR<br>
+#include "device.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\types.h"&nbsp;</td>
+<td align="undefined" valign="undefined">
+#include "USB_API/USB_Common/types.h" <br>
+OR<br>
+#include "types.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include
+"USB_Common\descriptors.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"descriptors.h"</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "USB_Common\usb.h"</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_Common/usb.h"<br>
+OR<br>
+#include "usb.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\hal_UCS.h"</td>
+<td align="undefined" valign="undefined">#include
+"HAL_UCS.h" (2)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Common\hal_pmm.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"HAL_PMM.h" (2)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "USB_CDC_API\UsbCdc.h"&nbsp;</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_CDC_API/UsbCdc.h"<br>
+OR<br>
+#include "UsbCdc.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "USB_HID_API\UsbCdc.h"</td>
+<td align="undefined" valign="undefined">#include
+"USB_API/USB_HID_API/UsbHid.h"<br>
+OR<br>
+#include "UsbHid.h" (1)</td>
+</tr>
+<tr>
+<td style="width: 427px;" align="undefined" valign="undefined">#include "Usb_constructs.h"</td>
+<td align="undefined" valign="undefined">#include
+"usbConstructs.h"&nbsp;</td>
+</tr>
+</tbody>
+</table><br><div style="margin-left: 40px;">(0) Note the change from
+backslashes to forward-slashes<br>
+(1) Needs step 17 above<br>
+(2) Note the change from lower case to upper
+case&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;<br>
+</div>
+<ol start="16"><li>&nbsp;Change the following function calls.</li></ol><table style="text-align: left; margin-left: 36px; height: 200px; width: 1025px;" border="1" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">Old</td>
+<td align="undefined" valign="undefined">New</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">hid_sendDataWaitTilDone()</td>
+<td align="undefined" valign="undefined">hidSendDataWaitTillDone()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">hid_sendDataInBackground()</td>
+<td align="undefined" valign="undefined">hidSendDataInBackground()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">hid_receiveDataInBuffer()</td>
+<td align="undefined" valign="undefined">hidReceiveDataInBuffer()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">cdc_sendDataWaitTilDone()</td>
+<td align="undefined" valign="undefined">cdcSendDataWaitTilDone()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">cdc_sendDataInBackground()</td>
+<td align="undefined" valign="undefined">cdcSendDataInBackground()</td>
+</tr>
+<tr>
+<td style="width: 509px;" align="undefined" valign="undefined">cdc_receiveDataInBuffer()</td>
+<td align="undefined" valign="undefined">cdcReceiveDataInBuffer()</td>
+</tr>
+</tbody>
+</table><ol start="17"><li>&nbsp;Change following values in source
+files.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;</li></ol>
+<div style="margin-left: 40px;">
+XT1LFOFFG = 0<br>XT1HFOFFG = 0<br></div>
+<ol start="18"><li>&nbsp; Now rebuild the project.</li></ol><h3>
+Other CCS specific considerations</h3><ul><li>Porting to a different
+device. The example projects provided in this product are
+pre-configured for the MSP430F5529 device.&nbsp; The projects are
+designed to be very easily adapted to any other USB-equipped MSP430,
+simply by changing the selected device in the project&#8217;s options --
+follow these steps.</li><ul><li>Open the project in CCS&nbsp;</li><li>Go to
+Project-&gt;Properties-&gt;CCS Build. Select the device from
+the drop-down menu and click &#8220;Apply&#8221;. Select "Create a new build
+configuration initialized with build options from the existing
+configuration".&nbsp; Select a new name for this configuration and
+make it active if needed.</li><li>NOTE:&nbsp; Please edit the
+Project-&gt;Properties-&gt;C/C++ Build-&gt;MSP430
+Compiler-&gt;Predefined Symbols to include ONLY ONE device define
+of format __MSP430Fxxx__.&nbsp; Having more than one will result in
+improper compilation and/or operation. &nbsp;<br></li></ul></ul><h3>
+Other IAR specific considerations</h3>
+<ul><li>The example projects provided in this
+product are pre-configured for the MSP430F5529 device.&nbsp; The
+projects are designed to be very easily adapted to any other
+USB-equipped MSP430, simply by changing the selected device in the
+project&#8217;s options -- follow these steps.</li><ul><li>Open the project in IAR</li><li>Go to Project-&gt;Options-&gt;General Options-&gt;Target
+and change the device.</li></ul><li>When the USB API is built into a
+library, and an application is built against the library,
+iUsbInterruptHandler gets optimized out by IAR Linker. To WORKAROUND
+this problem add &#8220;-giUsbInterruptHandler&#8221; as part of linker options.</li><li>n IAR, the environment
+gives a choice of using the DLIB standard library, or the legacy
+CLIB.&nbsp; To compile the API stacks, DLIB must be selected.</li></ul>
+<span style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a><br><br></span><hr style="width: 100%; height: 2px;"><span style="text-decoration: underline; color: rgb(102, 51, 255);"></span><h2><a class="mozTocH2" name="mozTocId249428"></a>
+Host Support</h2>Supported Operating Systems on the USB host:<br>
+<ul><li>Windows 7 (32bit and 64
+bit), Windows XP, Vista</li><li>
+Ubuntu version 9.04</li><li>Mac OS</li></ul>
+<span style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a></span><br><hr style="width: 100%; height: 2px;"><h2><a class="mozTocH2" name="mozTocId24433"></a>
+Hardware</h2><h3>
+Supported devices </h3>
+<ul><li>The MSP430 USB API supports
+all USB-equipped MSP430 devices:</li><ul><li>MSP430F552x/551x</li><li>MSP430F550x (note that this includes the F5510)</li><li>MSP430F563x/663x</li></ul><li>The API automatically adapts to any
+selected device, based on the CCS/IAR project&#8217;s options. </li><li>&nbsp;If using a device other than the
+&#8220;flagship&#8221; device in each family (that is, the F5638, F6638, F5529, or
+F5510):&nbsp; The examples contain a function Init_Ports() which
+initializes all unused port I/Os; this avoids excess power draw
+resulting from floating inputs.&nbsp; However, devices other than
+the flagship device may contain less I/Os than the flagship.&nbsp;
+If compiling for one of these devices, some of the initializations in
+this function may generate an error.&nbsp; The offending lines can
+simply be commented-out. </li><li>See
+<a href="http://www.ti.com/msp430usb">http://www.ti.com/msp430usb</a> for more information on these devices.
+&nbsp;</li></ul>
+<h3>
+Boards </h3>
+<ul><li>The examples should build
+and run on any hardware based on an USB-equipped MSP430, provided it is
+properly implemented.&nbsp; However, special concern should be paid
+to the I/O initializations in Init_Ports().&nbsp; The examples were
+primarily designed to run on MSP430 FET target boards &#8211; for example,
+the <a href="http://focus.ti.com/docs/toolsw/folders/print/msp-ts430pn80usb.html">TS430PN80USB</a> for the MSP430F5529.&nbsp; All the examples
+include a function Init_Ports(), which initializes the unused port
+I/Os; this avoids excess power draw resulting from floating
+inputs.&nbsp; However, doing so makes this function specific to
+MSP430 FET target boards.&nbsp; If using other hardware, this
+function may need to be modified. </li><li>Some of the MSC API examples
+are designed to run on the MSP430F5529 Experimenters&#8217; board -
+MSP-EXP430F55529.&nbsp; This is because they require the SD-card
+interface on this board.</li></ul>
+<span style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a><br><br></span><hr style="width: 100%; height: 2px;"><span style="text-decoration: underline; color: rgb(102, 51, 255);"></span><h2><a class="mozTocH2" name="mozTocId523034"></a>
+IDEs and Compiler</h2>
+<ul><li><a href="http://focus.ti.com/docs/toolsw/folders/print/ccstudio.html">Code Composer Studio</a> Version: 4.2.0.10018 &nbsp;with MSP430 C/C++ Compiler v3.3.1.&nbsp; All examples can compile within the 16K-limited
+free version. </li><li><a href="http://focus.ti.com/docs/toolsw/folders/print/iar-kickstart.html">IAR Embedded Workbench for
+MSP430 5.10</a> with IAR C/C++ Compiler V5.20.1.50215/W32.&nbsp; Works with either the free, 8K-limited IAR
+Kickstart or a fully-licensed version; however, the MSC API does not
+fit within 8K and therefore requires a fully-licensed version.
+&nbsp;</li></ul>
+<span style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a></span><br><br><span style="text-decoration: underline; color: rgb(102, 51, 255);"><a href="#MSP430_USB_Developers_Package_3.0.0.0"></a></span><hr style="width: 100%; height: 2px;"><h2><a class="mozTocH2" name="mozTocId142242"></a><a name="Known_Issues"></a>
+Known Issues</h2>
+None<br>
+<br><span style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a></span><br><hr style="width: 100%; height: 2px;"><h2><a class="mozTocH2" name="mozTocId782778"></a><a name="Benchmarks"></a>
+Benchmarks</h2>
+<h3><span style="text-decoration: underline; color: rgb(102, 51, 255);">
+</span>Size Benchmarks</h3><span style="text-decoration: underline; color: rgb(102, 51, 255);"></span><table style="text-align: left; height: 256px; width: 1011px; margin-left: 37px;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="width: 321px;" align="undefined" valign="undefined">Application</td><td align="undefined" valign="undefined">CCS</td><td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">IAR</td><td align="undefined" valign="undefined"></td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">FLASH (Bytes)</td><td align="undefined" valign="undefined">RAM&nbsp;(Bytes)</td><td align="undefined" valign="undefined">FLASH (Bytes)</td><td align="undefined" valign="undefined">RAM (Bytes)</td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined">1CDC</td><td align="undefined" valign="undefined">5785</td><td align="undefined" valign="undefined">250</td><td align="undefined" valign="undefined">5144</td><td align="undefined" valign="undefined">268</td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined">1HID</td><td align="undefined" valign="undefined">5712</td><td align="undefined" valign="undefined">245</td><td align="undefined" valign="undefined">5243</td><td align="undefined" valign="undefined">260</td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined">1MSC</td><td align="undefined" valign="undefined">8514</td><td align="undefined" valign="undefined">704</td><td align="undefined" valign="undefined">7521</td><td align="undefined" valign="undefined">695</td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined">2CDC</td><td align="undefined" valign="undefined">6089</td><td align="undefined" valign="undefined">276</td><td align="undefined" valign="undefined">5374</td><td align="undefined" valign="undefined">294</td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined">2HID</td><td align="undefined" valign="undefined">5908</td><td align="undefined" valign="undefined">269</td><td align="undefined" valign="undefined">5429</td><td align="undefined" valign="undefined">284</td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined">1CDC + 1 HID</td><td align="undefined" valign="undefined">7945</td><td align="undefined" valign="undefined">275</td><td align="undefined" valign="undefined">6942</td><td align="undefined" valign="undefined">293</td></tr><tr><td style="width: 321px;" align="undefined" valign="undefined">1CDC + 1HID + 1MSC</td><td align="undefined" valign="undefined">13099</td><td align="undefined" valign="undefined">799</td><td align="undefined" valign="undefined">11311</td><td align="undefined" valign="undefined">802</td></tr></tbody></table><br><div style="margin-left: 40px;">Note: Special benchmark application used.<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; IAR compiler optimization option used is high and balanced<br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;CCS compiler optimization opton used is --opt_level = 3.<br></div><span style="text-decoration: underline; color: rgb(102, 51, 255);"><br><a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a><br><br></span><hr style="width: 100%; height: 2px;"><h2><a class="mozTocH2" name="mozTocId619741"></a><a name="Versioning"></a>
+Versioning</h2>
+
+All releases have 4 digits (M.mm.pp.bb). This includes GA and
+pre-releases (engineering, alpha/EA, beta, etc.). Pre-releases are
+denoted with a suffix (e.g. 6.30.00.00-eng or 6.30.00.10-beta).<br>
+<br>
+This product's version follows a version format, M.mm.pp.bb, where M is
+a single digit Major number, mm is 2 digit minor number, pp is a 2
+digit patch number, and b is an unrestricted set of digits used as an
+incrementing build counter.<br>
+<br>
+To support multiple side-by-side installations of the product, the
+product version is encoded in the top level directory (e.g.
+MSP430_USB_Developers_Package_3_0_0_0).<br>
+<br>
+Subsequent releases of patch upgrades will be identified by the patch
+number, ex.&nbsp; 3.0.1.05 with directory
+MSP430_USB_Developers_Package_3_0_1_05. Typically, these patches only
+include critical bug fixes. <br>
+<br><span style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a></span><br><hr style="width: 100%; height: 2px;"><h2><a class="mozTocH2" name="mozTocId655871"></a><a name="Technical_Support_and_Product_Updates"></a>
+Technical Support and Product Updates</h2>
+<ul><li>Please contact
+<a href="mailto:softwaresupport@ti.com">softwaresupport@ti.com</a> for technical support.</li><li style="color: rgb(102, 51, 255);"><a href="http://e2e.ti.com/">TI E2E Community</a></li></ul>
+<span style="text-decoration: underline; color: rgb(102, 51, 255);">
+<a href="#MSP430_USB_Developers_Package_3.0.0.0">back to top</a><br><br></span>
+<hr style="width: 100%; height: 2px;">Last updated: March 10, 2011<br>
+</body></html>

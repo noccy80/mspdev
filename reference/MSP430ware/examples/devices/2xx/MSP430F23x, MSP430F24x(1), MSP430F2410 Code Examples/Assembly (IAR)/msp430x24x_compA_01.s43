@@ -1,0 +1,40 @@
+;******************************************************************************
+;   MSP430x24x Demo - Comparator A, Poll input CA0, result in P1.0 
+;
+;   Description: The Voltage at pin CA0 (Vcompare) is compared with reference
+;   voltage of 0.5*Vcc. LED is toggled when Vcompare crosses the ref voltage.
+;
+;                 MSP430F249
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST      P2.3/CA0|<--Vcompare
+;            |                 |
+;            |             P1.0|-->CAOUT - LED
+;
+;  B. Nisarga
+;  Texas Instruments Inc.
+;  September 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x24x.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+
+            mov.b   #CAON+CAREF_2+CARSEL, &CACTL1  ; Enable Comp, ref = 0.5*Vcc
+            mov.b   #P2CA0, &CACTL2         ; Pin to CA0
+
+SetupP1     bis.b   #BIT0,&P1DIR            ; P1.0 = output direction
+            bis.b   #BIT0,&P1SEL            ; P1.0 = CAOUT
+
+;-----------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-----------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; RESET Vector
+            DW      RESET                   ;
+            END

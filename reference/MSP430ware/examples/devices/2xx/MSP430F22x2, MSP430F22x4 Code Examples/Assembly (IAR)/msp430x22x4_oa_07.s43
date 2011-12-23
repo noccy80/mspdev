@@ -1,0 +1,51 @@
+;*******************************************************************************
+;   MSP430F22x4 Demo - OA1, General-Purpose Mode
+;
+;   Description: Configure OA1 for General-Purpose mode. In this mode, all
+;   OA connections are available externally.
+;   ACLK = n/a, MCLK = SMCLK = default DCO
+;
+;                 MSP430F22x4
+;              -------------------
+;          /|\|                XIN|-
+;           | |                   |
+;           --|RST            XOUT|-
+;             |                   |
+;      "+" -->|P2.4/A4/OA1I0      |
+;      "-" -->|P2.3/A3/OA1I1      |
+;             |                   |
+;             |      P4.4/A13/OA1O|--> OA1 Output
+;             |                   |
+;             |                   |
+;
+;   A. Dannenberg
+;   Texas Instruments Inc.
+;   March 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430x22x4.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+                                            ;
+SetupOA1    mov.b   #OAN_1+OAPM_1+OAADC0,&OA1CTL0
+                                            ; "+" connected to OA1I0 (default),
+                                            ; "-" connected to OA1I1,
+                                            ; Slow slew rate,
+                                            ; Output connected to A13/OA1O
+            mov.b   #018h,&ADC10AE0         ; P2.4/3 analog function select
+            mov.b   #020h,&ADC10AE1         ; P4.4 analog function select
+                                            ;
+Mainloop    bis.w   #LPM3,SR                ; Enter LPM3
+            nop                             ; Required only for debug
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

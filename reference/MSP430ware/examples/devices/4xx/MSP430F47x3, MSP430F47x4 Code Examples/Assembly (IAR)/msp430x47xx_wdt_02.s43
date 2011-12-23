@@ -1,0 +1,50 @@
+;******************************************************************************
+;    MSP430x47xx Demo - WDT, Toggle P5.1, Interval Overflow ISR, 32kHz ACLK
+;
+;   Description: Toggle P5.1 using WDT configured for Interval Timer mode.
+;   Interrupt toggles LED every 250ms based on 32kHz ACLK WDT clock source.
+;   ACLK = LFXT1 = 32768Hz, MCLK = SMCLK = default DCO = 32 x ACLK = 1048576Hz
+;   //* An external watch crystal between XIN & XOUT is required for ACLK *//	
+;
+;                 MSP430x47xx
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;
+;  P. Thanigai/ K. Venkat
+;  Texas Instruments Inc.
+;  November 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430x47x4.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+SetupWDT    mov.w   #WDT_ADLY_250,&WDTCTL   ; WDT 250ms, ACLK, interval timer
+            bis.b   #WDTIE,&IE1             ; Enable WDT interrupt
+SetupP5     bis.b   #BIT1,&P5DIR            ; P5.1 output
+                                            ;					
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3, enable interrupts
+            nop                             ; Required only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+WDT_ISR;    Toggle P5.1
+;------------------------------------------------------------------------------
+            xor.b   #BIT1,&P5OUT            ; Toggle P5.1
+            reti                            ;		
+                                            ;
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            ORG     WDT_VECTOR              ; MSP430 Watchdog Interrupt Vector
+            DW      WDT_ISR         
+            END

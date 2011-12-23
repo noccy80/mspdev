@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?fileVersion 3.1.0?>
+
+<ManagedProjectBuildInfo>
+<project id="MSP-EXP430F5529 User Experience.com.ti.ccstudio.buildDefinitions.MSP430.ProjectType.669048637" name="MSP430" projectType="com.ti.ccstudio.buildDefinitions.MSP430.ProjectType">
+<configuration artifactExtension="out" artifactName="MSP-EXP430F5529UserExperience" description="" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249" name="Debug" parent="com.ti.ccstudio.buildDefinitions.MSP430.Debug" postannouncebuildStep="Create flash image: TI-TXT" postbuildStep="&quot;${CG_TOOL_ROOT}/bin/hex${CG_TOOL_SUFFIX}.exe&quot; --ti_txt &quot;${BuildArtifactFileName}&quot; -o &quot;${BuildArtifactFileBaseName}.txt&quot; -order MS -romwidth 16">
+<toolChain id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.DebugToolchain.110106033" name="TI Code Generation Tools" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.DebugToolchain" targetTool="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.linkerDebug.491340690">
+<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.67808993" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS" valueType="stringList">
+<listOptionValue builtIn="false" value="DEVICE_CONFIGURATION_ID=MSP430F5529"/>
+<listOptionValue builtIn="false" value="DEVICE_ENDIANNESS=little"/>
+<listOptionValue builtIn="false" value="OUTPUT_FORMAT=COFF"/>
+<listOptionValue builtIn="false" value="CCS_MBS_VERSION=4.2.2"/>
+<listOptionValue builtIn="false" value="LINKER_COMMAND_FILE=lnk_msp430f5529.cmd"/>
+<listOptionValue builtIn="false" value="RUNTIME_SUPPORT_LIBRARY=libc.a"/>
+<listOptionValue builtIn="false" value="OUTPUT_TYPE=executable"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION.356319717" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION" value="3.3.2" valueType="string"/>
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug">
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DIAG_WARNING.2055922093" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DIAG_WARNING" valueType="stringList">
+<listOptionValue builtIn="false" value="225"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_VERSION.110845780" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_VERSION" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_VERSION.mspx" valueType="enumerated"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.PRINTF_SUPPORT.1699523042" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.PRINTF_SUPPORT" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.PRINTF_SUPPORT.minimal" valueType="enumerated"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DEFINE.1348514628" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DEFINE" valueType="definedSymbols">
+<listOptionValue builtIn="false" value="__MSP430F5529__"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU21.1876076723" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU21" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU22.1705034848" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU22" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU23.1658752163" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU23" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU40.741022461" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU40" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.LARGE_MEMORY_MODEL.1997070670" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.LARGE_MEMORY_MODEL" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.OPT_LEVEL.2025001683" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.OPT_LEVEL.2" valueType="enumerated"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.GCC.2007707933" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.GCC" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.INCLUDE_PATH.404139422" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.INCLUDE_PATH" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;${CCS_INSTALL_ROOT}/msp430/include&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/F5xx_F6xx_Core_Lib&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/FatFs&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/MSP-EXP430F5529_HAL&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/CTS&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB/USB_API/USB_CDC_API&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB/USB_API/&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB/USB_config&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB/USB_API/USB_Common&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB/USB_API/USB_HID_API&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB/USB_API/USB_MSC_API&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/USB/USB_User&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/UserExperienceDemo&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${MSP_EXP430F5529_UE_ROOT}/UserExperienceDemo/Puzzle&quot;"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.OPT_FOR_SPEED.1068079055" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.OPT_FOR_SPEED" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.OPT_FOR_SPEED.4" valueType="enumerated"/>
+</tool>
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.linkerDebug.491340690" name="MSP430 Linker" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.linkerDebug">
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.HEAP_SIZE.1187286706" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.HEAP_SIZE" value="160" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.STACK_SIZE.1266429496" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.STACK_SIZE" value="200" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.USE_HW_MPY.1801581028" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.USE_HW_MPY" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.USE_HW_MPY.F5" valueType="enumerated"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.OUTPUT_FILE.1905256446" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.OUTPUT_FILE" value="&quot;MSP-EXP430F5529UserExperience.out&quot;" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.MAP_FILE.266452606" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.MAP_FILE" value="&quot;MSP-EXP430F5529UserExperience.map&quot;" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.generatedLinkerCommandFiles.1805452856" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.generatedLinkerCommandFiles" valueType="libs">
+<listOptionValue builtIn="false" value="&quot;$(GEN_CMDS_QUOTED)&quot;"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.SEARCH_PATH.532163770" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.SEARCH_PATH" valueType="stringList">
+<listOptionValue builtIn="false" value="&quot;${CCS_INSTALL_ROOT}/msp430/include&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/lib&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.LIBRARY.1711725418" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.LIBRARY" valueType="libs">
+<listOptionValue builtIn="false" value="&quot;libc.a&quot;"/>
+</option>
+</tool>
+<macros expandEnvironmentMacros="true"/>
+</toolChain>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43" name="5xx_ACTIVE_test.s43" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP-EXP430F5529 User Experience/FatFs/option/cc932.c" name="cc932.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc932.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc932.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc932.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP-EXP430F5529 User Experience/FatFs/option/cc936.c" name="cc936.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc936.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc936.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc936.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP-EXP430F5529 User Experience/FatFs/option/cc949.c" name="cc949.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc949.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc949.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc949.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP-EXP430F5529 User Experience/FatFs/option/cc950.c" name="cc950.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc950.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc950.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/cc950.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c" name="ccsbcs.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP-EXP430F5529 User Experience/FatFs/option/syscall.c" name="syscall.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/syscall.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/syscall.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP-EXP430F5529 User Experience/FatFs/option/syscall.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP_EXP430F5529_UE_ROOT/UserExperienceDemo/5xx_ACTIVE_test.s43" name="5xx_ACTIVE_test.s43" rcbsApplicability="disable" resourcePath="/MSP_EXP430F5529_UE_ROOT/UserExperienceDemo/5xx_ACTIVE_test.s43" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/UserExperienceDemo/5xx_ACTIVE_test.s43">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/UserExperienceDemo/5xx_ACTIVE_test.s43" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc932.c" name="cc932.c" rcbsApplicability="disable" resourcePath="/MSP_EXP430F5529_UE_ROOT/FatFs/option/cc932.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc932.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc932.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc936.c" name="cc936.c" rcbsApplicability="disable" resourcePath="/MSP_EXP430F5529_UE_ROOT/FatFs/option/cc936.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc936.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc936.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc949.c" name="cc949.c" rcbsApplicability="disable" resourcePath="/MSP_EXP430F5529_UE_ROOT/FatFs/option/cc949.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc949.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc949.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc950.c" name="cc950.c" rcbsApplicability="disable" resourcePath="/MSP_EXP430F5529_UE_ROOT/FatFs/option/cc950.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc950.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/cc950.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP_EXP430F5529_UE_ROOT/FatFs/option/ccsbcs.c" name="ccsbcs.c" rcbsApplicability="disable" resourcePath="/MSP_EXP430F5529_UE_ROOT/FatFs/option/ccsbcs.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/ccsbcs.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/ccsbcs.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Debug.1139918249./MSP_EXP430F5529_UE_ROOT/FatFs/option/syscall.c" name="syscall.c" rcbsApplicability="disable" resourcePath="/MSP_EXP430F5529_UE_ROOT/FatFs/option/syscall.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/syscall.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977./MSP_EXP430F5529_UE_ROOT/FatFs/option/syscall.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerDebug.2054637977"/>
+</resourceConfiguration>
+</configuration>
+<configuration artifactExtension="out" artifactName="MSP-EXP430F5529UserExperience" description="" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920" name="Release" parent="com.ti.ccstudio.buildDefinitions.MSP430.Release" postannouncebuildStep="Create flash image: TI-TXT" postbuildStep="&quot;${CG_TOOL_ROOT}/bin/hex${CG_TOOL_SUFFIX}.exe&quot; --ti_txt &quot;${BuildArtifactFileName}&quot; -o &quot;${BuildArtifactFileBaseName}.txt&quot; -order MS -romwidth 16">
+<toolChain id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.ReleaseToolchain.1371376103" name="TI Code Generation Tools" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.ReleaseToolchain" targetTool="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.linkerRelease.1021840921">
+<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.1982458018" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS" valueType="stringList">
+<listOptionValue builtIn="false" value="DEVICE_CONFIGURATION_ID=MSP430F5529"/>
+<listOptionValue builtIn="false" value="DEVICE_ENDIANNESS=little"/>
+<listOptionValue builtIn="false" value="OUTPUT_FORMAT=COFF"/>
+<listOptionValue builtIn="false" value="CCS_MBS_VERSION=4.2.2"/>
+<listOptionValue builtIn="false" value="LINKER_COMMAND_FILE=lnk_msp430f5529.cmd"/>
+<listOptionValue builtIn="false" value="RUNTIME_SUPPORT_LIBRARY=libc.a"/>
+<listOptionValue builtIn="false" value="OUTPUT_TYPE=executable"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION.1602881993" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION" value="3.3.2" valueType="string"/>
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease">
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DIAG_WARNING.200385793" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DIAG_WARNING" valueType="stringList">
+<listOptionValue builtIn="false" value="225"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_VERSION.361181639" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_VERSION" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_VERSION.mspx" valueType="enumerated"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.PRINTF_SUPPORT.2062410402" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.PRINTF_SUPPORT" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.PRINTF_SUPPORT.minimal" valueType="enumerated"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DEFINE.1964070857" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.DEFINE" valueType="definedSymbols">
+<listOptionValue builtIn="false" value="__MSP430F5529__"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU21.840582384" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU21" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU22.2110984594" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU22" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU23.2029220212" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU23" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU40.895126875" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.SILICON_ERRATA.CPU40" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.LARGE_MEMORY_MODEL.1580408141" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.LARGE_MEMORY_MODEL" value="true" valueType="boolean"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.INCLUDE_PATH.921409287" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.INCLUDE_PATH" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;${CCS_INSTALL_ROOT}/msp430/include&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/F5xx_F6xx_Core_Lib&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/FatFs&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/MSP-EXP430F5529_HAL&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/CTS&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB/USB_API/USB_CDC_API&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB/USB_API/&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB/USB_config&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB/USB_API/USB_Common&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB/USB_API/USB_HID_API&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB/USB_API/USB_MSC_API&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/USB/USB_User&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/UserExperienceDemo&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${PROJECT_ROOT}/UserExperienceDemo/Puzzle&quot;"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.GCC.1333616767" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.compilerID.GCC" value="true" valueType="boolean"/>
+</tool>
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.linkerRelease.1021840921" name="MSP430 Linker" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.linkerRelease">
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.HEAP_SIZE.18242979" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.HEAP_SIZE" value="160" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.STACK_SIZE.1098443499" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.STACK_SIZE" value="160" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.USE_HW_MPY.1170636497" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.USE_HW_MPY" value="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.USE_HW_MPY.F5" valueType="enumerated"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.OUTPUT_FILE.1681358646" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.OUTPUT_FILE" value="&quot;MSP-EXP430F5529UserExperience.out&quot;" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.MAP_FILE.1662912189" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.MAP_FILE" value="&quot;MSP-EXP430F5529UserExperience.map&quot;" valueType="string"/>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.SEARCH_PATH.307076758" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.SEARCH_PATH" valueType="stringList">
+<listOptionValue builtIn="false" value="&quot;${CCS_INSTALL_ROOT}/msp430/include&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/lib&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+</option>
+<option id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.LIBRARY.1231727168" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.linkerID.LIBRARY" valueType="libs">
+<listOptionValue builtIn="false" value="&quot;libc.a&quot;"/>
+</option>
+</tool>
+<macros expandEnvironmentMacros="true"/>
+</toolChain>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920./MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43" name="5xx_ACTIVE_test.s43" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/UserExperienceDemo/5xx_ACTIVE_test.s43" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920./MSP-EXP430F5529 User Experience/FatFs/option/cc932.c" name="cc932.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc932.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc932.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc932.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920./MSP-EXP430F5529 User Experience/FatFs/option/cc936.c" name="cc936.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc936.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc936.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc936.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920./MSP-EXP430F5529 User Experience/FatFs/option/cc949.c" name="cc949.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc949.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc949.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc949.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920./MSP-EXP430F5529 User Experience/FatFs/option/cc950.c" name="cc950.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/cc950.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc950.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/cc950.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920./MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c" name="ccsbcs.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/ccsbcs.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745"/>
+</resourceConfiguration>
+<resourceConfiguration exclude="true" id="com.ti.ccstudio.buildDefinitions.MSP430.Release.50957920./MSP-EXP430F5529 User Experience/FatFs/option/syscall.c" name="syscall.c" rcbsApplicability="disable" resourcePath="/MSP-EXP430F5529 User Experience/FatFs/option/syscall.c" toolsToInvoke="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/syscall.c">
+<tool id="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745./MSP-EXP430F5529 User Experience/FatFs/option/syscall.c" name="MSP430 Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP430_3.3.exe.compilerRelease.66003745"/>
+</resourceConfiguration>
+</configuration>
+<macros/>
+</project>
+</ManagedProjectBuildInfo>

@@ -1,0 +1,21 @@
+#******************************************************************************
+#
+# filelist.txt - List of files to be included in the release.
+#
+# Copyright (c) 2007 Texas Instruments Incorporated.  All rights reserved.
+# TI Information - Selective Disclosure
+#
+# This lists all files in this directory that should be included in a release.
+# Files associated with unannounced parts can be listed with proper marking
+# (the typical unannounced begin/end) but internal use only files should not be
+# listed and protected.
+#
+#******************************************************************************
+#Comp
+comp_ex1_2VRef.c
+comp_ex2_1V5Ref_Int.c
+comp_ex3_avccRef_ULPM.c
+comp_ex4_hysteresis.c
+comp_ex5_TAx.c
+comp_ex6_extRef.c
+

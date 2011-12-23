@@ -1,0 +1,81 @@
+;******************************************************************************
+;  MSP-FET430P140 Demo - DMA0/1/2, USART0 SPI 3-Wire SPI Master P1.x Exchange
+;
+;  Description: SPI Master communicates at fast as possible, full-duplex with
+;  SPI Slave using 3-wire mode. The level on P1.4/5 is TX'ed and RX'ed to P1.0
+;  and P1.1. Master will pulse slave Reset on init to insure synch start.
+;  With data transfer driven directly by DMA - no CPU resources used.
+;  DMA0 trigger from TX read, which uses MPY to shift read P1 left
+;  DMA1 trigger from MPY moves shifted P1 data to the USART0 TX buffer
+;  DMA2 trigger from USART RX0 buffer moves received data to P1
+;  Master mode is LPM0.
+;  ACLK = n/a, MCLK = SMCLK = DCO ~ 800kHz, ULCK = external
+;  //* Final Production MSP430F16x(x) Device Required *//
+;
+;             fet140_dma_15              fet140_dma_14
+;             MSP430F169 Slave           MSP430F169 Master
+;             -----------------          -----------------
+;            |              XIN|-    /|\|              XIN|-
+;            |                 |      | |                 |
+;            |             XOUT|-     --|RST          XOUT|-
+;            |                 | /|\    |                 |
+;            |              RST|--+<----|P3.0             |
+;      LED <-|P1.0             |        |             P1.4|<-
+;      LED <-|P1.1             |        |             P1.5|<-
+;          ->|P1.4             |        |             P1.0|-> LED
+;          ->|P1.5             |        |             P1.1|-> LED
+;            |       SIMO0/P3.1|<-------|P3.1/SIMO0       |
+;            |       SOMI0/P3.2|------->|P3.2/SOMI0       |
+;            |        UCLK/P3.3|<-------|P3.3/UCLK        |
+;
+;
+;
+;   H. Grewal / A. Dannenberg
+;   Texas Instruments Inc.
+;   November 2005
+;   Built with IAR Embedded Workbench Version: 3.30A
+;******************************************************************************
+#include  <msp430x16x.h>
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Progam Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop watchdog timer
+            mov.b   #0h,&P1OUT              ; P1.0/1 setup for LED output
+            mov.b   #03h,&P1DIR             ;
+SetupP3     bis.b   #0Eh,&P3SEL             ; P3.1-3 SPI option select
+            bic.b   #01h,&P3OUT
+            bis.b   #01h,&P3DIR             ; Reset Slave with P3.0
+            bic.b   #01h,&P3DIR
+SetupSPI    mov.b   #CHAR+SYNC+MM+SWRST,&U0CTL ; 8-bit SPI Master
+            mov.b   #CKPL+SSEL1+STC,&U0TCTL ; SMCLK, 3-pin mode
+            mov.b   #02h,&U0BR0             ; SMCLK/2 for baud rate
+            clr.b   &U0BR1                  ;
+            clr.b   &U0MCTL                 ; Clear modulation
+            bis.b   #USPIE0,&ME1            ; Enable USART0 SPI mode
+            bic.b   #SWRST,&U0CTL           ; **Initialize USART state machine**
+            mov.w   #0FFFh,R15              ; Time for slave to ready
+L$1         dec.w   R15                     ;
+            jnz     L$1                     ;
+            mov.w   #1000h,&MPY             ; MPY first operand
+            mov.w   #DMA2TSEL_3+DMA1TSEL_11+DMA0TSEL_4,&DMACTL0 ; URXIFG0, MPY, UTXIFG0
+RX_store    mov.w   #U0RXBUF_,&DMA2SA       ; Src address = UART RX Buffer
+            mov.w   #P1OUT_,&DMA2DA         ; Dst address = P1
+            mov.w   #01h,&DMA2SZ            ; Size in words
+            mov.w   #DMADT_4+DMASBDB+DMAEN,&DMA2CTL ; Sng, config
+TX_load     mov.w   #RESHI_,&DMA1SA         ; Src address = multiplier
+            mov.w   #U0TXBUF_,&DMA1DA       ; Dst address = UART TX Buffer
+            mov.w   #01h,&DMA1SZ            ; Size in words
+            mov.w   #DMADT_4+DMASBDB+DMAEN,&DMA1CTL ; Sng, config
+TX_Init     mov.w   #P1IN_,&DMA0SA          ; Src address
+            mov.w   #OP2_,&DMA0DA           ; Dst address = multiplier
+            mov.w   #01h,&DMA0SZ            ; Size in words
+            mov.w   #DMADT_4+DMASBDB+DMALEVEL+DMAEN,&DMA0CTL ; Sng rpt, config
+            bis.b   #LPM0+GIE,SR            ; Enter LPM0
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     0FFFEh                  ; POR, ext. Reset, Watchdog, Flash
+            DW      RESET                   ;
+            END
+

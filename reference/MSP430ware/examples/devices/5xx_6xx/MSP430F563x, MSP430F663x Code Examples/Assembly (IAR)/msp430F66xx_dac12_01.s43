@@ -1,0 +1,45 @@
+;*******************************************************************************
+;   MSP430xG461x Demo - DAC12_0, Output 1.0V on DAC0
+;
+;   Description: Using DAC12_0 and AVcc reference with a gain of 1,
+;   output 1.5V on DAC0
+;
+;
+;                MSP430F6638
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |        DAC0/P6.6|--> 1.5V
+;            |                 |
+;
+;   Priya Thanigai
+;   Texas Instruments Inc.
+;   March 2010
+;   Built with IAR Embedded Workbench Version: 4.20
+;******************************************************************************
+
+#include <msp430f6638.h>
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+
+SetupDAC120 mov.w   #DAC12IR+DAC12SREF_1+DAC12AMP_5+DAC12CALON,&DAC12_0CTL0 
+            bis.w   #DAC12ENC,&DAC12_0CTL0
+            mov.w   #07ffh,&DAC12_0DAT      ; 1.5V
+                                            ;
+Mainloop    bis.w   #LPM0,SR                ; Enter LPM0
+            nop                             ; Required only for debugger
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET
+            END

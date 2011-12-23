@@ -1,0 +1,88 @@
+;*****************************************************************************
+;   MSP-FET430P120 Demo - USART0, SPI Interface to ADS7822 ADC
+;
+;   Description: This program will read an ADS7822 ADC using SPI, buffering
+;   16 samples starting @ RAM 200h.
+;   ACLK = n/a, MCLK = SMCLK = default DCO ~ 800k, UCLK = DCO/2
+;   //* VCC must be > 2.7V for ADS7822, add ADC CAPs as required *//
+;
+;                      MSP430F123(2)
+;                    -----------------
+;                /|\|              XIN|-
+;                 | |                 |
+;                 --|RST          XOUT|-
+;                   |                 |
+;     ADS7822       |                 |
+;    ----------     |                 |
+;   |        CS|<---|P3.0             |
+; ~>|+In DCLOCK|<---|P3.3/UCLK0       |
+;   |      Dout|--->|P3.2/SOMI0       |
+;
+ADCData2 .equ     R12
+ADCData  .equ     R11
+Pointer  .equ     R10
+CS          .equ     001h                   ; P3.0 - Chip Select
+;
+;   M. Buccini / M. Raju
+;   Texas Instruments Inc.
+;   May 2005
+;   Built with Code Composer Essentials Version: 1.0
+;******************************************************************************
+ .cdecls C,LIST,  "msp430x12x2.h"
+;-----------------------------------------------------------------------------
+            .text                           ; Program Start
+;-----------------------------------------------------------------------------
+RESET       mov.w   #0300h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop Watchdog Timer
+SetupP3     bis.b   #0Eh,&P3SEL             ; P3.1-3 SPI option select
+            bis.b   #01h,&P3DIR             ; P3.0 output direction
+SetupSPI    bis.b   #USPIE0,&ME2            ; Enable USART0 SPI
+            bis.b   #CKPH+SSEL1+SSEL0+STC,&UTCTL0 ; SMCLK, 3-pin mode
+            bis.b   #CHAR+SYNC+MM,&UCTL0    ; 8-bit SPI Master
+            mov.b   #02h,&UBR00             ; SMCLK/2 for baud rate
+            clr.b   &UBR10                  ;
+            clr.b   &UMCTL0                 ; Clear modulation
+            bic.b   #SWRST,&UCTL0           ; **Initalize USART state machine**
+                                            ;
+Mainloop    call    #Meas_ADC_16            ; Call subroutine
+            jmp     Mainloop                ; Repeat
+                                            ;
+;-----------------------------------------------------------------------------
+Meas_ADC_16; Subroutine to call  Meas_7822 16x, results stored in RAM @200h,
+;           Pointer (R10) used.
+;-----------------------------------------------------------------------------
+            mov.w   #200h,Pointer           ; Buffer @ 200h
+Meas_Loop   call    #Meas_7822              ;
+            mov.w   ADCData,0(Pointer)      ; Store ADC code
+            incd.w  Pointer                 ;
+            cmp.w   #0220h,Pointer          ; .end of 16 word (32 byte) buffer
+            jne     Meas_Loop               ;
+            ret                             ; Return from subroutine
+                                            ;
+;-----------------------------------------------------------------------------
+Meas_7822;  Subroutine to read ADS7822 storing 12-bit code in ADCData (R11).
+;           ADCData2 (R12) also used and not saved.
+;-----------------------------------------------------------------------------
+            bic.b   #CS,&P3OUT              ; /CS reset, enable ADC
+            bic.b   #URXIFG0,&IFG2          ; Clear RXBUF flag
+            mov.b   #00h,&TXBUF0            ; Dummy write to start SPI
+L1          bit.b   #URXIFG0,&IFG2          ; RXBUF ready?
+            jnc      L1                     ; 1 = empty
+            mov.b   &RXBUF0,ADCData         ; MSB
+            swpb    ADCData                 ;
+            mov.b   #00h,&TXBUF0            ; Dummy write to start SPI
+L2          bit.b   #URXIFG0,&IFG2          ; RXBUF ready?
+            jnc      L2                     ; 1 = empty
+            mov.b   &RXBUF0,ADCData2        ; LSB - MSB cleared
+            add.w   ADCData2,ADCData        ; MSB|LSB
+            rrc.w   ADCData                 ;
+            and.w   #0FFFh,ADCData          ; Keep only databits
+            bis.b   #CS,&P3OUT              ; /CS set, disable ADC
+            ret                             ;
+                                            ;
+;-----------------------------------------------------------------------------
+;           Interrupt Vectors
+;-----------------------------------------------------------------------------
+            .sect   ".reset"                ; MSP430 RESET Vector
+            .short  RESET                   ;
+            .end

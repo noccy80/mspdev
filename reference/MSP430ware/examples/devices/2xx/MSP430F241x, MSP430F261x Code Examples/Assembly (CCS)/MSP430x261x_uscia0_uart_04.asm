@@ -1,0 +1,64 @@
+;******************************************************************************
+;   MSP430x261x Demo - USCI_A0, 9600 UART, SMCLK, LPM0, Echo with over-sampling
+;
+;   Description: Echo a received character, RX ISR used. Normal mode is LPM0.
+;   USCI_A0 RX interrupt triggers TX Echo.
+;   Baud rate divider with 1MHz = 1MHz/9600 = ~104.2
+;   ACLK = n/a, MCLK = SMCLK = CALxxx_1MHZ = 1MHz
+;
+;              MSP430F261x/241x
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |     P3.4/UCA0TXD|------------>
+;            |                 | 9600 - 8N1
+;            |     P3.5/UCA0RXD|<------------
+;
+;  JL Bile
+;  Texas Instruments Inc.
+;  June 2008
+;  Built Code Composer Essentials: v3 FET
+;*******************************************************************************
+ .cdecls C,LIST, "msp430x26x.h"
+;-------------------------------------------------------------------------------
+			.text	;Program Start
+;-------------------------------------------------------------------------------
+RESET       mov.w   #0850h,SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+CheckCal    cmp.b   #0FFh,&CALBC1_1MHZ      ; Calibration constants erased?
+            jeq     Trap
+            cmp.b   #0FFh,&CALDCO_1MHZ
+            jne     Load  
+Trap        jmp     $                       ; Trap CPU!!
+Load        mov.b   &CALBC1_1MHZ,&BCSCTL1   ; Set DCO to 1MHz
+            mov.b   &CALDCO_1MHZ,&DCOCTL    ;        
+            
+SetupP3     bis.b   #030h,&P3SEL            ; Use P3.4/P3.5 for USCI_A0
+SetupUSCI0  bis.b   #UCSSEL_2,&UCA0CTL1     ; SMCLK
+            mov.b   #6,&UCA0BR0             ; 1MHz 9600
+            mov.b   #0,&UCA0BR1             ; 1MHz 9600
+            mov.b   #UCBRF3 + UCOS16, &UCA0MCTL ; Modln UCBRSx=1, over sampling
+            bic.b   #UCSWRST,&UCA0CTL1      ; **Initialize USCI state machine**
+            bis.b   #UCA0RXIE,&IE2          ; Enable USCI_A0 RX interrupt
+                                            ;
+Mainloop    bis.b   #CPUOFF+GIE,SR          ; Enter LPM0, interrupts enabled
+            nop                             ; Needed only for debugger
+                    
+;-------------------------------------------------------------------------------
+USCI0RX_ISR;  Echo back RXed character, confirm TX buffer is ready first
+;-------------------------------------------------------------------------------
+TX0         bit.b   #UCA0TXIFG,&IFG2        ; USCI_A0 TX buffer ready?
+            jz      TX0                     ; Jump if TX buffer not ready
+            mov.b   &UCA0RXBUF,&UCA0TXBUF   ; TX -> RXed character
+            reti                            ;
+                                            ;
+;-------------------------------------------------------------------------------
+;			Interrupt Vectors
+;-------------------------------------------------------------------------------
+            .sect	".int23"        ; USCI0 Rx Vector
+            .short  USCI0RX_ISR             ;
+            .sect	".reset"            ; RESET Vector
+            .short  RESET                   ;
+            .end

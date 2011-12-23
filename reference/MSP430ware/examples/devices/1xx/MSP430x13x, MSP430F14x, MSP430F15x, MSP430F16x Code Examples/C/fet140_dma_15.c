@@ -1,0 +1,79 @@
+//******************************************************************************
+//  MSP-FET430P140 Demo - DMA0/1/2, USART0 SPI 3-Wire SPI Slave P1.x Exchange
+//
+//  Description: SPI Master communicates at fast as possible, full-duplex with
+//  SPI Slave using 3-wire mode. The level on P1.4/5 is TX'ed and RX'ed to P1.0
+//  and P1.1. Master will pulse slave Reset on init to insure synch start.
+//  With data transfer driven directly by DMA - no CPU resources used.
+//  DMA0 trigger from TX read, which uses MPY to shift read P1 left
+//  DMA1 trigger from MPY moves shifted P1 data to the USART0 TX buffer
+//  DMA2 trigger from USART0 RX buffer moves received data to P1
+//  Slave normal mode is LPM4.
+//  ACLK = n/a, MCLK = SMCLK = DCO ~ 800kHz, ULCK = external
+//  //* Final Production MSP430F16x(x) Device Required *//
+//
+//             fet140_dma_15              fet140_dma_14
+//             MSP430F169 Slave           MSP430F169 Master
+//             -----------------          -----------------
+//            |              XIN|-    /|\|              XIN|-
+//            |                 |      | |                 |
+//            |             XOUT|-     --|RST          XOUT|-
+//            |                 | /|\    |                 |
+//            |              RST|--+<----|P3.0             |
+//      LED <-|P1.0             |        |             P1.4|<-
+//      LED <-|P1.1             |        |             P1.5|<-
+//          ->|P1.4             |        |             P1.0|-> LED
+//          ->|P1.5             |        |             P1.1|-> LED
+//            |       SIMO0/P3.1|<-------|P3.1/SIMO0       |
+//            |       SOMI0/P3.2|------->|P3.2/SOMI0       |
+//            |        UCLK/P3.3|<-------|P3.3/UCLK        |
+//
+//  M. Buccini / A. Dannenberg
+//  Texas Instruments Inc.
+//  November 2005
+//  Built with CCE Version: 3.2.0 and IAR Embedded Workbench Version: 3.30A
+//******************************************************************************
+
+#include  <msp430x16x.h>
+// Definition necessary to compile with CCEv3.2
+// Workaround for &P1OUT
+#define _P1OUT_ 0x0021						// Physical address of P1OUT
+void main(void)
+{
+  WDTCTL = WDTPW + WDTHOLD;                 // Stop watchdog
+  P1OUT = 0x00;                             // P1.0 setup for LED output
+  P1DIR |= 0x03;
+  P3SEL |= 0x0E;                            // P3.1,2,3 SPI option select
+  U0CTL = CHAR + SYNC + SWRST;              // 8-bit, SPI
+  U0TCTL = CKPL + STC;                      // Polarity, 3-wire
+  U0BR0 = 0x02;                             // SPICLK = SMCLK/2
+  U0BR1 = 0x00;
+  U0MCTL = 0x00;
+  ME1 |= USPIE0;                            // Module enable
+  U0CTL &= ~SWRST;                          // SPI enable
+
+  MPY = 0x1000;                             // MPY first operand
+
+// Setup triggers first
+  DMACTL0 = DMA2TSEL_3 + DMA1TSEL_11 + DMA0TSEL_4;  // URXIFG0, MPY, UTXIFG0
+
+// TX load
+  DMA1SA = (unsigned int)&RESHI;            // Src address = multiplier
+  DMA1DA = (unsigned int)&U0TXBUF;          // Dst address = RAM memory
+  DMA1SZ = 1;                               // Size in bytes
+  DMA1CTL = DMADT_4 + DMASBDB + DMAEN;      // Sng, config
+
+// TX Init
+  DMA0SA = (unsigned int)&P1IN;             // Src address
+  DMA0DA = (unsigned int)&OP2;              // Dst address = multiplier
+  DMA0SZ = 1;                               // Size in words
+  DMA0CTL = DMADT_4 + DMASBDB + DMALEVEL + DMAEN;  // Sng rpt, config
+
+// RX Store
+  DMA2SA = (unsigned int)&U0RXBUF;          // Src address = UART RX Buffer
+  DMA2DA = (unsigned int)&P1OUT;            // Dst address = P1
+  DMA2SZ = 1;                               // Size in bytes
+  DMA2CTL = DMADT_4 + DMASBDB + DMAEN;      // Sng, config
+
+  _BIS_SR(LPM4_bits + GIE);                 // Enter LPM4 w/ interrupt
+}

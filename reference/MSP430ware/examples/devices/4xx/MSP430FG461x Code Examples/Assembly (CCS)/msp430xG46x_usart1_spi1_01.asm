@@ -1,0 +1,68 @@
+;******************************************************************************
+;   MSP430xG46x Demo - USART1, SPI Interface to TLC549 8-Bit ADC
+;
+;   Description:  This program demonstrates USART1 in SPI mode, interfaced to a
+;   TLC549 8-bit ADC. If AIN > 0.5(REF+ - REF-), then P5.1 is set, otherwise it
+;   is reset.  R15 = 8-bit ADC code.
+;   ACLK = 32.768kHz, MCLK = SMCLK = default DCO ~ 1048k, UCLK1 = SMCLK/2
+;   //* VCC must be at least 3V for TLC549 *//
+;
+;                           MSP430FG461x
+;                       -----------------
+;                   /|\|              XIN|-
+;        TLC549      | |                 |
+;    -------------   --|RST          XOUT|-
+;   |           CS|<---|P4.6             |
+;   |      DATAOUT|--->|P4.4/SOMI1       |
+; ~>| IN+  I/O CLK|<---|P4.5/UCLK1       |
+;
+;  JL Bile
+;  Texas Instruments Inc.
+;  June 2008
+;  Built Code Composer Essentials: v3 FET
+;*******************************************************************************
+ .cdecls C,LIST, "msp430xG46x.h"
+;-------------------------------------------------------------------------------
+			.text	;Program Start
+;-------------------------------------------------------------------------------
+RESET       mov.w   #900,SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop watchdog timer
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+
+OFIFGcheck  bic.b   #OFIFG,&IFG1            ; Clear OFIFG
+            mov.w   #047FFh,R15             ; Wait for OFIFG to set again if
+OFIFGwait   dec.w   R15                     ; not stable yet
+            jnz     OFIFGwait
+            bit.b   #OFIFG,&IFG1            ; Has it set again?
+            jnz     OFIFGcheck              ; If so, wait some more
+
+SetupP1     bis.b   #02h,&P5DIR             ; P5.1 as output
+SetupP5     bis.b   #30h,&P4SEL             ; P4.2,3 SPI option select
+            bis.b   #60h,&P4DIR             ; P4.3,0 as outputs
+SetupSPI1   bis.b   #USPIE1,&ME2            ; Enable USART1 SPI
+            bis.b   #CKPH+SSEL1+SSEL0+STC,&U1TCTL ; SMCLK, 3-pin mode
+            bis.b   #CHAR+SYNC+MM,&U1CTL    ; 8-bit SPI master
+            mov.b   #02h,&U1BR0             ; SMCLK/2 for baud rate
+            clr.b   &U1BR1                  ; SMCLK/2 for baud rate
+            clr.b   &U1MCTL                 ; Clear modulation
+            bic.b   #SWRST,&U1CTL           ; Initialize USART state machine
+                                            ;
+Mainloop    bic.b   #40h,&P4OUT             ; Enable TLC549 by enabling /CS
+            mov.b   #00h,&U1TXBUF           ; Dummy write to start SPI
+L1          bit.b   #URXIFG1,&IFG2          ; RXBUF ready?
+            jnc     L1                      ; wait until ready
+            mov.b   &U1RXBUF,R15            ; R15 = 00|DATA
+            bis.b   #40h,&P4OUT             ; Disable '549 by driving /CS high
+            bic.b   #02h,&P5OUT             ; P5.1 = 0
+            cmp.b   #07Fh,R15               ; Is AIN > 0.5(REF+ - REF-)?
+            jlo     Mainloop                ; Again
+            bis.b   #02h,&P5OUT             ; P5.1 = 1
+            jmp     Mainloop                ; Again
+                                            ;
+;------------------------------------------------------------------------------
+;			Interrupt Vectors
+;------------------------------------------------------------------------------
+            .sect	".reset"            	
+            .short   RESET
+            .end
+            

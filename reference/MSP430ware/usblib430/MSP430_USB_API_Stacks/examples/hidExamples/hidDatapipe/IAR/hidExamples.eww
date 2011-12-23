@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\H1_Example\H1_Example.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\H2_Example\H2_Example.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\H3_Example\H3_Example.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\H4_Example\H4_Example.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\H5_Example\H5_Example.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\H6_Example\H6_Example.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

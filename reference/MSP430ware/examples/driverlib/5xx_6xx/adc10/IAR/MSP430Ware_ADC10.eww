@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\adc10_ex1.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex12.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex14.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex2.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex4.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex5.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex6.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex7.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\adc10_ex8.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

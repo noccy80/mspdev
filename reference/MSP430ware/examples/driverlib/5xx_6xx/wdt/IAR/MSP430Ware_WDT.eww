@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\wdt_ex1.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\wdt_ex2.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\wdt_ex3.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

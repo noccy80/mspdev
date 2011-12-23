@@ -1,0 +1,47 @@
+;*******************************************************************************
+;   MSP430F22x4 Demo - Timer_A, Toggle P1.1/TA0, Up/Down Mode, DCO SMCLK
+;
+;   Description: Toggle P1.1 using hardware TA0 output. Timer_A is configured
+;   for up/down mode with TACCR0 defining period, TA0 also output on P1.1. In
+;   this example, TACCR0 is loaded with 250 and TA0 will toggle P1.1 at
+;   TACLK/2*250. Thus the output frequency on P1.1 will be the TACLK/1000.
+;   No CPU or software resources required.
+;   ACLK = n/a, SMCLK = MCLK = TACLK = default DCO ~1.2MHz
+;   As coded with TACLK = SMCLK, P1.1 output frequency is ~1200000/1000
+;
+;               MSP430F22x4
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |         P1.1/TA0|--> SMCLK/1000
+;
+;   A. Dannenberg
+;   Texas Instruments Inc.
+;   April 2006
+;   Built with IAR Embedded Workbench Version: 3.41A
+;*******************************************************************************
+#include "msp430x22x4.h"
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP1     bis.b   #002h,&P1DIR            ; P1.1 output
+            bis.b   #002h,&P1SEL            ; P1.1 option slect
+SetupC0     mov.w   #OUTMOD_4,&TACCTL0      ; TACCR0 toggle mode
+            mov.w   #250,&TACCR0            ;
+SetupTA     mov.w   #TASSEL_2+MC_3,&TACTL   ; SMCLK, updown mode
+                                            ;
+Mainloop    bis.w   #CPUOFF,SR              ; CPU off
+            nop                             ; Required only for debugger
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

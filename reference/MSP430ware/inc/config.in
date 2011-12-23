@@ -1,0 +1,13 @@
+#******************************************************************************
+#
+# config.in - Configuration information for the inc directory.
+#
+# Copyright (c) 2010 Texas Instruments Incorporated.  All rights reserved.
+# TI Information - Selective Disclosure
+#
+#******************************************************************************
+
+NOBUILD=yes
+TARGET=inc
+ROOT=..
+COPYRIGHT=2008

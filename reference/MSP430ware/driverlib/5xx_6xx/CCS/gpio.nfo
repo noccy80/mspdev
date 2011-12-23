@@ -1,0 +1,237 @@
+MSP430 C/C++ Optimizer                  v3.3.1
+Build Number 1KGCQ-KDADEMDK-RTARQ-TAV-ZACIF_T_T_R
+
+		======File-level Analysis Summary======
+
+
+extern void GPIO_clearInterruptFlag() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_disbleInterrupt() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_enableInterrupt() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned GPIO_getInputPinValue() is called from 0 sites in this file.
+    It appears to be inlineable (size = 41 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern unsigned GPIO_getInterruptStatus() is called from 0 sites in this file.
+    It appears to be inlineable (size = 37 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_interruptEdgeSelect() is called from 0 sites in this file.
+    It appears to be inlineable (size = 45 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setAsInputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 75 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setAsInputPinWithPullDownresistor() is called from 0 sites in this file.
+    It appears to be inlineable (size = 87 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setAsInputPinWithPullUpresistor() is called from 0 sites in this file.
+    It appears to be inlineable (size = 81 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setAsOutputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setAsPeripheralModuleFunctionInputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setAsPeripheralModuleFunctionOutputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 45 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setDriveStrength() is called from 0 sites in this file.
+    It appears to be inlineable (size = 45 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setOutputHighOnPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 33 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_setOutputLowOnPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+extern void GPIO_toggleOutputOnPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 33 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+
+
+		======= End file-level Analysis =======
+
+
+==============================================================================
+
+extern void GPIO_toggleOutputOnPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 33 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setOutputLowOnPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setOutputHighOnPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 33 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setDriveStrength() is called from 0 sites in this file.
+    It appears to be inlineable (size = 45 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setAsPeripheralModuleFunctionOutputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 45 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setAsPeripheralModuleFunctionInputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setAsOutputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setAsInputPinWithPullUpresistor() is called from 0 sites in this file.
+    It appears to be inlineable (size = 81 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setAsInputPinWithPullDownresistor() is called from 0 sites in this file.
+    It appears to be inlineable (size = 87 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_setAsInputPin() is called from 0 sites in this file.
+    It appears to be inlineable (size = 75 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_interruptEdgeSelect() is called from 0 sites in this file.
+    It appears to be inlineable (size = 45 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned GPIO_getInterruptStatus() is called from 0 sites in this file.
+    It appears to be inlineable (size = 37 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern unsigned GPIO_getInputPinValue() is called from 0 sites in this file.
+    It appears to be inlineable (size = 41 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_enableInterrupt() is called from 0 sites in this file.
+    It appears to be inlineable (size = 51 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_disbleInterrupt() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+==============================================================================
+
+extern void GPIO_clearInterruptFlag() is called from 0 sites in this file.
+    It appears to be inlineable (size = 39 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+<<NULL MIX DOMAIN>>
+
+== END OF INFO OUTPUT==

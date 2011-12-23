@@ -1,0 +1,93 @@
+;*****************************************************************************
+;  MSP430F66xx Demo - FLL+, Output 32kHz Xtal + HF Xtal + Internal DCO
+;
+;  Description:  This program demonstrates using an external 32kHz crystal to
+;  supply ACLK, and using a high speed crystal or resonator to supply SMCLK.
+;  MLCK for the CPU is supplied by the internal DCO.  The 32kHz crystal
+;  connects between pins Xin and Xout. The high frequency crystal or
+;  resonator connects between pins XT2IN and XT2OUT.  The DCO clock is
+;  generated internally and calibrated from the 32kHz crystal.  ACLK is
+;  brought out on pin P1.0, SMCLK is brought out on P3.4.
+;  ACLK = LFXT1 = 32768Hz, MCLK = default DCO = 32 x ACLK = 1048576Hz
+;  SMCLK = HF XTAL
+;
+;  ;* An external watch crystal between XIN & XOUT is required for ACLK *;	
+;
+;  NOTE: External matching capacitors must be added for the high
+;       speed crystal or resonator as required.
+
+;  
+;                MSP430F6638
+;             -----------------
+;        /|\ |              XIN|-
+;         |  |                 | 32kHz
+;         ---|RST          XOUT|-
+;            |                 |
+;            |                 |
+;            |            XT2IN|-
+;            |                 | HF XTAL or Resonator (add capacitors)
+;            |           XT2OUT|-
+;            |                 |
+;            |            P1.0 |--> ACLK = 32kHz Crystal Out
+;            |                 |
+;            |            P3.4 |--> SMCLK = High Freq Xtal or Resonator Out
+;            |                 |
+;            |                 |
+;            |                 |
+;
+;
+;   Priya Thanigai
+;   Texas Instruments Inc.
+;   March 2010
+;   Built with IAR Embedded Workbench Version: 4.20
+;******************************************************************************
+
+#include <msp430f6638.h>
+
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+            mov.w   #WDTPW + WDTHOLD,&WDTCTL; Stop WDT
+           
+            bis.b   #BIT0,&P1DIR            ; P1.0 output
+            bis.b   #BIT0,&P1SEL            ; ACLK set out to pins
+            bis.b   #BIT4,&P3DIR            ; P3.4 output
+            bis.b   #BIT4,&P3SEL            ; SMCLK set out to pins
+            
+            ; Initialize LFXT1, XT2
+Test_LOCKIO bit.w   #LOCKIO,&BAKCTL
+            jz      Clock_Init
+            bic.w   #LOCKIO,&BAKCTL
+            jmp     Test_LOCKIO
+           
+Clock_Init  bis.b   #BIT2 + BIT3,&P7SEL     ; Port select XT2
+            bic.w   #XT1OFF+XT2OFF,&UCSCTL6 ; Clear XT1OFF & XT2OFF bit
+            bis.w   #XCAP_3,&UCSCTL6        ; Internal load cap
+            
+
+            ; Loop until XT1,XT2 & DCO stabilizes
+do_while    bic.w   #XT2OFFG + XT1LFOFFG + DCOFFG,&UCSCTL7
+                                            ; Clear XT2,XT1,DCO fault flags
+            bic.w   #OFIFG,&SFRIFG1         ; Clear fault flags
+            bit.w   #OFIFG,&SFRIFG1         ; Test oscillator fault flag
+            jc      do_while
+
+            bic.w   #XT2DRIVE0,&UCSCTL6     ; Decrease XT2 Drive according to
+                                            ; expected frequency
+            bis.w   #SELA_0 + SELS_5,&UCSCTL4
+                                            ; Select SMCLK, ACLK, DCO source
+Mainloop    jmp     Mainloop
+
+;-------------------------------------------------------------------------------
+                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR                ; POR, ext. Reset
+            DW      RESET
+            END

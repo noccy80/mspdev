@@ -1,0 +1,43 @@
+MSP430 C/C++ Optimizer                  v3.3.1
+Build Number 1KGCQ-KDADEMDK-RTARQ-TAV-ZACIF_T_T_R
+
+		======File-level Analysis Summary======
+
+
+extern void PMAP_configurePorts() is called from 0 sites in this file.
+    It appears to be inlineable (size = 47 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	_disable_interrupts() (1 times)
+
+
+These functions may be recursive:
+	PMAP_configurePorts()
+
+These external functions are called but not defined here:
+	_disable_interrupts()
+
+
+		======= End file-level Analysis =======
+
+
+==============================================================================
+
+extern void PMAP_configurePorts() is called from 0 sites in this file.
+    It appears to be inlineable (size = 47 units)
+    It has 3 non-trivial scope blocks nested 3 deep.
+    It calls these functions:
+	<NONE>
+
+ADVICE: In function PMAP_configurePorts() in pmap.c
+	in the 'for' loop with loop variable 'i' at lines 52-55
+	for the statement PxMAPy[i] = portMapping[i]; at line 54
+
+	Consider declaring 'portMapping' as const unsigned char * const restrict portMapping
+	or declaring 'PxMAPy' as  unsigned char * const restrict PxMAPy
+	to assert that 'portMapping' in the address of portMapping[i];
+	and            'PxMAPy' in the address of PxMAPy[i];
+	do not access the same object in memory.
+<<NULL MIX DOMAIN>>
+
+== END OF INFO OUTPUT==

@@ -1,0 +1,87 @@
+;******************************************************************************
+;   MSP430x47xx Demo - XT2 Oscillator Fault Detection
+;
+;   Description: System runs normally in LPM3 with with basic timer clocked by
+;   MCLK.  P5.1 is toggled inside basic timer interrupt at 1 Hz
+;   frequency.  If an XT2 oscillator fault occurs, NMI is requested, forcing
+;   exit from LPM3. P5.1 is toggled at DCO speed by software as long as
+;   XT2 oscillator fault is present.  Assumed only XT2 as NMI
+;   source - code does not check for other NMI sources.
+;   MCLK = XT2 = 4MHz normally, when at fault MCLK = DCO freq ~460KHz
+;   //* An external 4MHx crystal is required between XT2 and XT2OUT *//	
+;
+;                MSP430x47xx
+;             -----------------
+;         /|\|            XT2IN|-
+;          | |                 | 4MHz
+;          --|RST        XT2OUT|-
+;            |                 |
+;            |             P5.1|--> LED
+;
+;  JL Bile
+;  Texas Instruments Inc.
+;  June 2008
+;  Built Code Composer Essentials: v3 FET
+;*******************************************************************************
+ .cdecls C,LIST, "msp430x47x4.h"
+;-------------------------------------------------------------------------------
+			.text							; Program Start
+;-------------------------------------------------------------------------------
+RESET       mov.w   #900h,SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+
+SetupHF     bic.b   #XT2OFF,&FLL_CTL1       ; Clear bit = HFXT2 on
+ClearFlag   bic.b   #OFIFG,&IFG1            ; Clear osc fault flag
+            mov     #047FFh,R15             ; Move delay time to register 15
+HF_Wait     dec     R15                     ; Delay for xtal to start, FLL lock
+            jnz     HF_Wait		    ; Loop if delay not finished
+
+            bit.b   #OFIFG,&IFG1            ; Test osc fault flag
+            jnz     ClearFlag               ; If not loop again
+                                            ;
+            bis.b   #SELM_XT2,&FLL_CTL1     ; MCLK = XT2
+                                            ;
+SetupP1     bis.b   #BIT1,&P1DIR            ; P1.1 output direction
+            bis.b   #BIT1,&P1SEL            ; P1.1 option select
+
+SetupBT     mov.b   #BT_ADLY_1000,&BTCTL    ; One-second interrupt
+            bis.b   #BTIE,&IE2              ; Enable Basic Timer interrupt
+
+            bis.b   #BIT1,&P5DIR            ; P5.1 = output direction
+; An immediate Osc Fault will occur next
+            bis.b   #OFIE,&IE1              ; Enable osc fault interrupt
+
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3, enable interrupts
+            xor.b   #002h,&P5OUT            ; Toggle P5.1
+            jmp     Mainloop                ;
+                                            ;
+;------------------------------------------------------------------------------
+NMI_ISR;   Only osc fault enabled, R15 used temporarily and not saved
+;          Assumed LFXT1 is only source for NMI interrupt
+;------------------------------------------------------------------------------
+CheckOsc    bic.b   #OFIFG,&IFG1            ; Clear OSC fault flag
+            xor.b   #BIT1,&P5OUT            ; Toggle P5.1
+            mov.w   #047FFh,R15             ; R15 = Delay
+CheckOsc1   dec.w   R15                     ; Time for flag to set
+            jnz     CheckOsc1               ;
+            bit.b   #OFIFG,&IFG1            ; OSC fault flag set?
+            jnz     CheckOsc                ; OSC Fault, clear flag again
+            bis.b   #OFIE,&IE1              ; Re-enable osc fault interrupt
+            reti                            ; Return from interrupt
+                                            ;
+;------------------------------------------------------------------------------
+BT_ISR;     Exit LPM3 on reti
+;------------------------------------------------------------------------------
+            bic.w   #LPM3,0(SP)             ;
+            reti                            ;		
+                                            ;
+;-----------------------------------------------------------------------------
+;			Interrupt Vectors
+;------------------------------------------------------------------------------
+            .sect	".reset"            	; MSP430 RESET Vector
+            .short  RESET                   ;
+            .sect    ".int00"       ; Basic Timer Vector
+            .short   BT_ISR                  ;
+            .sect   ".int14"              ; NMI vector
+            .short   NMI_ISR                 ;
+            .end

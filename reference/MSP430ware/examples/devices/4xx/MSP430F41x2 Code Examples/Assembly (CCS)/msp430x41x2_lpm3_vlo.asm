@@ -1,0 +1,72 @@
+;******************************************************************************
+;   MSP430x41x2 Demo - Basic Clock, LPM3 Using WDT ISR, VLO ACLK
+;
+;   Description: This program operates MSP430 normally in LPM3, pulsing P5.1
+;   ~ 3 second intervals. WDT ISR used to wake-up system. All I/O configured
+;   as low outputs to eliminate floating inputs. Current consumption does
+;   increase when LED is powered on P5.1. Demo for measuring LPM3 current.
+;   ACLK = VLO/2, MCLK = SMCLK = default DCO ~1.045MHz
+;
+;                MSP430F41x2
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;
+;  P. Thanigai
+;  Texas Instruments Inc.
+;  January 2009
+;  Built with CCE Version: 3.1
+;******************************************************************************
+ .cdecls C,LIST, "msp430x41x2.h" 
+ 
+            .global _main
+;------------------------------------------------------------------------------
+            .text                           ; Program Start
+;------------------------------------------------------------------------------
+_main
+RESET       mov.w   #0400h,SP               ; Initialize stack pointer
+SetupWDT    mov.w   #WDT_ADLY_1000,&WDTCTL  ; WDT 1s*4 interval timer
+SetupFLL    bis.b   #LF1XT1S_2,&FLL_CTL2    ; LFXT1CLK = VLO
+            bis.b   #WDTIE,&IE1             ; Enable WDT interrupt
+SetupP1     mov.b   #0FFh,&P1DIR            ; All P1.x outputs
+            clr.b   &P1OUT                  ; All P1.x reset
+SetupP2     clr.b   &P2SEL                  ; All P2.x GPIO function
+            mov.b   #0FFh,&P2DIR            ; All P2.x outputs
+            clr.b   &P2OUT                  ; All P2.x reset
+SetupP3     mov.b   #0FFh,&P3DIR            ; All P3.x outputs
+            clr.b   &P3OUT                  ; All P3.x reset
+SetupP4     mov.b   #0FFh,&P4DIR            ; All P4.x outputs
+            clr.b   &P4OUT                  ; All P4.x reset
+SetupP5     mov.b   #0FFh,&P5DIR            ; All P5.x outputs
+            clr.b   &P5OUT                  ; All P5.x reset
+SetupP6     mov.b   #0FFh,&P6DIR            ; All P6.x outputs
+            clr.b   &P6OUT                  ; All P6.x reset
+SetupP7     mov.b   #0FFh,&P7DIR            ; All P7.x outputs
+            clr.b   &P7OUT                  ; All P7.x reset                                    
+                                            ;
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3, enable interrupts
+            bis.b   #002h,&P5OUT            ; Set P5.1
+Wait        mov.w   #20000,R15              ; Delay to R15
+L1          dec.w   R15                     ; Decrement R15
+            jnz     L1                      ; Delay over?
+            bic.b   #002h,&P5OUT            ; Reset P5.1
+            jmp     Mainloop                ; Again
+                                            ;
+;-------------------------------------------------------------------------------
+WDT_ISR;    Exit LPM3 on reti
+;-------------------------------------------------------------------------------
+            bic.w   #LPM3,0(SP)             ; Clear LPM3 from TOS
+            reti                            ;
+                                            ;
+;-------------------------------------------------------------------------------
+;			Interrupt Vectors
+;-------------------------------------------------------------------------------
+            .sect   ".int10"                ; WDT Vector
+            .short  WDT_ISR
+            .sect   ".reset"	      ; POR, ext. Reset, Watchdog
+            .short  RESET
+            .end
+            

@@ -1,0 +1,174 @@
+<html>
+<head>
+<title>MSP430F471x6 C Code Examples</title>
+</head>
+<body>
+<h1><font face="Arial">MSP430F471x6 C Code Examples</font></h1>
+
+<p>
+	<ul>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_1,MSP430,MSP430F471\d6,'msp430x471x7_1.c')">
+			<img border="0" src="project.gif" />msp430x471x7_1.c - Software Toggle P5.1</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_bt_01,MSP430,MSP430F471\d6,'msp430x471x7_bt_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_bt_01.c - Basic Timer, Toggle P5.1 Inside ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_bt_02,MSP430,MSP430F471\d6,'msp430x471x7_bt_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_bt_02.c - Basic Timer, Toggle P5.1 Inside ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_clks_02,MSP430,MSP430F471\d6,'msp430x471x7_clks_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_clks_02.c - FLL+, Output 32kHz Xtal + HF Xtal + Internal DCO</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_compA_01,MSP430,MSP430F471\d6,'msp430x471x7_compA_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_compA_01.c - Comparator A, Poll input CA0, result in P5.1</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_compA_02,MSP430,MSP430F471\d6,'msp430x471x7_compA_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_compA_02.c - Comparator A, Poll input CA0, CA exchange, result in P5.1</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_compA_04,MSP430,MSP430F471\d6,'msp430x471x7_compA_04.c')">
+			<img border="0" src="project.gif" />msp430x471x7_compA_04.c - Comparator A, Poll input CA0, result in P5.1</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_compA_05,MSP430,MSP430F471\d6,'msp430x471x7_compA_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_compA_05.c - Comparator A, Poll input CA0, interrupt triggered</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_dma_01_IAR,MSP430,MSP430F471\d6,'msp430x471x7_dma_01_IAR.c')">
+			<img border="0" src="project.gif" />msp430x471x7_dma_01_IAR.c - DMA0, Repeated Burst to-from RAM, Software Trigger</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_dma_02_IAR,MSP430,MSP430F471\d6,'msp430x471x7_dma_02_IAR.c')">
+			<img border="0" src="project.gif" />msp430x471x7_dma_02_IAR.c - DMA0, Repeated Block to P5OUT, TACCR2 Trigger</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_dma_03_IAR,MSP430,MSP430F471\d6,'msp430x471x7_dma_03_IAR.c')">
+			<img border="0" src="project.gif" />msp430x471x7_dma_03_IAR.c - DMA0, Repeated Block UCA1UART 9600, TACCR2, ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_dma_04_IAR,MSP430,MSP430F471\d6,'msp430x471x7_dma_04_IAR.c')">
+			<img border="0" src="project.gif" />msp430x471x7_dma_04_IAR.c - DMA0, Block Mode UART0 9600, ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_flashwrite_01,MSP430,MSP430F471\d6,'msp430x471x7_flashwrite_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_flashwrite_01.c - Flash In-System Programming, Copy SegC to SegD</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_flashwrite_03,MSP430,MSP430F471\d6,'msp430x471x7_flashwrite_03.c')">
+			<img border="0" src="project.gif" />msp430x471x7_flashwrite_03.c - Flash In-System Programming w/ EEI, Copy SegC to SegD</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_flashwrite_04,MSP430,MSP430F471\d6,'msp430x471x7_flashwrite_04.c')">
+			<img border="0" src="project.gif" />msp430x471x7_flashwrite_04.c - Flash In-System Programming w/ EEI, Copy SegD to A/B/C</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_fll_01,MSP430,MSP430F471\d6,'msp430x471x7_fll_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_fll_01.c - FLL+, Runs Internal DCO at 2.45MHz</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_fll_02,MSP430,MSP430F471\d6,'msp430x471x7_fll_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_fll_02.c - FLL+, Runs Internal DCO at 16MHz</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_hfxt2,MSP430,MSP430F471\d6,'msp430x471x7_hfxt2.c')">
+			<img border="0" src="project.gif" />msp430x471x7_hfxt2.c - FLL+, MCLK Configured to Operate from XT2 HF XTAL</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_lcda_04,MSP430,MSP430F471\d6,'msp430x471x7_lcda_04.c')">
+			<img border="0" src="project.gif" />msp430x471x7_lcda_04.c - LCD_A Put "0123456" on SBLCDA4 LCD</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_lcda_05,MSP430,MSP430F471\d6,'msp430x471x7_lcda_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_lcda_05.c - LCD_A Put "0123456" on SBLCDA4 LCD with charge pump</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_lpm3,MSP430,MSP430F471\d6,'msp430x471x7_lpm3.c')">
+			<img border="0" src="project.gif" />msp430x471x7_lpm3.c - FLL+, LPM3 Using Basic Timer ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_01,MSP430,MSP430F471\d6,'msp430x471x7_MPY_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_01.c - 16x16 Unsigned Multiply</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_03,MSP430,MSP430F471\d6,'msp430x471x7_MPY_03.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_03.c - 16x16 Signed Multiply</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_09,MSP430,MSP430F471\d6,'msp430x471x7_MPY_09.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_09.c - 32x32 Unsigned Multiply</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_10,MSP430,MSP430F471\d6,'msp430x471x7_MPY_10.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_10.c - 32x32 Signed Multiply</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_11,MSP430,MSP430F471\d6,'msp430x471x7_MPY_11.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_11.c - 32x32 Signed Multiply Accumalate</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_12,MSP430,MSP430F471\d6,'msp430x471x7_MPY_12.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_12.c - 32x32 Unsigned Multiply Accumalate</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_13,MSP430,MSP430F471\d6,'msp430x471x7_MPY_13.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_13.c - Saturation mode overflow test</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_14,MSP430,MSP430F471\d6,'msp430x471x7_MPY_14.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_14.c - Saturation mode underflow test</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_MPY_15,MSP430,MSP430F471\d6,'msp430x471x7_MPY_15.c')">
+			<img border="0" src="project.gif" />msp430x471x7_MPY_15.c - Fractional mode, Q15 multiplication</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_OF_LFXT1_nmi,MSP430,MSP430F471\d6,'msp430x471x7_OF_LFXT1_nmi.c')">
+			<img border="0" src="project.gif" />msp430x471x7_OF_LFXT1_nmi.c - LFXT1 Oscillator Fault Detection</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_OF_XT2,MSP430,MSP430F471\d6,'msp430x471x7_OF_XT2.c')">
+			<img border="0" src="project.gif" />msp430x471x7_OF_XT2.c - XT2 Oscillator Fault Detection</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_P1_01,MSP430,MSP430F471\d6,'msp430x471x7_P1_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_P1_01.c - Software Poll P2.7, Set P5.1 if P2.7 = 1</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_P1_02,MSP430,MSP430F471\d6,'msp430x471x7_P1_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_P1_02.c - Software Port Interrupt on P2.7 from LPM4</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_P1_05,MSP430,MSP430F471\d6,'msp430x471x7_P1_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_P1_05.c - Write a byte to Port 1</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_P7_05,MSP430,MSP430F471\d6,'msp430x471x7_P7_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_P7_05.c - Write a byte to Port 7</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_P8_05,MSP430,MSP430F471\d6,'msp430x471x7_P8_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_P8_05.c - Write a byte to Port 8</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_PA_05,MSP430,MSP430F471\d6,'msp430x471x7_PA_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_PA_05.c - Write a Word to Port A (Port7+Port8)</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_PB_05,MSP430,MSP430F471\d6,'msp430x471x7_PB_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_PB_05.c - Write a Word to Port B (Port9+Port10)</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_rtc_01,MSP430,MSP430F471\d6,'msp430x471x7_rtc_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_rtc_01.c - Real Time Clock, Toggle P5.1 Inside ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_rtc_02,MSP430,MSP430F471\d6,'msp430x471x7_rtc_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_rtc_02.c - Real Time Clock, Toggle P5.1 Inside ISR, 32kHz ACLK and send Time via UART</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_sd16_01,MSP430,MSP430F471\d6,'msp430x471x7_sd16_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_sd16_01.c - SD16, Continuous Conversion on a Group of 7 Channels</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_sd16_02,MSP430,MSP430F471\d6,'msp430x471x7_sd16_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_sd16_02.c - SD16, Single Conversion on a Group of 7 Channels</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_sd16_03,MSP430,MSP430F471\d6,'msp430x471x7_sd16_03.c')">
+			<img border="0" src="project.gif" />msp430x471x7_sd16_03.c - SD16, Continuous Conversion on a Single Channel</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_sd16_04,MSP430,MSP430F471\d6,'msp430x471x7_sd16_04.c')">
+			<img border="0" src="project.gif" />msp430x471x7_sd16_04.c - SD16, Single Conversion on Single Channel Polling IFG</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_sd16_05,MSP430,MSP430F471\d6,'msp430x471x7_sd16_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_sd16_05.c - SD16, Single Conversion on a Single Channel Using ISR</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_sd16_06,MSP430,MSP430F471\d6,'msp430x471x7_sd16_06.c')">
+			<img border="0" src="project.gif" />msp430x471x7_sd16_06.c - SD16, Using the Integrated Temperature Sensor</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_svs_01,MSP430,MSP430F471\d6,'msp430x471x7_svs_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_svs_01.c - SVS, POR @ 2.5V Vcc</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_svs_03,MSP430,MSP430F471\d6,'msp430x471x7_svs_03.c')">
+			<img border="0" src="project.gif" />msp430x471x7_svs_03.c - SVS, Toggle port 5.1 on Vcc < 2.8V</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_ta_01,MSP430,MSP430F471\d6,'msp430x471x7_ta_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_ta_01.c - Timer_A, Toggle P5.1, CCR0 Cont. Mode ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_ta_02,MSP430,MSP430F471\d6,'msp430x471x7_ta_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_ta_02.c - Timer_A, Toggle P5.1, CCR0 Up Mode ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_ta_03,MSP430,MSP430F471\d6,'msp430x471x7_ta_03.c')">
+			<img border="0" src="project.gif" />msp430x471x7_ta_03.c - Timer_A, Toggle P5.1, Overflow ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_ta_04,MSP430,MSP430F471\d6,'msp430x471x7_ta_04.c')">
+			<img border="0" src="project.gif" />msp430x471x7_ta_04.c - Timer_A, Toggle P5.1, Overflow ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_ta_05,MSP430,MSP430F471\d6,'msp430x471x7_ta_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_ta_05.c - Timer_A, Toggle P5.1, CCR0 Up Mode ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_ta_16,MSP430,MSP430F471\d6,'msp430x471x7_ta_16.c')">
+			<img border="0" src="project.gif" />msp430x471x7_ta_16.c - Timer_A, PWM TA1-2 Up Mode, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_ta_17,MSP430,MSP430F471\d6,'msp430x471x7_ta_17.c')">
+			<img border="0" src="project.gif" />msp430x471x7_ta_17.c - Timer_A, PWM TA1-2 Up Mode, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_tb_01,MSP430,MSP430F471\d6,'msp430x471x7_tb_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_tb_01.c - Timer_B, Toggle P5.1, CCR0 Cont. Mode ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_tb_02,MSP430,MSP430F471\d6,'msp430x471x7_tb_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_tb_02.c - Timer_B, Toggle P5.1, CCR0 Up Mode ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_tb_03,MSP430,MSP430F471\d6,'msp430x471x7_tb_03.c')">
+			<img border="0" src="project.gif" />msp430x471x7_tb_03.c - Timer_B, Toggle P5.1, Overflow ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_tb_04,MSP430,MSP430F471\d6,'msp430x471x7_tb_04.c')">
+			<img border="0" src="project.gif" />msp430x471x7_tb_04.c - Timer_B, Toggle P5.1, Overflow ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_tb_05,MSP430,MSP430F471\d6,'msp430x471x7_tb_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_tb_05.c - Timer_B, Toggle P5.1, CCR0 Up Mode ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_tb_10,MSP430,MSP430F471\d6,'msp430x471x7_tb_10.c')">
+			<img border="0" src="project.gif" />msp430x471x7_tb_10.c - Timer_B, PWM TB1-2 Up Mode, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_tb_11,MSP430,MSP430F471\d6,'msp430x471x7_tb_11.c')">
+			<img border="0" src="project.gif" />msp430x471x7_tb_11.c - Timer_B, PWM TB1-2 Up Mode, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscia0_duplex_9600,MSP430,MSP430F471\d6,'msp430x471x7_uscia0_duplex_9600.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscia0_duplex_9600.c - USCI_A0, UART 9600 Full-Duplex Transceiver, 32K ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscia0_irda_01,MSP430,MSP430F471\d6,'msp430x471x7_uscia0_irda_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscia0_irda_01.c - USCI_A0 IrDA External Loopback Test, 4MHz SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscia0_spi_09,MSP430,MSP430F471\d6,'msp430x471x7_uscia0_spi_09.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscia0_spi_09.c - USCI_A0, SPI 3-Wire Master Incremented Data</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscia0_spi_10,MSP430,MSP430F471\d6,'msp430x471x7_uscia0_spi_10.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscia0_spi_10.c - USCI_A0, SPI 3-Wire Slave Data Echo</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscia0_uart_115k,MSP430,MSP430F471\d6,'msp430x471x7_uscia0_uart_115k.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscia0_uart_115k.c - USCI_A0, 115200 UART Echo ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscia0_uart_115k_lpm,MSP430,MSP430F471\d6,'msp430x471x7_uscia0_uart_115k_lpm.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscia0_uart_115k_lpm.c - USCI_A0, 115200 UART Echo ISR, DCO SMCLK, LPM3</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscia0_uart_9600,MSP430,MSP430F471\d6,'msp430x471x7_uscia0_uart_9600.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscia0_uart_9600.c - USCI_A0, Ultra-Low Pwr UART 9600 Echo ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscib0_i2c_08,MSP430,MSP430F471\d6,'msp430x471x7_uscib0_i2c_08.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscib0_i2c_08.c - USCI_B0 I2C Master TX multiple bytes to MSP430 Slave</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscib0_i2c_09,MSP430,MSP430F471\d6,'msp430x471x7_uscib0_i2c_09.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscib0_i2c_09.c - USCI_B0 I2C Slave RX multiple bytes from MSP430 Master</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscib0_i2c_10,MSP430,MSP430F471\d6,'msp430x471x7_uscib0_i2c_10.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscib0_i2c_10.c - USCI_B0 I2C Master RX multiple bytes from MSP430 Slave</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscib0_i2c_11,MSP430,MSP430F471\d6,'msp430x471x7_uscib0_i2c_11.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscib0_i2c_11.c - USCI_B0 I2C Slave TX multiple bytes to MSP430 Master</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_uscib0_spi_01,MSP430,MSP430F471\d6,'msp430x471x7_uscib0_spi_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_uscib0_spi_01.c - USCI_B0, SPI Interface to TLC549 8-Bit ADC</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_wdt_01,MSP430,MSP430F471\d6,'msp430x471x7_wdt_01.c')">
+			<img border="0" src="project.gif" />msp430x471x7_wdt_01.c - WDT, Toggle P5.1, Interval Overflow ISR, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_wdt_02,MSP430,MSP430F471\d6,'msp430x471x7_wdt_02.c')">
+			<img border="0" src="project.gif" />msp430x471x7_wdt_02.c - WDT, Toggle P5.1, Interval Overflow ISR, 32kHz ACLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_wdt_04,MSP430,MSP430F471\d6,'msp430x471x7_wdt_04.c')">
+			<img border="0" src="project.gif" />msp430x471x7_wdt_04.c - WDT+ Failsafe Clock, DCO SMCLK</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_wdt_05,MSP430,MSP430F471\d6,'msp430x471x7_wdt_05.c')">
+			<img border="0" src="project.gif" />msp430x471x7_wdt_05.c - Reset on Invalid Address fetch, Toggle P5.1</a></li>
+		<li><a href="liveaction:CreateProjectAction(msp430x471x7_wdt_06,MSP430,MSP430F471\d6,'msp430x471x7_wdt_06.c')">
+			<img border="0" src="project.gif" />msp430x471x7_wdt_06.c - WDT+ Failsafe Clock, 32kHz ACLK</a></li>
+	</ul>
+</p>
+</body>
+</html>
+

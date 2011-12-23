@@ -1,0 +1,49 @@
+;******************************************************************************
+;   MSP-FET430P440 Demo - Timer_B, Toggle P5.1, CCR0 Up Mode ISR, DCO SMCLK
+;
+;   Description: This program toggles P5.1 using software and TB_0 ISR.
+;   Timer_B is configured for up mode, thus the timer overflows when
+;   TBR counts to TBCCR0.  In this example, TBCCR0 is loaded with 20000.
+;   ACLK = n/a, MCLK = SMCLK = TBCLK = default DCO
+;
+;                MSP430F449
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 |
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;
+;   M. Buccini
+;   Texas Instruments Inc.
+;   Feb 2005
+;   Built with IAR Embedded Workbench Version: 3.21A
+;******************************************************************************
+#include  <msp430x44x.h>
+;------------------------------------------------------------------------------
+            ORG     01100h                  ; Program Start
+;------------------------------------------------------------------------------
+RESET       mov.w   #0A00h,SP               ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupP5     bis.b   #002h,&P5DIR            ; P5.1 output
+SetupC0     mov.w   #CCIE,&TBCCTL0          ; TBCCR0 interrupt enabled
+            mov.w   #20000,&TBCCR0          ;
+SetupTB     mov.w   #TBSSEL_2+MC_1,&TBCTL   ; SMCLK, upmode
+                                            ;						
+Mainloop    bis.w   #CPUOFF+GIE,SR          ; CPU off, interrupts enabled
+            nop                             ; Required only for debugger
+                                            ;
+;------------------------------------------------------------------------------
+TB0_ISR;    Toggle P5.1
+;------------------------------------------------------------------------------
+            xor.b   #002h,&P5OUT            ; Toggle P5.1
+            reti                            ;		
+                                            ;
+;------------------------------------------------------------------------------
+;           Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     0FFFEh                  ; RESET Vector
+            DW      RESET                   ;
+            ORG     0FFFAh                  ; Timer_B0 Vector
+            DW      TB0_ISR                 ;
+            END

@@ -1,0 +1,123 @@
+;******************************************************************************
+;   MSP430xG461x Demo - Real Time Clock, Toggle P5.1 Inside ISR, 32kHz ACLK
+;
+;   Description: This program toggles P5.1 by xor'ing P5.1 inside of
+;   a Real Time Clock ISR. The Real Time Clock ISR is called once a minute using
+;   the Alarm function provided by the RTC. ACLK used to clock basic timer.
+;   The actual time is send send via UART
+;   ACLK = LFXT1 = 32768Hz, MCLK = SMCLK = default DCO = 32 x ACLK = 1048576Hz
+;   //* An external watch crystal between XIN & XOUT is required for ACLK *//
+;
+;                MSP430FG4619
+;             -----------------
+;         /|\|              XIN|-
+;          | |                 | 32kHz
+;          --|RST          XOUT|-
+;            |                 |
+;            |             P5.1|-->LED
+;            |                 |
+;            |      P2.4/UC0TXD|----------->
+;            |                 | 2400 - 8N1
+;            |      P2.5/UC0RXD|<-----------
+;
+;   S.Schauer / A. Dannenberg
+;   Texas Instruments Inc.
+;   June 2007
+;   Built with IAR Embedded Workbench Version: 3.42A
+;******************************************************************************
+#include  <msp430xG46x.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+
+
+SetupP2     bis.b   #030h,&P2SEL            ; P2.4,5 = USART0 TXD/RXD
+SetupP5     bis.b   #002h,&P5DIR            ; P5.1 output
+
+SetupUSCI0:
+            mov.b   #UCSWRST, &UCA0CTL1     ; To set hold the module in reset
+            bis.b   #UCSSEL0, &UCA0CTL1     ; ACLK
+            mov.b   #013,     &UCA0BR0      ; 32k - 2400 baudrate control setting
+            mov.b   #0,       &UCA0BR1      ;
+            mov.b   #UCBRS2+UCBRS1, &UCA0MCTL; Seond modulation stage values
+            bic.b   #UCFE+UCOE+UCPE+UCBRK+UCRXERR, &UCA0STAT
+            bic.b   #UCSWRST, &UCA0CTL1     ; Release the module
+
+SetupRTC    mov.b   #RTCBCD+RTCHOLD+RTCMODE_3+RTCTEV_0+RTCIE,&RTCCTL
+                                            ; RTC enable, BCD mode,
+                                            ; alarm every Minute,
+                                            ; enable RTC interrupt
+            ; Init time
+            mov.b   #000h,&RTCSEC           ; Set Seconds
+            mov.b   #000h,&RTCMIN           ; Set Minutes
+            mov.b   #008h,&RTCHOUR          ; Set Hours
+
+            ; Init date
+            mov.b   #002h,&RTCDOW           ; Set DOW
+            mov.b   #023h,&RTCDAY           ; Set Day
+            mov.b   #008h,&RTCMON           ; Set Month
+            mov.w   #02005h,&RTCYEAR        ; Set Year
+
+            bic.b   #RTCHOLD,&RTCCTL        ; Enable RTC
+
+Mainloop    bis.w   #LPM3+GIE,SR            ; Enter LPM3, enable interrupts
+            nop                             ; Required only for debugger
+            mov.b   &RTCHOUR,R12            ; Send hour to UART
+            rra     R12                     ; Prep high nibble
+            rra     R12                     ;
+            rra     R12                     ;
+            rra     R12                     ;
+            add     #0x30,R12               ;
+            call    #tx_char                ; Send Char
+            mov.b   &RTCHOUR,R12            ; Prep low nibble
+            and.b   #0x0F,R12               ;
+            add     #0x30,R12               ;
+            call    #tx_char                ; Send Char
+;
+            mov.b   #':',R12                ; Send ':'
+            call    #tx_char                ; Send Char
+;
+            mov.b   &RTCMIN,R12             ; send minutes to UART
+            rra     R12                     ; Prep high nibble
+            rra     R12                     ;
+            rra     R12                     ;
+            rra     R12                     ;
+            add     #0x30,R12               ;
+            call    #tx_char                ; Send Char
+            mov.b   &RTCMIN,R12             ; Prep low nibble
+            and.b   #0x0F,R12               ;
+            add     #0x30,R12               ;
+            call    #tx_char                ; Send Char
+;
+            mov.b   #'\n',R12               ; Send new line
+            call    #tx_char                ; Send Char
+;
+            jmp     Mainloop                ;
+;
+;-------------------------------------------------------------------------------
+tx_char     bit.b   #UCA0TXIFG,&IFG2        ; wait till TXbuf empty
+            jz      tx_char                 ;
+            mov.b   R12,&UCA0TXBUF          ; TX char
+            ret
+;
+;-------------------------------------------------------------------------------
+BT_ISR;     Toggle P5.1
+;-------------------------------------------------------------------------------
+            xor.b   #002h,&P5OUT            ; Toggle P5.1
+            bic     #LPM3,0(SP)             ; Exit LPm after interrupt
+            reti                            ;
+                                            ;
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     BASICTIMER_VECTOR       ; Basic Timer Vector
+            DW      BT_ISR                  ;
+            ORG     RESET_VECTOR            ; POR, ext. Reset, Watchdog
+            DW      RESET
+            END
+

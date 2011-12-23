@@ -1,0 +1,71 @@
+//*****************************************************************************
+//  MSP430F66x Demo - FLL+, Output 32kHz Xtal + HF Xtal + Internal DCO
+//
+//  Description:  This program demonstrates using an external 32kHz crystal to
+//  supply ACLK, and using a high speed crystal or resonator to supply SMCLK.
+//  MLCK for the CPU is supplied by the internal DCO.  The 32kHz crystal
+//  connects between pins Xin and Xout. The high frequency crystal or
+//  resonator connects between pins XT2IN and XT2OUT.  The DCO clock is
+//  generated internally and calibrated from the 32kHz crystal.  
+//  ACLK is brought out on pin P1.0, SMCLK is brought out on P3.4.
+//
+//  ACLK = LFXT1 = 32768Hz, MCLK = default DCO = 32 x ACLK = 1048576Hz
+//  SMCLK = HF XTAL
+//  //* An external watch crystal between XIN & XOUT is required for ACLK *//	
+//
+//                MSP430F66x
+//             -----------------
+//        /|\ |              XIN|-
+//         |  |                 | 32kHz
+//         ---|RST          XOUT|-
+//            |                 |
+//            |                 |
+//            |            XT2IN|-
+//            |                 | HF XTAL or Resonator (add capacitors)
+//            |           XT2OUT|-
+//            |                 |
+//            |             P1.0|--> ACLK = 32kHz Crystal Out
+//            |                 |
+//            |             P3.4|--> SMCLK = High Freq Xtal or Resonator Out
+//            |                 |
+//            |                 |
+//
+//   Priya Thanigai
+//   Texas Instruments Inc.
+//   Nov 2009
+//   Built with IAR Embedded Workbench Version: 4.20 & Code Composer Studio V4.0
+//******************************************************************************
+#include <msp430f6638.h>
+
+void main(void)
+{
+  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
+
+  P1DIR |= BIT0;                            // ACLK set out to pins
+  P1SEL |= BIT0;                            
+  P3DIR |= BIT4;                            // SMCLK set out to pins
+  P3SEL |= BIT4;                            
+
+  while(BAKCTL & LOCKIO)                    // Unlock XT1 pins for operation
+     BAKCTL &= ~(LOCKIO);   
+  
+  P7SEL |= BIT2+BIT3;                       // Port select XT2
+  UCSCTL6 &= ~XT2OFF;                       // Set XT2 On
+  
+  UCSCTL6 &= ~(XT1OFF);                     // XT1 On
+  UCSCTL6 |= XCAP_3;                        // Internal load cap 
+  // Loop until XT1 fault flag is cleared
+  do
+  {
+    UCSCTL7 &= ~(XT2OFFG + XT1LFOFFG + DCOFFG);
+                                            // Clear XT2,XT1,DCO fault flags
+    SFRIFG1 &= ~OFIFG;                      // Clear fault flags
+  }while (SFRIFG1&OFIFG);                   // Test oscillator fault flag
+
+  
+  UCSCTL6 &= ~XT2DRIVE0;                    // Decrease XT2 Drive according to
+                                            // expected frequency  
+  UCSCTL4 |= SELA_0 + SELS_5;               // Select SMCLK, ACLK source and DCO source
+
+  while(1);                                 // Loop in place
+}

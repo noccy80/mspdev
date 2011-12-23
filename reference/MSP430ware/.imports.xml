@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href=".imports.xsl"?>
+<tree-imports>
+ <tools-version TOOLS_SETTING="Build Host">
+     CYGWIN_NT-5.1 DTA0194920 1.7.9(0.237/5/3) 2011-03-29 10:10 i686 Cygwin
+ </tools-version>
+ <location-prefix root="/cygdrive/c/430ware/Msp430Ware">
+  <!--Location prefix is the absolute starting location for all the imports.-->
+ </location-prefix>
+  <import>
+   <name>
+    MSP-EXP430F5529_UE-1.20.00.00-Setup.exe
+   </name>
+   <location>
+    1_20_00_00/http://dleinspect.itg.ti.com:82/msp430/msp430_public_sw/mcu/msp430/MSPEXP430F5529UE/
+   </location>
+   <package>
+    <!--Placeholder only. not yet used -->
+   </package>
+  </import>
+  <import>
+   <name>
+    master
+   </name>
+   <location>
+    git://gforge01.dal.design.ti.com/msp430apps
+   </location>
+   <package>
+    <!--Placeholder only. not yet used -->
+   </package>
+  </import>
+  <import>
+   <name>
+    MSP430_USB_Developers_Package-3.0-Installer.exe
+   </name>
+   <location>
+    3_00_00_00/http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430_USB_Developers_Package
+   </location>
+   <package>
+    <!--Placeholder only. not yet used -->
+   </package>
+  </import>
+</tree-imports>

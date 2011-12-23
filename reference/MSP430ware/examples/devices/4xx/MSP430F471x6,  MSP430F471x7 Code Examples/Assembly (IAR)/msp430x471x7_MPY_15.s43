@@ -1,0 +1,42 @@
+;******************************************************************************
+;    MSP430x471xx Demo - Fractional mode, Q15 multiplication
+;
+;   Description: The example illustrates multiplication of 2 Q15 numbers in
+;   fractional mode. The result is a Q15 (15 bit) number stored in the RES1
+;   register. It can be viewed in the debugger window. 
+;
+;                MSP430x471xx
+;             -----------------
+;         /|\|                 |
+;          | |                 |
+;          --|RST              |
+;            |                 |
+;            |                 |
+;
+;  K. Venkat
+;  Texas Instruments Inc.
+;  May 2009
+;  Built with IAR Embedded Workbench Version: 4.11B
+;******************************************************************************
+#include  <msp430x471x7.h>
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+;-----------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+SetupFLL    bis.b   #XCAP14PF,&FLL_CTL0     ; Configure load caps
+SetupMPY    bis.w   #MPYFRAC,&MPY32CTL0     ; Enable fractional mode
+            mov.w   #07D70h,&MPYS           ; Load first operand
+            mov.w   #01000h,&OP2            ; Load second operand      
+            mov.w   &RESHI,R5               ; R5 = Q15 result
+            bic.w   #MPYFRAC,&MPY32CTL0     ; Disable fractional mode                    
+            bis.w   #LPM4,SR                ; LPM4
+            nop                             ; set BREAKPOINT here
+;------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; MSP430 RESET Vector
+            DW      RESET                   ;
+            END

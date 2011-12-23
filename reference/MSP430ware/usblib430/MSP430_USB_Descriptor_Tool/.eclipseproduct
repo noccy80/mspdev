@@ -1,0 +1,5 @@
+#Eclipse Product File
+#Wed Mar 16 09:37:22 CDT 2011
+version=3.0.10
+name=MSP430 USB Descriptor Tool(3.0.10)
+id=com.ti.msp430.usb.descriptortool.product
