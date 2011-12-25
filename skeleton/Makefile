@@ -42,7 +42,8 @@ AR       = msp430-ar
 #
 # Flags and command lines
 #
-CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
+CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-functions -g -O2 -Wall -Wunused $(INCLUDES)
+# if your main never returns: -mendup-at=main  (saves 6 bytes of ram)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 ARFLAGS  = crs
