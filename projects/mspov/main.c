@@ -1,8 +1,9 @@
 /**
- * Blink example for MSP430
+ * MSP430 Persistence of Visition Display
  *
- * Snatched from hackaday.com and rewritten to compile for a number of
- * different MCUs in the MSP430 series.
+ * This is a simple POV display for the MSP430, capable of outputting text (for
+ * now at least) in any direction. It can be extended with a tilt sensor to
+ * change the direction.
  *
  * @author Christopher Vagnetoft <noccylabs.info>
  * @license GNU General Public License (GPL) v2 or later
@@ -15,9 +16,6 @@
 
 #define  LED_DIR   P1DIR
 #define  LED_OUT   P1OUT
-
-unsigned char blank = 0;
-unsigned char step = 0;
 
 // The message to display 
 const char message[] = "HELLO WORLD!\0";
@@ -53,7 +51,7 @@ int main(void) {
 	// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
 	// should output an LED change every 1 second. Try this out and see how
 	// inaccurate the VLO can be
-	TACCR0 = 300;
+	TACCR0 = 100;
 
 	//Enable global interrupts
 	eint();
@@ -74,17 +72,32 @@ interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 #endif
 	static unsigned char stepchar = 0;
 	static unsigned char position = 0;
+	static unsigned char blank = 0;
+	static unsigned char step = 0;
+	
+	// Blank is used to make every 2nd display cycle blank (blacken) out the
+	// LEDs.
 	blank = !blank;
 	if (!blank) {
+		
+		// If we are not on a blank phase, we grab the message byte as stepchar.
 		stepchar = message[step];
 		if (stepchar == 0) {
+			// If the character is 0 then we black out again, and reset to the
+			// first step (step 0)
 			LED_OUT = 0;
 			step = 0;
 		} else {
+			// Else, we need to go over the columns of the font, so this is how
+			// we do that.
 		    if (position < FONTWIDTH) {
+				// Set the output leds to be the value of char-offset with an
+				// index to step.
 				LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + step];
 				position++;
 		    } else {
+				// When we hit the end of the character, we jump to the next
+				// characters' first column.
 				step++;
 				position=0;
 		    }
