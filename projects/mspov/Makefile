@@ -7,7 +7,7 @@
 # is located in a location outside of the path, change the following line to
 # point to the proper location. Also, the driver is defined here:
 MSPDEBUG = mspdebug
-MSPTYPE  = rf2500
+MSPTYPE ?= rf2500
 #
 # The MCU to use can either be defined on the command line:
 #   export MCU=msp430g2253
@@ -32,7 +32,8 @@ OBJCOPY  = msp430-objcopy
 SIZE     = msp430-size --format=sysv
 STRIP    = msp430-strip
 # Flags and command lines
-CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-functions -g -Os -Wall -Wunused $(INCLUDES)
+#  if your main never returns: -mendup-at=main  (saves 6 bytes of ram)
+CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-functions -g -O2 -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings

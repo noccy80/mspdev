@@ -11,11 +11,10 @@
 #include <msp430.h>
 #include <legacymsp430.h>
 #include "ta0compat.h"
+#include "font.h"
 
 #define  LED_DIR   P1DIR
 #define  LED_OUT   P1OUT
-
-#include "font.h"
 
 unsigned char blank = 0;
 unsigned char step = 0;
@@ -57,7 +56,7 @@ int main(void) {
 	TACCR0 = 300;
 
 	//Enable global interrupts
-	WRITE_SR(GIE);
+	eint();
 
 	while(1) {
 		//Loop forever, interrupts take care of the rest
@@ -74,6 +73,7 @@ interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
 interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 #endif
 	static unsigned char stepchar = 0;
+	static unsigned char position = 0;
 	blank = !blank;
 	if (!blank) {
 		stepchar = message[step];
@@ -81,8 +81,13 @@ interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 			LED_OUT = 0;
 			step = 0;
 		} else {
-			LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + step];
-			step++;
+		    if (position < FONTWIDTH) {
+				LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + step];
+				position++;
+		    } else {
+				step++;
+				position=0;
+		    }
 		}
 	} else {
 		// Blank every 2nd step
