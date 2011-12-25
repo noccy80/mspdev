@@ -30,7 +30,7 @@ BUILD     = bin prog
 TARGET    = main
 INCLUDES  =
 LIBS      =
-INCDIR    = -I../include
+
 #
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
@@ -42,7 +42,7 @@ AR       = msp430-ar
 #
 # Flags and command lines
 #
-CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCDIR) $(INCLUDES)
+CFLAGS   = -mmcu=$(MCU) -g -Os -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 ARFLAGS  = crs

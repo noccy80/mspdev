@@ -15,22 +15,18 @@
 #define  LED_DIR   P1DIR
 #define  LED_OUT   P1OUT
 
+#include "font.h"
+
 unsigned char blank = 0;
 unsigned char step = 0;
 
 // The message to display 
 const char message[] = "HELLO WORLD!\0";
 
-// Charset starts at 32
-const char firstchar = 32;
-
-// This is our font data
-const char charset[] = { 0 };
-
 void initLEDs(void) {
 
 	LED_DIR = 0xFF;
-	LED_OUT = 0;
+	LED_OUT = 0x00;
 
 }
 
@@ -85,7 +81,7 @@ interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 			LED_OUT = 0;
 			step = 0;
 		} else {
-			LED_OUT = charset[stepchar - firstchar];
+			LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + step];
 			step++;
 		}
 	} else {

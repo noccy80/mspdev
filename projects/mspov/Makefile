@@ -22,8 +22,8 @@ MCU?=$(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | 
 SOURCES  = main.c
 SOURCESA =
 TARGET   = mspov
-INCLUDES =
-LIBS     =
+INCLUDES = -I../../lib430/include
+LIBS     = -L../../lib430/libs
 
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
