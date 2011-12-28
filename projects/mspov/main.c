@@ -13,6 +13,8 @@
 #include <legacymsp430.h>
 #include "ta0compat.h"
 #include "font.h"
+#include "database.h"
+#include "config.h"
 
 #define  LED_DIR   P1DIR
 #define  LED_OUT   P1OUT
@@ -86,14 +88,15 @@ interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 			// If the character is 0 then we black out again, and reset to the
 			// first step (step 0)
 			LED_OUT = 0;
-			step = 0;
+			position++;
+			if (position > FONTWIDTH) step = 0;
 		} else {
 			// Else, we need to go over the columns of the font, so this is how
 			// we do that.
 		    if (position < FONTWIDTH) {
 				// Set the output leds to be the value of char-offset with an
 				// index to step.
-				LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + step];
+				LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + position];
 				position++;
 		    } else {
 				// When we hit the end of the character, we jump to the next
