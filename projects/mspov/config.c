@@ -22,6 +22,9 @@
 #define BTN_MENU BIT1
 #define BTN_NEXT BIT2
 
+uint8_t in_menu = 0;
+uint8_t menu_index = 0;
+
 /**
  * @brief UI initialization.
  *

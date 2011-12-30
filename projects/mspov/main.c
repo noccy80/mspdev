@@ -14,10 +14,10 @@
 #include "ta0compat.h"
 #include "font.h"
 #include "database.h"
+#include <msplib/lib430.h>
+#include <msplib/wdt.h>
 #include "config.h"
 
-#define  LED_DIR   P1DIR
-#define  LED_OUT   P1OUT
 
 // The message to display 
 const char message[] = "HELLO WORLD!\0";
@@ -31,13 +31,7 @@ void initLEDs(void) {
 
 int main(void) {
 
-	// Halt the watchdog timer - According to the datasheet the watchdog timer
-	// starts automatically after powerup. It must be configured or halted at
-	// the beginning of code execution to avoid a system reset. Furthermore,
-	// the watchdog timer register (WDTCTL) is password protected, and requires
-	// the upper byte during write operations to be 0x5A, which is the value
-	// associated with WDTPW.
-	WDTCTL = WDTPW + WDTHOLD;
+	WDT_hold();
 
 	//Setup LEDs
 	initLEDs();

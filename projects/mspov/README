@@ -22,6 +22,28 @@ and can be programmed onto any compatible device with any programmer.
 
  * mspdebug is needed to identify the device as well as program it
  * msp430-gcc is needed to compile the project
+ 
+Using
+-----
+
+ P1.[0..7]   Red LEDs
+ P2.1        Green LED
+ P2.[2..3]   Programmer light detector circuit
+ P2.4        Menu button
+ P2.5        Select button
+
+Using MSPov is simple. Hold the menu button. The green light will light up and
+one of the red led:s will start flashing. When you go full circle the green
+LED will start flashing. This means "exit menu".
+
+If you select a slot with the select button and the menu button, the light for
+that slot will stay on and the green led will start fashing. Put the sensors
+toward your screen running the "povprog" binary. When the MSPov detects a sync
+signal, the green LED will come on and it will remain on until the full message
+have been received and programmed. At this time all lights will be off.
+
+Tapping the menu button once will start the message. Tapping the select button
+will change to the next pattern.
 
 The Makefile
 ------------
