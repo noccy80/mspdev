@@ -1,5 +1,5 @@
-#ifndef __WDT_H__
-#define __WDT_H__
+#ifndef __MSPLIB_H__
+#define __MSPLIB_H__
 
 #define __mainloop while(1)
 
@@ -12,4 +12,4 @@ static void __inline__ brief_pause(register unsigned int n)
         : [n] "+r"(n));
 }
 
-#endif // __WDT_H__
+#endif // __MSPLIB_H__

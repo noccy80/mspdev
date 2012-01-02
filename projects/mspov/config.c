@@ -13,14 +13,7 @@
 #include <legacymsp430.h>
 #include "config.h"
 
-#define BTN_DIR P2DIR
-#define BTN_IN P2IN
 
-#define LED_MENU BIT0
-#define SENSE_DATA BIT3
-#define SENSE_CLOCK BIT4
-#define BTN_MENU BIT1
-#define BTN_NEXT BIT2
 
 uint8_t in_menu = 0;
 uint8_t menu_index = 0;
@@ -58,7 +51,7 @@ void ui_menumode(void) {
  *
  *
  */
-interrupt(PORT2_VECTOR) PORT2_ISR(void) {
+interrupt(PORT2_VECTOR) PORT1_ISR(void) {
 
 	int source = 0;
 	

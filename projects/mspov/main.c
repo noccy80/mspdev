@@ -19,7 +19,7 @@
 #include "config.h"
 
 
-// The message to display 
+// The message to display
 const char message[] = "HELLO WORLD!\0";
 
 void initLEDs(void) {
@@ -49,6 +49,9 @@ int main(void) {
 	// inaccurate the VLO can be
 	TACCR0 = 100;
 
+	// Timer to control, timer clock and edge, and timer
+	TIMER_setup(__TIMERA0_BASE, TASSEL_1 | MC_1, 100);
+
 	//Enable global interrupts
 	eint();
 
@@ -70,12 +73,12 @@ interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 	static unsigned char position = 0;
 	static unsigned char blank = 0;
 	static unsigned char step = 0;
-	
+
 	// Blank is used to make every 2nd display cycle blank (blacken) out the
 	// LEDs.
 	blank = !blank;
 	if (!blank) {
-		
+
 		// If we are not on a blank phase, we grab the message byte as stepchar.
 		stepchar = message[step];
 		if (stepchar == 0) {
