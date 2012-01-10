@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>CapTouchBoosterPack_UserExperience</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
+		<nature>com.ti.ccstudio.managedbuild.core.ccsNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>CapTouchBoosterPack_UserExperience.c</name>
+			<type>1</type>
+			<locationURI>CAPTOUCH_BOOSTERPACK_UE_ROOT/CapTouchBoosterPack_UserExperience.c</locationURI>
+		</link>
+		<link>
+			<name>uart.c</name>
+			<type>1</type>
+			<locationURI>CAPTOUCH_BOOSTERPACK_UE_ROOT/uart.c</locationURI>
+		</link>
+		<link>
+			<name>uart.h</name>
+			<type>1</type>
+			<locationURI>CAPTOUCH_BOOSTERPACK_UE_ROOT/uart.h</locationURI>
+		</link>
+		<link>
+			<name>CapacitiveTouchLibrary</name>
+			<type>2</type>
+			<locationURI>CAPTOUCH_BOOSTERPACK_UE_ROOT/CapacitiveTouchLibrary</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>
