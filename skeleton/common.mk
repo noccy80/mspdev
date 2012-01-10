@@ -50,17 +50,19 @@ LSTS     = $(SOURCES:.c=.lst)
 # Target rules
 all: $(BUILD)
 lib: $(TARGET).a
-bin: $(TARGET).elf $(TARGET).hex listing
+bin: $(TARGET).elf $(TARGET).hex
 
+# Build library
+$(TARGET).a: $(OBJS)
+	$(AR) $(ARFLAGS) -o $(TARGET).a $(OBJS)
+
+# Build binary
 $(TARGET).elf: $(OBJS)
 ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
 	@exit 1
 endif
 	$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJS) $(LIBS)
-ifeq ($(STRIP),"1")
-	$(STRIP) $(TARGET).elf
-endif
 	$(SIZE) $(TARGET).elf
 
 listing: $(LSTS)

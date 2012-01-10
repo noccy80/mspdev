@@ -1,4 +1,4 @@
-BUILDLIBS=libcore libhal libcomm libsound libmidi
+BUILDLIBS=libcore libhal libcomm libsound libmidi liblcd
 
 all: $(BUILDLIBS)
 
@@ -16,6 +16,9 @@ libhal: force
 
 libcomm: force
 	@cd libcomm; $(MAKE) $(MFLAGS) lib; cd ..
+
+liblcd: force
+	@cd liblcd; $(MAKE) $(MFLAGS) lib; cd ..
 
 clean: force
 	@cd libhal; $(MAKE) $(MFLAGS) clean; cd ..

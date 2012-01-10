@@ -15,8 +15,8 @@ unsigned char suart_rcvbuflen = 0;
 unsigned char BitCnt;		// Bit count, used when transmitting byte
 unsigned int TXByte;		// Value sent over UART when Transmit() is called
 unsigned int RXByte;		// Value recieved once hasRecieved is set
-bool _uart_isReceiving;		// Status for when the device is receiving
-bool _uart_hasReceived;		// Lets the program know when a byte is received
+volatile bool _uart_isReceiving;		// Status for when the device is receiving
+volatile bool _uart_hasReceived;		// Lets the program know when a byte is received
 
 /**
  * @brief Initialize the software uart code
