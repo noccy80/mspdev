@@ -1,6 +1,14 @@
 #include <stdint.h>
 #include "hal.h"
 
+uint8_t* hal_get_port_base(uint8_t port, uint8_t offset) {
+	return (_PBADDR[port] + offset);
+}
+
+uint8_t hal_get_pin(HAL_MAP pin) {
+	return 2^(pin & 0xF);
+}
+
 /**
  * NoccyLabs Hardware Abstraction Library for the MSP430
  *
@@ -15,29 +23,45 @@ inline void gpio_decode_pin(HAL_MAP halmap) { return ((halmap & 0x000F); };
 
 void gpio_makeinput(HAL_MAP pin) {
 	if (pin & HAL_DEVICE_GPIO) {
-		uint8_t port = (uint8_t*)hal_get_port_base(gpio_decode_port(pin));
+		uint8_t port = (uint8_t*)hal_get_port_base(gpio_decode_port(pin),GPIO_OFFS_DIR);
+		uint8_t pinval = hal_get_pin_value(pin);
 		if (port) { 
 			// Set port input 
+			port |= pinval;
 		}
 	}
 }
 
 void gpio_makeoutput(HAL_MAP pin) {
 	if (pin & HAL_DEVICE_GPIO) {
-		uint8_t port = (uint8_t*)hal_get_port_base(gpio_deocde_port(pin));
+		uint8_t port = (uint8_t*)hal_get_port_base(gpio_decode_port(pin),GPIO_OFFS_DIR);
+		uint8_t pinval = hal_get_pin_value(pin);
 		if (port) { 
 			// Set port output
+			port &= ~pinval;
 		}
 	}
 }
 
-void gpio_setstate(HAL_MAP pin, uint8_t state) {
+void gpio_setstate(HAL_MAP pin, bool state) {
 	if (pin & HAL_DEVICE_GPIO) {
-		uint8_t port = (uint8_t*)hal_get_port_base(pin & HAL_MASK_PORT);
+		uint8_t port = (uint8_t*)hal_get_port_base(gpio_decode_port(pin),GPIO_OFFS_OUT);
+		uint8_t pinval = hal_get_pin_value(pin);
 		if (port) { 
-			uint8_t pin = hal_get_pin
-			// Set port state
+			if (state) { 
+				port |= pinval;
+			} else {
+				port &= ~pinval;
+			}
 		}
+	}
+}
+
+bool gpio_getstate(HAL_MAP pin) {
+	if (pin & HAL_DEVICE_GPIO) {
+		uint8_t port = (uint8_t*)hal_get_port_base(gpio_decode_port(pin),GPIO_OFFS_OUT);
+		uint8_t pinval = hal_get_pin_value(pin);
+		return (port & pinval);
 	}
 }
 

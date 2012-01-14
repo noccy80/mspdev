@@ -13,7 +13,7 @@ SOURCES   = fifo.c huart.c suart.c usci.c usi.c io.c
 SOURCESA  =
 BUILD     = lib
 TARGET    = libcomm
-INCLUDES  =
+INCLUDES  = -I..
 LIBS      =
 
 include common.mk

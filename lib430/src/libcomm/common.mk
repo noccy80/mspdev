@@ -38,8 +38,7 @@ STRIP    = msp430-strip
 # Flags and command lines
 #   -mendup-at=main   - saves 6 bytes of ram if the main funct never returns
 CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections \
-			-fno-inline-small-functions -g -O2 -Wall -Wunused $(INCLUDES) \
-			-mendup-at=main
+			-fno-inline-small-functions -g -O2 -Wall -Wunused $(INCLUDES)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings
