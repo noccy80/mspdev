@@ -25,8 +25,8 @@ void suart_init(FIFO* inq, FIFO* outq, HAL_MAP drecv, HAL_MAP dsend) {
 	_uart_drecv = drecv;
 	_uart_dsend = dsend;
 
-	fifo_init(&_uart_inq,16);
-	fifo_init(&_uart_outq,16);
+	fifo_init(_uart_inq,16);
+	fifo_init(_uart_outq,16);
 
 	WDTCTL = WDTPW + WDTHOLD; // Stop WDT
   
@@ -52,7 +52,7 @@ void suart_init(FIFO* inq, FIFO* outq, HAL_MAP drecv, HAL_MAP dsend) {
  * @param int character The character to write
  */
 int putchar(int character) {
-	fifo_push(&_uart_outq,(uint8_t)character);
+	fifo_push(_uart_outq,(uint8_t)character);
 	suart_flush();
 	return 1;
 
@@ -65,7 +65,7 @@ int putchar(int character) {
  * @return bool True if data is waiting
  */
 bool suart_datawaiting() {
-	return fifo_peek(&_uart_inq);
+	return fifo_peek(_uart_inq);
 }
 
 /**
@@ -75,12 +75,12 @@ bool suart_datawaiting() {
  */
 unsigned char suart_receive() {
 
-	return fifo_pop(&_uart_inq);
+	return fifo_pop(_uart_inq);
 
 }
 
 void suart_flush() {
-	while (fifo_peek(&_uart_outq)) { suart_transmit(fifo_pop(&_uart_outq)); }
+	while (fifo_peek(_uart_outq)) { suart_transmit(fifo_pop(_uart_outq)); }
 }
 
 /**
@@ -163,7 +163,7 @@ interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
 			if ( (RXByte & 0x201) == 0x200) {	// Validate the start and stop bits are correct
 				RXByte = RXByte >> 1;		// Remove start bit
 				RXByte &= 0xFF;			// Remove stop bit
-				fifo_push(&_uart_inq,RXByte);
+				fifo_push(_uart_inq,RXByte);
 			}
   			__bic_SR_register_on_exit(CPUOFF);	// Enable CPU so the main while loop continues
 		} else {

@@ -1,6 +1,7 @@
 #ifndef __HAL_H__
 #define __HAL_H__
 #include <stdint.h>
+#include <msp430.h>
 
 #define HAL_MAP uint16_t
 
