@@ -1,0 +1,15 @@
+Revision Information:
+Note: This applies only when C functions are used to call the ASM library.
+Due to a change in C calling conventions by IAR the USI I2C library has been modified and two seperate revisions - A and B are provided in order that they are compatible with all IAR versions. 
+
+For IAR Version1, during a C function call, the first parameter passed as an argument is assigned to R12 or R13:R12, depending on the size of the parameter. The second argument is passed in R14 or R15:R14. Should there be no more available registers, the parameter is passed on the stack.
+For IAR Version2, the first parameter is assigned the first free register, starting from R12.
+Please refer to the MSP430 C/C++ Compiler Reference Guide for a detailed description of the calling convention changes(available in 'Help' tab of IAR Embedded Workbench).
+
+The USI I2C Library Rev. A works with IAR Version 1 (upto and including IAR V3.42A)
+The USI I2C Library Rev. B  has been modified to work for all later versions of IAR.
+Please go to Help -> About -> Product Info  to determine your IAR version.
+Note that only the source files have changed between revisions, the same example files can be used across both revs.
+
+Rev (05/09)
+Rev A & B Slave - Source - Modified State 4 to restore R12 on address NACK.

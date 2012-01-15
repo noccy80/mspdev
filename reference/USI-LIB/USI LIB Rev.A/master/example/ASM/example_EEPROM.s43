@@ -1,0 +1,140 @@
+;******************************************************************************
+;  MSP430F20xx Demo - USI I2C interface with AT24C02 EEPROM
+;
+;  Description: USI module is used in I2C mode to transmit 10 bytes of 
+;  data to the AT24C02 EEPROM. The data is split into 2 streams of 8 bytes & 2 
+;  bytes each so it can be prefixed by the page address of the EEPROM device. 
+;  Data is then continuously read from the EEPROM and stored in RAM. 
+;  LED turns on if transmitted data = received data. Received data can also be 
+;  veiwed in the debugger window.
+;
+;   ACLK = n/a, MCLK = SMCLK = Calibrated 1MHz
+;         
+;               MSP430F20x2/3              AT24C02A EEPROM
+;             -----------------          -----------------
+;         /|\|              XIN|-     - | Vcc             |
+;          | |                 |        |                 |
+;          --|RST          XOUT|-       |                 |
+;            |                 |        |                 |
+;      LED <-|P1.0             |        |                 |
+;            |                 |        |                 |
+;            |         SDA/P1.7|------->|SDA              |
+;            |         SCL/P1.6|------->|SCL          GND |
+;
+;  Note: Internal pull-ups are used in this example for SDA & SCL
+;        EEPROM slave address = 0x50 
+;
+;  P.Thanigai
+;  Texas Instruments Inc.
+;  August 2007
+;  Built with IAR Embedded Workbench Version: 3.42A
+;*****************************************************************************
+#include  <msp430x20x2.h>
+EXTERN    TI_USI_I2C_MasterInit
+EXTERN    TI_USI_I2CSelect
+EXTERN    TI_USI_I2CRead
+EXTERN    TI_USI_I2CWrite
+EXTERN    TI_USI_I2CStop
+            RSEG    DATA16_C
+Transmit1   DB      0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07
+Transmit2   DB      0x08,0x08,0x09   
+            RSEG    DATA16_N
+Receive     DS      10  
+Check       DS      10
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+            EVEN
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+CheckCal    cmp.b   #0FFh,&CALBC1_1MHZ      ; Calibration constants erased?
+            jeq     Trap
+            cmp.b   #0FFh,&CALDCO_1MHZ
+            jne     Load  
+Trap        jmp     $                       ; Trap CPU!!
+Load        mov.b   &CALBC1_1MHZ,&BCSCTL1   ; Set DCO to 1MHz
+            mov.b   &CALDCO_1MHZ,&DCOCTL 
+SetupPx     bis.b   #0x01,&P1DIR            ; P1.0& 1.1 as output 
+            bic.b   #0x01,&P1OUT
+InitCall    mov.b   #0xEA,R12               ; USIDIV_7+USISSEL_2+USICKPL
+            mov.w   #StatusCallback,R14     ; Callback fn. pointer
+            call    #TI_USI_I2C_MasterInit  ; Initialize USI master
+SlaveDetect            
+            xor.b   #0x01,&P1OUT            ; Detect if slave is present...
+            mov.w   #0xFFFF,R5              ; ... LED toggles until slave ACKS
+L1          dec.w   R5
+            jnz     L1 
+Poll_0      call    #AcknowledgePoll        ; Slave device present?
+            cmp.b   #0,R12                  ; Is result zero (ACK)?
+            jnz     SlaveDetect             ; Loop until device acknowledges
+            clr.b   &P1OUT                  ; Slave acknowledged, LED off
+TransmitCall_1
+            mov.w   #0x50,R12               ; Slave address
+            mov.w   #9,R14                  ; length = 9
+            push.w  #Transmit1              ; pointer to data buffer 
+            push.w  #0x00                   ; generate stop
+            call    #TI_USI_I2CWrite        ; transmit data stream #1
+            add.w   #4,SP                   ; compensate SP on return
+            bis.w   #LPM0+GIE,SR            ; enter LPM, enable interrupts 
+Poll_1      call    #AcknowledgePoll        ; Device ready for next transfer?
+            cmp.b   #0,R12                  ; Is result zero (ACK)?
+            jnz     Poll_1                  ; Loop until device acknowledges
+TransmitCall_2
+            mov.w   #0x50,R12               ; Slave address
+            mov.w   #3,R14                  ; length = 3
+            push.w  #Transmit2              ; pointer to data buffer 
+            push.w  #0x00                   ; generate stop
+            call    #TI_USI_I2CWrite        ; transmit data stream #2
+            add.w   #4,SP                   ; compensate SP on return
+            bis.w   #LPM0+GIE,SR            ; enter LPM, enable interrupts 
+Poll_2      call    #AcknowledgePoll        ; Device ready for next transfer?
+            cmp.b   #0,R12                  ; Is result zero (ACK)?
+            jnz     Poll_2                  ; Loop until device acknowledges
+TransmitCall_3
+            mov.w   #0x50,R12               ; Slave address
+            mov.w   #1,R14                  ; length = 1
+            push.w  #Transmit1              ; pointer to data buffer 
+            push.w  #0x01                   ; generate stop
+            call    #TI_USI_I2CWrite        ; transmit to reset internal counter
+            add.w   #4,SP                   ; compensate SP on return
+            bis.w   #LPM0+GIE,SR            ; enter LPM, enable interrupts
+ReceiveCall  
+            mov.w   #0x50,R12               ; Slave address
+            mov.w   #10,R14                 ; length = 10
+            push.w  #Receive                ; pointer to data buffer
+            push.w  #0x01                   ; do not generate stop
+            call    #TI_USI_I2CRead         ; receive stream#1,#2
+            add.w   #4,SP                   ; compensate SP on return
+            bis.w   #LPM0+GIE,SR            ; enter LPM, enable interrupts 
+StopTransaction      
+            call    #TI_USI_I2CStop         ; Stop I2C transactions
+CheckResult            
+            mov.w   #Receive,R6             ; store received data location
+            clr.b   R4
+Compare     cmp.b   R4,0(R6)
+            jz      Increment               ; data valid, continue
+            clr.b   &P1OUT                  ; data invalid, LED off
+            jmp     EndProgram
+Increment   
+            inc.b   R4
+            inc.w   R6
+            cmp.b   #10,R4
+            jnz     Compare                 ; if all 10 bytes are correct.
+            bis.b   #0x01,&P1OUT            ; ... turn on LED
+EndProgram  jmp     $                       ; program ends here
+AcknowledgePoll           
+            mov.b   #0x50,R12               ; slave address
+            call    #TI_USI_I2CSelect       ; Ack polling function 
+            ret
+StatusCallback
+            mov.w   #1,R12                  ; wake up on exit
+            ret
+
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET                   ;
+            END

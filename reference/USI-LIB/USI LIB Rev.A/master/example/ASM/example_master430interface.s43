@@ -1,0 +1,121 @@
+;******************************************************************************
+;  MSP430F20xx Demo - I2C Master Transmitter and Receiver
+;
+;  Description: MSP430 I2C Master communicates with MSP430 I2C Slave using
+;  the USI module. 
+;  The master device transmits 16 bytes of data to the slave device and reads 
+;  it back. LED turns on if transmitted data = received data.
+;  Slave MSP430 device must be enabled connected to the bus before master 
+;  begins first transmit operation.
+;  ACLK = n/a, MCLK = SMCLK = Calibrated 1MHz
+;
+;  ***THIS IS THE MASTER CODE***
+;
+;                  Slave                      Master
+;          (example_slave430interface.s43)
+;               MSP430F20x2/3              MSP430F20x2/3
+;             -----------------          -----------------
+;         /|\|              XIN|-    /|\|              XIN|-
+;          | |                 |      | |                 |
+;          --|RST          XOUT|-     --|RST          XOUT|-
+;            |                 |        |                 |
+;      LED <-|P1.0             |        |                 |
+;            |                 |        |             P1.0|-> LED
+;            |         SDA/P1.7|------->|P1.7/SDA         |
+;            |         SCL/P1.6|<-------|P1.6/SCL         |
+;
+;  Note: Internal pull-ups are used in this example for SDA & SCL
+;        MSP430 Slave address = 0x48
+;
+;  P. Thanigai
+;  Texas Instruments Inc.
+;  August 2007
+;  Built with IAR Embedded Workbench Version: 3.41A
+;******************************************************************************
+#include  <msp430x20x2.h>
+EXTERN    TI_USI_I2C_MasterInit
+EXTERN    TI_USI_I2CRead
+EXTERN    TI_USI_I2CWrite
+EXTERN    TI_USI_I2CSelect
+
+            RSEG    DATA16_C
+Transmit    DB      0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07
+            DB      0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F   
+            RSEG    DATA16_N
+Receive     DS      16             
+
+;-------------------------------------------------------------------------------
+            RSEG    CSTACK                  ; Define stack segment
+;-------------------------------------------------------------------------------
+            RSEG    CODE                    ; Assemble to Flash memory
+            EVEN
+;-------------------------------------------------------------------------------
+RESET       mov.w   #SFE(CSTACK),SP         ; Initialize stackpointer
+StopWDT     mov.w   #WDTPW+WDTHOLD,&WDTCTL  ; Stop WDT
+CheckCal    cmp.b   #0FFh,&CALBC1_1MHZ      ; Calibration constants erased?
+            jeq     Trap
+            cmp.b   #0FFh,&CALDCO_1MHZ
+            jne     Load  
+Trap        jmp     $                       ; Trap CPU!!
+Load        mov.b   &CALBC1_1MHZ,&BCSCTL1   ; Set DCO to 1MHz
+            mov.b   &CALDCO_1MHZ,&DCOCTL 
+SetupPx     bis.b   #0x03,&P1DIR            ; P1.0& 1.1 as output
+InitCall    mov.b   #0xEA,R12               ; USIDIV_7+USISSEL_2+USICKPL
+            mov.w   #StatusCallback,R14     ; Callback fn. pointer
+            call    #TI_USI_I2C_MasterInit
+SlaveDetect            
+            xor.b   #0x01,&P1OUT            ; Detect if slave is present...
+            mov.w   #0xFFFF,R5              ; ... LED toggles until slave ACKS
+L1          dec.w   R5
+            jnz     L1 
+Poll_0      call    #AcknowledgePoll        ; Slave device present?
+            cmp.b   #0,R12                  ; Is result zero (ACK)?
+            jnz     SlaveDetect             ; Loop until device acknowledges
+            clr.b   &P1OUT                  ; Slave acknowledged, LED off 
+TransmitCall
+            mov.w   #0x48,R12               ; Slave address
+            mov.w   #0x10,R14               ; length = 16
+            push.w  #Transmit               ; pointer to data buffer 
+            push.w  #0x00                   ; multi parameter
+            call    #TI_USI_I2CWrite        ; Call transmit fn.
+            add.w   #4,SP                   ; compensate SP on return
+            bis.w   #LPM0+GIE,SR            ; enter LPM, enable interrupts 
+            nop             
+ReceiveCall  
+            mov.w   #0x48,R12               ; Slave address
+            mov.w   #0x10,R14               ; length = 16
+            push.w  #Receive                ; pointer to data buffer
+            push.w  #0x00                   ; multi
+            call    #TI_USI_I2CRead         ; Call receive fn.
+            add.w   #4,SP                   ; compensate SP on return
+            bis.w   #LPM0+GIE,SR            ; enter LPM, enable interrupts 
+CheckResult            
+            mov.w   #Receive,R6             ; chk received data
+            mov.w   #Transmit,R4
+            clr.w   R5
+Compare     cmp.b   @R4,0(R6)
+            jz      Increment  
+            clr.b   &P1OUT
+            jmp     EndProgram
+Increment   
+            inc.w   R4
+            inc.w   R6
+            inc.w   R5
+            cmp.b   #0x0F,R5                ; counter =16?
+            jnz     Compare                 ; if all 16 bytes are correct...
+            bis.b   #0x01,&P1OUT            ; ... turn on LED
+EndProgram  jmp     $                       ; program ends here
+AcknowledgePoll           
+            mov.b   #0x48,R12               ; slave address
+            call    #TI_USI_I2CSelect       ; Ack polling function
+            ret
+StatusCallback
+            mov.w   #1,R12                  ; wake up on exit
+            ret
+
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC                  ; Interrupt Vectors
+;-------------------------------------------------------------------------------
+            ORG     RESET_VECTOR            ; POR, ext. Reset
+            DW      RESET                   ;
+            END

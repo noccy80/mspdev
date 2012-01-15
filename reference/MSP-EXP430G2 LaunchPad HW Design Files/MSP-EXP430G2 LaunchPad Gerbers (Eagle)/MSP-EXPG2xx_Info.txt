@@ -1,0 +1,47 @@
+	Company
+	Texas Instruments Deutschland GmbH
+	Haggertystr. 1
+	85350 Freising
+
+        Responsible :
+	S.Gerlich      Tel:  08161/80-4432 
+			Fax:          -3760
+
+
+	PCB:   
+	========
+
+        MSP-EXPG2_Rev.1.3  Rev.: 1.3
+
+
+	Files:
+	======
+
+        All Gerberfiles are done with the extended Gerberformat (RS274X)
+	*.DRL    : Tooltabelle SM1000
+
+	*.BS    : Top Site for Components
+	*.LS    :  -Soldering Side Back Side
+	*.SMB   : Solderstopp Component side (gespiegelt fÅr Lîtseite)
+	*.SML   : Soldertstopp Solderingside
+	*.LOT   :  Solderingpaste Stencil
+	*.BD    : Component setting Print component side
+	*.BOF   : Drill Film
+	*.VDK   : Drillfile  SM1000 before contacting
+	*.NDK   :  -"-       -"-            after    -"-
+
+
+	PCB Size:
+	==============
+
+       The D-code with 2 mil width in the singallayers and in the drill assigns the outside of the  PCB
+
+
+	Length   :   60 mm
+	wide :   53 mm
+
+
+	Comment:
+	=========
+Colour: standard Green
+
