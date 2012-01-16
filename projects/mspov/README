@@ -34,6 +34,9 @@ and can be programmed onto any compatible device with any programmer.
 [2]: http://mspgcc.sourceforge.net "msp430-gcc"
 [3]: http://svn.noccy.com/mspdev/lib430/README "lib430"
 
+Bill Of Materials
+-----------------
+
 Implementation
 --------------
 

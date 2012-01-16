@@ -16,4 +16,4 @@ TARGET    = libair
 INCLUDES  = -I.. -I../libcomm
 LIBS      =
 
-include common.mk
+include ../../../skeleton/common.mk

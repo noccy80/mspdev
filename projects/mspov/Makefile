@@ -5,7 +5,9 @@ SOURCES  = main.c database.c config.c
 SOURCESA =
 TARGET   = mspov
 
-include common.mk
+include ../../skeleton/common.mk
 
+LIBS     = -L../../lib430/$(MCU)/lib
 INCLUDES = -I../../lib430/$(MCU)/include
-LIBS     = -L../../lib430/$(MCU)/lib -lcomm
+LIBS    += -lair
+

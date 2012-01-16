@@ -16,4 +16,4 @@ TARGET    = libcomm
 INCLUDES  = -I..
 LIBS      =
 
-include common.mk
+include ../../../skeleton/common.mk

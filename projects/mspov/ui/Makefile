@@ -5,7 +5,7 @@ SOURCES  = ui.c
 SOURCESA =
 TARGET   = ui
 
-include common.mk
+include ../../../skeleton/common.mk
 
 INCLUDES = -I../../../lib430/$(MCU)/include
 LIBS     = -L../../../lib430/$(MCU)/lib -lcomm
