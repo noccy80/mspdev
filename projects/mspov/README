@@ -26,11 +26,11 @@ and can be programmed onto any compatible device with any programmer.
 Using
 -----
 
- P1.[0..7]   Red LEDs
- P2.1        Green LED
- P2.[2..3]   Programmer light detector circuit
- P2.4        Menu button
- P2.5        Select button
+ * P1.[0..7]   Red LEDs
+ * P2.1        Green LED
+ * P2.[2..3]   Programmer light detector circuit
+ * P2.4        Menu button
+ * P2.5        Select button
 
 Using MSPov is simple. Hold the menu button. The green light will light up and
 one of the red led:s will start flashing. When you go full circle the green
@@ -67,4 +67,9 @@ following actions:
 
  * identify - Identify the attached microcontroller using mspdebug.
 
+Dependencies
+------------
 
+You need to build lib430 for your microcontroller before attempting to build
+mspov. The original reference design calls for two different microcontrollers
+to be in charge of the leds and the user interface respectively.

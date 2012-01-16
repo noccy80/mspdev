@@ -48,26 +48,23 @@ case "$OP" in
 			echo "No MCU defined. Either export MCU or use -m MCU."
 			exit 1
 		fi
+		echo "Building for $MCU ..."
 		rm -rf $MCU
 		mkdir -p $MCU/include $MCU/lib
 
 		LIBS="libcomm libcore libhal libgpio libair libmidi liblcd"
 		for LIB in $LIBS; do
-			echo "Building $LIB"
+			echo -n " :: $LIB: "
 			cd src/$LIB
 			if [ -e Makefile ]; then
-				echo " - Building"
 				make clean &> /dev/null && make lib &>../../$MCU/$LIB.log
 			fi
-			echo " - Installing"
+			echo "Installing"
 			cp $LIB.a ../../$MCU/lib/ &>/dev/null
 			cp *.h ../../$MCU/include/ &>/dev/null
 			cd ../..
 		done
-		echo "Chmodding"
-		echo " - Libraries"
 		chmod 666 $MCU/lib/*.a
-		echo " - Includes"
 		chmod 666 $MCU/include/*.h
 		;;
 	"package")

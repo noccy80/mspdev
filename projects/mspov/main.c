@@ -14,8 +14,8 @@
 #include "ta0compat.h"
 #include "font.h"
 #include "database.h"
-#include <msplib/lib430.h>
-#include <msplib/wdt.h>
+#include <lib430.h>
+#include <wdt.h>
 #include "config.h"
 
 
@@ -50,7 +50,7 @@ int main(void) {
 	TACCR0 = 100;
 
 	// Timer to control, timer clock and edge, and timer
-	TIMER_setup(__TIMERA0_BASE, TASSEL_1 | MC_1, 100);
+	// TIMER_setup(__TIMERA0_BASE, TASSEL_1 | MC_1, 100);
 
 	//Enable global interrupts
 	eint();
