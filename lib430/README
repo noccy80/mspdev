@@ -1,25 +1,38 @@
+lib430: A FLOSS framework for the MSP430 style microcontrollers
+===============================================================
 
-== lib430: A FLOSS framework for the MSP430 style microcontrollers ============
+Using
+-----
+ 
+To use it you need to build it. Do this with the build.sh script which will 
+take care of the rest for you. All the libraries will be built for the desired
+microcontroller and furthermore copied into the appropriate folders.
 
-=== Using ===
+The way this is done is by creating a subdirectory in the lib and include
+folders named by the microcontroller. So, when building your project, you
+simply pass -Ilib430/msp430g2553/include -Llib430/msp430g2553/lib as the
+custom library path.
  
- To use it you need to build it. Do this with the included makefiles.
- 
-=== Building ===
+Building
+--------
 
-=== Patches ===
+    ./build.sh msp430g2553
+
+Patches
+-------
  
- Patches are accepted via e-mail to lib430-patches@noccylabs.info as long as
- they can be applied to the current trunk. They should be performed from the
- lib430 root folder:
+Patches are accepted via e-mail to lib430-patches@noccylabs.info as long as
+they can be applied to the current trunk. They should be performed from the
+lib430 root folder:
  
-   ~/lib430/ $ svn diff > ./lib430-describe-your-patch-r0000.patches
+    ~/lib430/ $ svn diff > ./lib430-describe-your-patch-r0000.patches
    
- The revision can be found with svn info:
+The revision can be found with svn info:
  
-   ~/lib430/ $ svn info | grep -i revision
+    ~/lib430/ $ svn info | grep -i revision
  
  
-=== Copying/Distributing ===
+Copying/Distributin
+-------------------
  
- Released under GNU GPL Version 3.
+Released under GNU GPL Version 3.

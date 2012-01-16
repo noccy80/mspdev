@@ -30,8 +30,10 @@ clean: force
 force:
 	@true
 
-install: $(BUILDLIBS)
-	@echo "No install yet. Please do it manually for now :s"
+install: all
+	mkdir -p ../include ../lib
+	for hdr in libcomm/*.h; do cp -v libcomm/$(hdr) ../include/$(hdr); done
+	cp .-v /libcomm/libcomm.a ../lib/libcomm.a
 
 uninstall: $(BUILDLIBS)
 	@echo "No uninstall yet. Please do it manually for now :s"

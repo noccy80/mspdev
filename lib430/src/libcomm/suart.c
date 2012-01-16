@@ -52,6 +52,7 @@ void suart_init(FIFO* inq, FIFO* outq, HAL_MAP drecv, HAL_MAP dsend) {
  * @param int character The character to write
  */
 int putchar(int character) {
+
 	fifo_push(_uart_outq,(uint8_t)character);
 	suart_flush();
 	return 1;
