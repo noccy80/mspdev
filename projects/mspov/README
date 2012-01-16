@@ -14,7 +14,7 @@ over a wide number of devices, the ta0compat.h file is provided in order to map
 the Timer0 A0 functionality from the devices that have more than one timer to 
 the defines present in single-timer devices.
 
-The code in main() is responsible for setting up the timers and enable global
+The code in `main()` is responsible for setting up the timers and enable global
 interrupts so that the ISR occur when they hit the target value.
 
 Requirements
