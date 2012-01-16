@@ -41,7 +41,7 @@ done
 
 case "$OP" in
 	"list")
-		ls -al msp430*
+		ls -al | grep msp430*
 		;;
 	"build")
 		if [ -z "$MCU" ]; then
