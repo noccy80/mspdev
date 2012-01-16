@@ -22,20 +22,24 @@ To compile this project you need a MSP430-based device and programmer. It is
 designed to be used with the Launchpad, but the binaries should be universal
 and can be programmed onto any compatible device with any programmer.
 
- * mspdebug is needed to identify the device as well as program it
- * msp430-gcc is needed to compile the project
- * lib430 is included if you checked out the code from SVN. Please refer to
+ * [mspdebug][1] is needed to identify the device as well as program it
+ * [msp430-gcc][2] is needed to compile the project
+ * [lib430][3] is included if you checked out the code from SVN. Please refer to
    the lib430 documentation for information on how to build it and use it
    with mspov.
- 
+
+[1]: http://mspdebug.sourceforge.net "MSPDebug"
+[2]: http://mspgcc.sourceforge.net "msp430-gcc"
+[3]: http://svn.noccy.com/mspdev/lib430/README "lib430"
+
 Implementation
 --------------
 
- * P1.[0..7]   Red LEDs
- * P2.1        Green LED
- * P2.[2..3]   Programmer light detector circuit
- * P2.4        Menu button
- * P2.5        Select button
+ * P1.[0..7] -  Red LEDs
+ * P2.1      - Green LED
+ * P2.[2..3] - Programmer light detector circuit
+ * P2.4      - Menu button
+ * P2.5      - Select button
 
 ### Using
 
@@ -58,21 +62,21 @@ The Makefile
 The makefile is based on the mspdev skeleton makefile and thus prvides the
 following actions:
 
- * all - Build all the source files, link the binary and then call on mspdebug
+ * `all` - Build all the source files, link the binary and then call on mspdebug
    to program the device. This is the default action, and thus just calling
    make will instantly deploy the project on the microcontroller, just like
    with the picdev makefile.
 
- * bin - Build all the source files and link the binary in elf and hex format.
+ * `bin` - Build all the source files and link the binary in elf and hex format.
    No programming is done here.
 
- * prog - Program the device with the binary.
+ * `prog` - Program the device with the binary.
 
- * clean - Clean the build environment and remove all temporary files.
+ * `clean` - Clean the build environment and remove all temporary files.
 
- * listing - Generate assembly source listings from the .c files.
+ * `listing` - Generate assembly source listings from the .c files.
 
- * identify - Identify the attached microcontroller using mspdebug.
+ * `identify` - Identify the attached microcontroller using mspdebug.
 
 Dependencies
 ------------
