@@ -1,8 +1,6 @@
-lib430: A FLOSS framework for the MSP430 style microcontrollers
-===============================================================
+# lib430: A FLOSS framework for the MSP430 style microcontrollers
 
-Using
------
+## Using
  
 To use it you need to build it. Do this with the build.sh script which will 
 take care of the rest for you. All the libraries will be built for the desired
@@ -13,13 +11,19 @@ folders named by the microcontroller. So, when building your project, you
 simply pass -Ilib430/msp430g2553/include -Llib430/msp430g2553/lib as the
 custom library path.
  
-Building
---------
+## Building
 
-    ./build.sh msp430g2553
+    ./build.sh -m msp430g2553
 
-Patches
--------
+### Removing builds
+
+    ./build.sh -m msp430g2553 -r
+
+### Listing installed builds
+
+    ./build.sh -l
+
+## Patches
  
 Patches are accepted via e-mail to lib430-patches@noccylabs.info as long as
 they can be applied to the current trunk. They should be performed from the
@@ -32,7 +36,6 @@ The revision can be found with svn info:
     ~/lib430/ $ svn info | grep -i revision
  
  
-Copying/Distributin
--------------------
+## Copying/Distributin
  
 Released under GNU GPL Version 3.

@@ -73,7 +73,7 @@
 		if (delay) delayMicroseconds((delay << 10) - (delay << 4) - (delay << 3));
 	}
 
-interrupt(TIMERA0_VECTOR) TA0ISR(void) {
+interrupt(TIMER0_A0_VECTOR) TA0ISR(void) {
 	// __low_power_mode_off_on_exit(); // Restore Active Mode on return
 }	
 
