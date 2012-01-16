@@ -1,6 +1,4 @@
 #include "cc1101.h"
-#include <libcomm.h>
-#include <libusi.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <spi.h>

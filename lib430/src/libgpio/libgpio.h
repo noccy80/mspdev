@@ -1,7 +1,7 @@
 #ifndef __LIBGPIO_H__
 #define __LIBGPIO_H__
 
-#include <msplib/msplib.h>
+#include <msplib.h>
 
 typedef struct _GPIOPIN {
 	uint16_t portbase;

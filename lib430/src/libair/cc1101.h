@@ -3,6 +3,14 @@
 
 #include "../libcomm/spi.h"
 
+typedef struct _CC1101 {
+	int portpair;
+} CC1101;
+typedef struct _GPIOPIN {
+	uint8_t port;
+	uint8_t pin;
+} GPIOPIN;
+
 int cc1101_initialize( CC1101 *radio,
 	GPIOPIN pClock, GPIOPIN pDataInBi, GPIOPIN pDataOut,
 	long options
