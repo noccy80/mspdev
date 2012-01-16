@@ -1,7 +1,7 @@
 MSP430 POV Display
 ==================
 
-![mspov](mspov.jpg "msPOV")
+![mspov](schematics/mspov.jpg "msPOV Hardware Schematics")
 
 This code toggles the output pins of P1.0-P1.7 to display a message in rapid
 succession. This effect is called "Persistence of Vision".
@@ -24,15 +24,20 @@ and can be programmed onto any compatible device with any programmer.
 
  * mspdebug is needed to identify the device as well as program it
  * msp430-gcc is needed to compile the project
+ * lib430 is included if you checked out the code from SVN. Please refer to
+   the lib430 documentation for information on how to build it and use it
+   with mspov.
  
-Using
------
+Implementation
+--------------
 
  * P1.[0..7]   Red LEDs
  * P2.1        Green LED
  * P2.[2..3]   Programmer light detector circuit
  * P2.4        Menu button
  * P2.5        Select button
+
+### Using
 
 Using MSPov is simple. Hold the menu button. The green light will light up and
 one of the red led:s will start flashing. When you go full circle the green
