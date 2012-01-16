@@ -1,6 +1,8 @@
 MSP430 POV Display
 ==================
 
+![mspov](mspov.jpg "msPOV")
+
 This code toggles the output pins of P1.0-P1.7 to display a message in rapid
 succession. This effect is called "Persistence of Vision".
 
