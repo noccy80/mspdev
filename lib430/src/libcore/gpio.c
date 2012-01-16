@@ -1,6 +1,0 @@
-
-
-
-
-
-void gpio_setflags();

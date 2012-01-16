@@ -23,6 +23,10 @@ custom library path.
 
     ./build.sh -l
 
+### There is more
+
+    ./build.sh -h
+
 ## Patches
  
 Patches are accepted via e-mail to lib430-patches@noccylabs.info as long as
