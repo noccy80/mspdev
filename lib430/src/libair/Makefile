@@ -9,11 +9,11 @@
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCES   = cc1101.c libairproto.c ninet.c
+SOURCES   = cc1101.c rfm70.c airproto.c ninet.c
 SOURCESA  =
 BUILD     = lib
 TARGET    = libair
-INCLUDES  = -I.. -I../libcomm
+INCLUDES  = -I. -I.. -I../libcomm -I../libhal -I../libcore
 LIBS      =
 
 include ../../../skeleton/common.mk
