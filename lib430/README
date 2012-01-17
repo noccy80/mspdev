@@ -41,6 +41,10 @@ The way this is done is by creating a subdirectory in the lib and include
 folders named by the microcontroller. So, when building your project, you
 simply pass -Ilib430/msp430g2553/include -Llib430/msp430g2553/lib as the
 custom library path.
+
+Some projects that use lib430:
+
+ * [msPOV Persistence of Vision Display](/projects/mspov/README "README for msPOV")
  
 ## Building
 
