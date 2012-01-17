@@ -13,12 +13,16 @@ feel familiar to Android developers.
 
 ## What's in it?
 
-### Defines and Constants
+### Variable types
+
+The following variable types have been mapped to the appropriate MSP vartypes:
 
  * `WORD` as `unsigned int` _(2 bytes)_
  * `byte` as `unsigned char` _(1 byte)_
 
 ### Constants
+
+The following constants are defined to aid when working with digital IO
 
  * LOW 0
  * HIGH 1
@@ -26,12 +30,16 @@ feel familiar to Android developers.
  * OUTPUT 1	
 	
 ### Digital I/O
-	
+
+Methods to do digital I/O to be compatible with the Arduino SDK.
+
  * `inline void pinMode(int pin, int isOutput)`
  * `inline void digitalWrite(WORD pin, WORD setOrReset)`
  * `inline int digitalRead(WORD pin)`
 
 ### Control Functions
+
+Methods to control the MCU to be compatible with the Arduino SDK.
 
  * `void delayMicroseconds(unsigned int time)`
  * `void delayMicrosecondszz(unsigned int time)`
