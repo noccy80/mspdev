@@ -61,7 +61,8 @@ custom library path.
 Some projects that use lib430:
 
  * [msPOV Persistence of Vision Display](/mspdev/projects/mspov/README "README for msPOV")
- * [RGBlink - A RGB blinke](/mspdev/projects/rgblink/README "README for RGBlink")
+ * [Blink - Simple LED blinker](/mspdev/projects/blink/README "README for Blink")
+ * [RGBlink - A RGB blinker](/mspdev/projects/rgblink/README "README for RGBlink")
  * [MIDIPAD - A control surface for MIDI gadgets](/mspdev/projects/midipad/README "README for MIDIPAD")
   
 ## Building

@@ -8,7 +8,7 @@ file is provided in order to map the Timer0 A0 functionality from the devices
 that have more than one timer to the defines present in single-timer devices.
 
 The magic happens in the ISR at the bottom of main.c where the Uint8 global
-variable "twink" will doggle between 1 and 0, and in effect light up either
+variable "twink" will toggle between 1 and 0, and in effect light up either
 LED1 or LED2.
 
 The code in main() is responsible for setting up the timers and enable global
