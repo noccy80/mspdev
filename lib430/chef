@@ -1,5 +1,5 @@
 #!/bin/bash
-LIBS="libcomm libcore libhal libgpio libair libmidi liblcd libarduino"
+LIBS="libair libarduino libcomm libcore libfat libgpio libhal liblcd libmidi libsound"
 OP=""
 while getopts ":m:vhbra:lcpi" opt; do
 	case $opt in
