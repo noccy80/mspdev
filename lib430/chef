@@ -89,6 +89,7 @@ case "$OP" in
 		echo "== Cooking for: $MCU =="
 		rm -rf $MCU
 		mkdir -p $MCU/include $MCU/lib
+		export MCU
 
 		for LIB in $LIBS; do
 			echo -n "   :: $LIB: "
