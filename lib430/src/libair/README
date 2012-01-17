@@ -1,18 +1,27 @@
-# Anaren AIR Library
+# libAir [lib430]
 
-This is a FLOSS implementation of the Anaren AIR Firmware and protocol stack
-for the MSP430 series MCU. It consists of a library for the TI CC1101 wireless
-radio and a library to implement the Anaren Integrated Radio protocol stack.
+This is the wireless library of lib430. It contains drivers for wireless
+chipsets, as well as protocols to allow for communication in a sensor network
+of any layout including star and point-to-point.
 
-The goal is to keep the code as compliant as possible with the official Anaren
-APIs.
+## Included Protocols
 
-Anaren AIR is a Registered Trademark of Anaren Inc.
-NoccyLabs is not affiliated with Anaren in any way.
+This code contains a FLOSS implementation of the Anaren AIR firmware and wireless
+protocol stack for the MSP430 series MCU. It has been designed to operate in a
+driver-agnostic fashion without any requirements of the CC1101 but any wireless
+driver can be used.
+
+ * Anaren AIR Wireless Protocol
+ * NiNet - The Net who says Ni!
+
+_Anaren AIR is a Registered Trademark of Anaren Inc._
+_NoccyLabs is not affiliated with Anaren nor any other hardware manufacturer in any way._
 
 ## Included Drivers
 
  * TI CC1101 (-DWITH-CC1101)
  * HopeRF RFM70 (-DWITH-RFM70)
+
+## Extending
 
 

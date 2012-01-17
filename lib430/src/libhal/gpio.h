@@ -3,6 +3,7 @@
 
 #include <hal.h>
 #include <msplib.h>
+#include <stdint.h>
 
 typedef struct _GPIOPIN {
 	uint16_t portbase;
@@ -24,8 +25,8 @@ void gpio_makeinput(HAL_MAP pin);
 void gpio_makeoutput(HAL_MAP pin);
 void gpio_setstate(HAL_MAP pin, uint8_t state);
 
-GPIOBUTTONSTATE gpio_get_button_state(GPIOPIN* pin);
-void gpio_init_button(GPIOPIN* pin, uint16_t portbase, uint8_t pin);
+uint8_t gpio_get_button_state(GPIOPIN* pin);
+void gpio_init_button(GPIOPIN* gpiopin, uint16_t portbase, uint8_t pin);
 
 int gpio_shift_in(GPIOPIN* clk, GPIOPIN* data);
 void gpio_shift_out(GPIOPIN* clk, GPIOPIN* data, int state);

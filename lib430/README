@@ -6,26 +6,42 @@
 
 ### libarduino
 
-[Arduino](src/libarduino/README "libarduino")
-
 Provides an arduino-esque platform, implementing most of the arduino API
 functions. Linking with this library, you don't have to worry about setting
 up a `main()` function - just do the usual `setup()` and `loop()`.
 
-### libair
+[Read More...](src/libarduino/README "libarduino")
 
-[Air](src/libair/README "libair")
+### libair
 
 Interface with wireless devices using the _Anaren AIR Platform_ or using the
 lighter _NiNet_. You know, _the Net who says Ni._ Communication can be done
-over a _TI CC1101_ wireless radio, or a _RFM70_ 2.4ghz radio.
+over a _TI CC1101_ sub-1ghz wireless radio, or a _RFM70_ 2.4ghz radio.
+
+[Read More...](src/libair/README "libair")
 
 ### libcomm
 
-[Comm](src/libcomm/README "libcomm")
-
 Unifies everything communication. Fifo buffers, SPI, I2C, UART, HUART, SUART
 and just about any other communications term you can imagine.
+
+[Read more...](src/libcomm/README "libcomm")
+
+### libhal
+
+Abstracts the hardware for you, so you don't have to. Shoves the most commonly
+used bits and bobs into structures that can be passed around in a simple
+and effective manner.
+
+[Read more...](src/libhal/README "libhal")
+
+### libmidi
+
+This is a MIDI implementation, that allows your device to become either a host
+or a slave in a MIDI network. Build yourself a MIDI-powered mixer panel, or
+just hook up some knobs and build yourself a synthesizer.
+
+[Read more...](src/libmidi/README "libmidi")
 
 ### And more ...
 
