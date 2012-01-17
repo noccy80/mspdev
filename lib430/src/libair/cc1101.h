@@ -1,7 +1,7 @@
 #ifndef __CC1101_H__
 #define __CC1101_H__
 
-#include "../libcomm/spi.h"
+#include <spi.h>
 
 typedef struct _CC1101 {
 	int portpair;

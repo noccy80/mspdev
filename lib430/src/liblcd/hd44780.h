@@ -5,7 +5,7 @@
 #include <legacymsp430.h>
 #include <stdint.h>
 
-#include "wiring.h"
+#include <arduino.h>
 
 /**
  * @brief Definitions for the Hitachi HD44780 series LCD display

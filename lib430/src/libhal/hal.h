@@ -67,16 +67,6 @@ void gpio_makeinput(HAL_MAP pin);
 void gpio_makeoutput(HAL_MAP pin);
 void gpio_setstate(HAL_MAP pin, uint8_t state);
 
-/**
- * Arduino-ish-ness
- *
- * Implemented as macros calling on msplibs native methods. Difference is in
- * how it is invoked:
- *
- *   bool v = digital_read(HAL_CLASS_GPIO | GPIO_PORT_1 | GPIO_PIN_0);
- */
-#define digital_read(P) gpio_getstate(P)
-#define digital_write(P,D) gpio_setstate(P,D)
 
 // HAL_MAP led = HAL_DEVICE_GPIO | GPIO_PORT_0 | GPIO_PIN_1;
 // gpio_makeoutput(led); gpio_setstate(led, 1);

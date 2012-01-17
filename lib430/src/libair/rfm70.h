@@ -1,7 +1,7 @@
 #ifndef __RFM70_H__
 #define __RFM70_H__
 
-#include "../libcomm/spi.h"
+#include <spi.h>
 
 int rfm70_initialize( CC1101 *radio,
 	GPIOPIN pClock, GPIOPIN pDataInBi, GPIOPIN pDataOut,
