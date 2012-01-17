@@ -37,6 +37,14 @@ and can be programmed onto any compatible device with any programmer.
 Bill Of Materials
 -----------------
 
+ * *8x* Red LED
+ * *1x* Green LED
+ * *2x* Pushbutton
+ * *2x* Optoresistor
+ * *1x* msp430g2553 (for display)
+ * *1x* msp430f2013 (for UI)
+ * *1x* 7-segment LCD display
+
 Implementation
 --------------
 
