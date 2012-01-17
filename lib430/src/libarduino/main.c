@@ -1,8 +1,7 @@
-#ifndef __MAIN_C__
-#define __MAIN_C__
+#include <arduino.h>
+#include <wdt.h>
+#include <msplib.h>
 
-#include <msplib/wdt.h>
-#include <msplib/msplib.h>
 
 void setup(void);
 void loop(void);
@@ -15,8 +14,7 @@ int main(void) {
 	WDT_halt();
 	
 	setup();
-	while(1) loop();
+	for(;;){ loop(); }
 
 }
 
-#endif // __MAIN_C__

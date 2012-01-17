@@ -1,7 +1,7 @@
 #!/bin/bash
-
+LIBS="libcomm libcore libhal libgpio libair libmidi liblcd libarduino"
 OP=""
-while getopts ":m:vhbrlp" opt; do
+while getopts ":m:vhbrlcp" opt; do
 	case $opt in
 		m)
 			MCU="$OPTARG"
@@ -18,21 +18,26 @@ while getopts ":m:vhbrlp" opt; do
 		b)
 			OP="build"
 			;;
+		c)
+			OP="clean"
+			;;
 		v)
 			;;
 		h)
-			echo "`basename $0` - Repair Chromium when it goes all lockout on you"
-			echo "(c) 2011-2012, Noccy.com"
+			echo "`basename $0` - lib430 Builder"
+			echo "(c) 2011-2012, NoccyLabs.info"
 			echo
 			echo "Usage: `basename $0` [-m <mcu>] [-v] -b"
 			echo "       `basename $0` [-m <mcu>] -r"
 			echo "       `basename $0` -l"
+			echo "       `basename $0` -c"
 			echo "       `basename $0` -h"
 			echo ""
 			echo "  -m  MCU (msp430g2553,...)"
 			echo "  -p  Package module"
 			echo "  -r  Remove modules"
 			echo "  -l  List modules"
+			echo "  -c  Clean modules"
 			echo "  -h  Show this help"
 			exit 1
 			;;
@@ -43,6 +48,17 @@ case "$OP" in
 	"list")
 		ls -al | grep msp430*
 		;;
+	"clean")
+		for LIB in $LIBS; do
+			echo -n " :: $LIB: "
+			cd src/$LIB
+			if [ -e Makefile ]; then
+				make clean &> /dev/null
+			fi
+			echo "Clean"
+			cd ../..
+		done
+		;;
 	"build")
 		if [ -z "$MCU" ]; then
 			echo "No MCU defined. Either export MCU or use -m MCU."
@@ -52,12 +68,12 @@ case "$OP" in
 		rm -rf $MCU
 		mkdir -p $MCU/include $MCU/lib
 
-		LIBS="libcomm libcore libhal libgpio libair libmidi liblcd"
 		for LIB in $LIBS; do
 			echo -n " :: $LIB: "
 			cd src/$LIB
 			if [ -e Makefile ]; then
-				make clean &> /dev/null && make lib &>../../$MCU/$LIB.log
+				make clean &> /dev/null
+				make lib &>../../$MCU/$LIB.log
 			fi
 			echo "Installing"
 			cp $LIB.a ../../$MCU/lib/ &>/dev/null
