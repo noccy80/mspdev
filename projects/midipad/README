@@ -1,11 +1,21 @@
 MIDIpad - A MIDI Controller Interface
 =====================================
 
+Doing everything MIDI you want it to. And more
 
+-------------------------------------------------------------------------------
 
+Bill of Materials
+-----------------
 
-Mapping of controllers
-----------------------
+ * _1x_ HD44780 LCD Display
+ * _4x_ Pushbuttons
+ * _1x_ MSP430g2553
+
+Using the MIDIpad
+-----------------
+
+### Mapping of controllers
 
  1. Press MENU
  2. Select "Controller Map"
@@ -15,8 +25,7 @@ Mapping of controllers
     value, press OK, then the highest value, then OK, then center and OK.
  6. Select the MIDI CC to assign
 
-Linking controllers
--------------------
+### Linking controllers
 
  1. Press MENU
  2. Select "Controller Link"
@@ -24,8 +33,7 @@ Linking controllers
  4. Move the first controller, change mode if needed (Map, Invert), press OK.
  5. Move the second controller, change mode if needed, press OK.
 
-Using linked controllers
-------------------------
+### Using linked controllers
 
  1. Hold the SHIFT button
  2. Move the controller
