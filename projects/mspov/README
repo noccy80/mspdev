@@ -54,7 +54,8 @@ Implementation
  * `P2.4`      - Menu button
  * `P2.5`      - Select button
 
-### Using
+Instructions / Using
+--------------------
 
 Using MSPov is simple. Hold the menu button. The green light will light up and
 one of the red led:s will start flashing. When you go full circle the green
@@ -68,6 +69,37 @@ have been received and programmed. At this time all lights will be off.
 
 Tapping the menu button once will start the message. Tapping the select button
 will change to the next pattern.
+
+### What the buttons do
+
+ * When in *display mode*, pressing `menu` will set the device in programming
+   mode.
+ * When in *display mode*, pressing `select` will activate the next message
+   slot.
+ * When in *menu mode*, pressing and holding `menu` will initiate programming of the
+   selected slot.
+ * When in *menu mode*, pressing `select` will activate the next message
+   slot.
+ * When in *programming mode*, pressing and holding `menu` will blank the slot
+   and disable programming mode.
+ * When in *programming mode*, pressing and holding `select` will cancel the
+   programming mode.
+
+### What does the LED mean/do?
+
+ * In normal operation mode, the _green_ led should be off. The _red_ leds will
+   in this mode display the message with the appropriate timing.
+ * When *menu mode* is selected, the _green_ led will be lit up.
+ * When *programming mode* is selected, the _green_ led will be lit up and one
+   of the _red_ leds will be flashing to indicate the slot to re-program.
+ * When the device is *reprogramming* the _red_ light for the slot will be
+   flashing, and the _green_ light will also remain flashing until the programming
+   is done at which time all the leds will go dark for a second.
+
+### When using with the UI module
+
+ * The UI module adds a 7-segment LCD display to give visual indications on
+   what slot is being active/programmed.
 
 The Makefile
 ------------
