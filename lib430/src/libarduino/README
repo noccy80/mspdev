@@ -51,3 +51,14 @@ Compile lib430 with the makefile such as:
 Then copy the .a file as well as the include files to your desired location.
 Or you can use `chef` in the *lib430* root folder to build for your desired
 targets.
+
+## Using
+
+If you used `chef` and the *[mspdev Makefile][1]* (with [common.mk][2]) you should be good with just adding
+`-larduino` to the libraries define in the Makefile. This will get you all the
+loop-wrapping goodness, but you of course also need to `#include <arduino.h>`
+for things to work as intended.
+
+[1]: http://svn.noccy.com/mspdev/skeleton/Makefile "Skeleton Makefile"
+[2]: http://svn.noccy.com/mspdev/skeleton/common.mk "Common Makefile Rules"
+
