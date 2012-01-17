@@ -31,7 +31,7 @@ void initLEDs(void) {
 
 int main(void) {
 
-	WDT_hold();
+	wdt_hold();
 
 	//Setup LEDs
 	initLEDs();

@@ -20,6 +20,7 @@ while getopts ":m:vhbra:lcpi" opt; do
 			;;
 		c)
 			OP="clean"
+                        echo "-- Will do Clean"
 			;;
 		a)
 			OP="patch"
