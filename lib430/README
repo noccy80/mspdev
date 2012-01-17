@@ -36,19 +36,19 @@ custom library path.
  
 ## Building
 
-    ./build.sh -m msp430g2553
+    ./chef -m msp430g2553
 
 ### Removing builds
 
-    ./build.sh -m msp430g2553 -r
+    ./chef -m msp430g2553 -r
 
 ### Listing installed builds
 
-    ./build.sh -l
+    ./chef -l
 
 ### There is more
 
-    ./build.sh -h
+    ./chef -h
 
 ## Patches
  
@@ -56,12 +56,7 @@ Patches are accepted via e-mail to lib430-patches@noccylabs.info as long as
 they can be applied to the current trunk. They should be performed from the
 lib430 root folder:
  
-    ~/lib430/ $ svn diff > ./lib430-describe-your-patch-r0000.patches
-   
-The revision can be found with svn info:
- 
-    ~/lib430/ $ svn info | grep -i revision
- 
+	./chef -a "describe-your-patch" 
  
 ## Copying/Distributin
  

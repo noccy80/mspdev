@@ -1,7 +1,7 @@
 #!/bin/bash
 LIBS="libcomm libcore libhal libgpio libair libmidi liblcd libarduino"
 OP=""
-while getopts ":m:vhbra:lcp" opt; do
+while getopts ":m:vhbra:lcpi" opt; do
 	case $opt in
 		m)
 			MCU="$OPTARG"
@@ -25,6 +25,14 @@ while getopts ":m:vhbra:lcp" opt; do
 			OP="patch"
 			PATCH="$OPTARG"
 			;;
+		i)
+			NAME=`dirname $0`
+			LIBDIR="${NAME}${MCU}/lib"
+			INCDIR="${NAME}${MCU}/include"
+			shift
+			echo "-L$LIBDIR -I$INCDIR $@"		
+			exit 0
+			;;
 		v)
 			;;
 		h)
@@ -37,6 +45,7 @@ while getopts ":m:vhbra:lcp" opt; do
 			echo "       `basename $0` -c"
 			echo "       `basename $0` -a <info-here>"
 			echo "       `basename $0` -h"
+			echo "       `basename $0` -i"
 			echo ""
 			echo "  -m  MCU (msp430g2553,...)"
 			echo "  -p  Package module"
