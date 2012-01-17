@@ -1,7 +1,53 @@
-# libArduino (lib430)
+# libArduino [lib430]
 
 ------------------------------------------------------------------------------
 
-This is the Arduinoish SDK component of lib430. It allows you to implement
+This is the Arduinoish SDK component of *lib430*. It allows you to implement
 your program much like an Arduino sketch. Functions are provided that look and
 feel familiar to Android developers.
+
+## Differences
+
+ * Since the MSP430 with GCC is limited to C at this time, only C-syntax can
+   be used. This means that objects aren't available in the same way.
+
+## What's in it?
+
+### Defines and Constants
+
+ * WORD unsigned int
+ * byte unsigned char
+ * uint8_t unsigned char
+
+### Constants
+
+ * LOW 0
+ * HIGH 1
+ * INPUT 0
+ * OUTPUT 1	
+	
+### Digital I/O
+	
+ * `inline void pinMode(int pin, int isOutput)`
+ * `inline void digitalWrite(WORD pin, WORD setOrReset)`
+ * `inline int digitalRead(WORD pin)`
+
+### Control Functions
+
+ * `void delayMicroseconds(unsigned int time)`
+ * `void delayMicrosecondszz(unsigned int time)`
+ * `inline void delayMilliseconds(unsigned int delay)`
+
+### Stubs
+
+ * `main()` stub, making use of `loop()` and `setup()`.
+
+## Compiling
+
+Compile lib430 with the makefile such as:
+
+    MCU=msp430g2553 make lib
+
+Then copy the .a file as well as the include files to your desired location.
+Or you can use `chef` in the *lib430* root folder to build for your desired
+targets.
