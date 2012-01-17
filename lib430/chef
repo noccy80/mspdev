@@ -1,7 +1,7 @@
 #!/bin/bash
 LIBS="libcomm libcore libhal libgpio libair libmidi liblcd libarduino"
 OP=""
-while getopts ":m:vhbrlcp" opt; do
+while getopts ":m:vhbra:lcp" opt; do
 	case $opt in
 		m)
 			MCU="$OPTARG"
@@ -21,6 +21,10 @@ while getopts ":m:vhbrlcp" opt; do
 		c)
 			OP="clean"
 			;;
+		a)
+			OP="patch"
+			PATCH="$OPTARG"
+			;;
 		v)
 			;;
 		h)
@@ -31,6 +35,7 @@ while getopts ":m:vhbrlcp" opt; do
 			echo "       `basename $0` [-m <mcu>] -r"
 			echo "       `basename $0` -l"
 			echo "       `basename $0` -c"
+			echo "       `basename $0` -a <info-here>"
 			echo "       `basename $0` -h"
 			echo ""
 			echo "  -m  MCU (msp430g2553,...)"
@@ -38,6 +43,7 @@ while getopts ":m:vhbrlcp" opt; do
 			echo "  -r  Remove modules"
 			echo "  -l  List modules"
 			echo "  -c  Clean modules"
+			echo "  -a  Create patch with description"
 			echo "  -h  Show this help"
 			exit 1
 			;;
@@ -45,6 +51,12 @@ while getopts ":m:vhbrlcp" opt; do
 done
 
 case "$OP" in
+	"patch")
+		REV="`svn info | grep -i revision | cut -f 2 -d' '`"
+		DEST=./lib430-r$REV-$PATCH-patch.diff
+		svn diff > $DEST
+		echo "Patch saved to $DEST"
+		;;
 	"list")
 		ls -al | grep msp430*
 		;;
@@ -64,12 +76,12 @@ case "$OP" in
 			echo "No MCU defined. Either export MCU or use -m MCU."
 			exit 1
 		fi
-		echo "Building for $MCU ..."
+		echo "== Cooking for: $MCU =="
 		rm -rf $MCU
 		mkdir -p $MCU/include $MCU/lib
 
 		for LIB in $LIBS; do
-			echo -n " :: $LIB: "
+			echo -n "   :: $LIB: "
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean &> /dev/null

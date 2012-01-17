@@ -16,4 +16,4 @@ TARGET    = liblcd
 INCLUDES  =
 LIBS      =
 
-include common.mk
+include ../../../skeleton/common.mk

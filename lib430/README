@@ -1,5 +1,28 @@
 # lib430: A FLOSS framework for the MSP430 style microcontrollers
 
+## Components
+
+### libarduino
+
+Provides an arduino-esque platform, implementing most of the arduino API
+functions. Linking with this library, you don't have to worry about setting
+up a `main()` function - just do the usual `setup()` and `loop()`.
+
+### libair
+
+Interface with wireless devices using the _Anaren AIR Platform_ or using the
+lighter _NiNet_. You know, _the Net who says Ni._ Communication can be done
+over a _TI CC1101_ wireless radio, or a _RFM70_ 2.4ghz radio.
+
+### libcomm
+
+Unifies everything communication. Fifo buffers, SPI, I2C, UART, HUART, SUART
+and just about any other communications term you can imagine.
+
+### And more ...
+
+This document is still being written.
+
 ## Using
  
 To use it you need to build it. Do this with the build.sh script which will 
