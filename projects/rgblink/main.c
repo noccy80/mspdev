@@ -63,11 +63,8 @@ int main(void) {
 
 }
 
-// Interrupt Service Routine for Timer A0. We need to use preprocessor
-// directives in order to place the interrupt at the correct address for
-// the current mcu.
-// interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
-interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
+// Interrupt Service Routine for Timer A0. 
+interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
 
 	static unsigned char color = 0;
 
