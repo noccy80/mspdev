@@ -24,10 +24,10 @@ The following variable types have been mapped to the appropriate MSP vartypes:
 
 The following constants are defined to aid when working with digital IO
 
- * LOW 0
- * HIGH 1
- * INPUT 0
- * OUTPUT 1	
+ * `LOW`
+ * `HIGH`
+ * `INPUT`
+ * `OUTPUT`
 	
 ### Digital I/O
 
