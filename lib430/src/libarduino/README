@@ -15,9 +15,8 @@ feel familiar to Android developers.
 
 ### Defines and Constants
 
- * WORD unsigned int
- * byte unsigned char
- * uint8_t unsigned char
+ * `WORD` as `unsigned int` _(2 bytes)_
+ * `byte` as `unsigned char` _(1 byte)_
 
 ### Constants
 

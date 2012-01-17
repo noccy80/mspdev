@@ -2,11 +2,12 @@
 #define __ARDUINO_H__
 
 #include <msp430.h>
+#include <stdint.h>
 
 #ifndef WORD
 	#define WORD unsigned int
 	#define byte unsigned char
-	#define uint8_t unsigned char
+
 #endif
 
 
