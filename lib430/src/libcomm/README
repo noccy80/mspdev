@@ -1,0 +1,20 @@
+# libComm [lib430]
+
+------------------------------------------------------------------------------
+
+Communication routines and utilities.
+
+## Buffers
+
+The library implements a handy FIFO buffer that can be used for all things
+communication.
+
+## SPI and I2C Communication
+
+ * SPI as Master or Slave
+ * I2C as Master of Slave
+
+## UART
+
+ * Hardware UART (if supported)
+ * Software UART (always available)
