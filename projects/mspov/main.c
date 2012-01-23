@@ -22,7 +22,7 @@
 // The message to display
 const char message[] = "HELLO WORLD!\0";
 
-void initLEDs(void) {
+void init_leds(void) {
 
 	LED_DIR = 0xFF;
 	LED_OUT = 0x00;
@@ -34,7 +34,7 @@ int main(void) {
 	wdt_hold();
 
 	//Setup LEDs
-	initLEDs();
+	init_leds();
 
 	//Set ACLK to use internal VLO (12 kHz clock)
 	BCSCTL3 |= LFXT1S_2;
@@ -78,33 +78,33 @@ interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 	// LEDs.
 	blank = !blank;
 	if (!blank) {
-
-		// If we are not on a blank phase, we grab the message byte as stepchar.
-		stepchar = message[step];
-		if (stepchar == 0) {
-			// If the character is 0 then we black out again, and reset to the
-			// first step (step 0)
-			LED_OUT = 0;
-			position++;
-			if (position > FONTWIDTH) step = 0;
-		} else {
-			// Else, we need to go over the columns of the font, so this is how
-			// we do that.
-		    if (position < FONTWIDTH) {
-				// Set the output leds to be the value of char-offset with an
-				// index to step.
-				LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + position];
-				position++;
-		    } else {
-				// When we hit the end of the character, we jump to the next
-				// characters' first column.
-				step++;
-				position=0;
-		    }
-		}
-	} else {
 		// Blank every 2nd step
 		LED_OUT = 0;
+		return;
+	}
+
+	// If we are not on a blank phase, we grab the message byte as stepchar.
+	stepchar = message[step];
+	if (stepchar == 0) {
+		// If the character is 0 then we black out again, and reset to the
+		// first step (step 0)
+		LED_OUT = 0;
+		position++;
+		if (position > FONTWIDTH) step = 0;
+	} else {
+		// Else, we need to go over the columns of the font, so this is how
+		// we do that.
+	    if (position < FONTWIDTH) {
+			// Set the output leds to be the value of char-offset with an
+			// index to step.
+			LED_OUT = System5x7[((stepchar - FONTOFFSET) * FONTWIDTH) + position];
+			position++;
+	    } else {
+			// When we hit the end of the character, we jump to the next
+			// characters' first column.
+			step++;
+			position=0;
+	    }
 	}
 
 }
