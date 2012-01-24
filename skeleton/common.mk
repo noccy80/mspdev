@@ -41,8 +41,8 @@ CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-fu
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings
-OBJS     = $(SOURCEC:.c=.o) $(SOURCEASM:.asm=.o)
-LSTS     = $(SOURCEC:.c=.lst)
+OBJS     = $(SOURCEC:.c=.o) $(SOURCEASM:.asm=.o) $(SOURCECPP:.cpp=.o)
+LSTS     = $(SOURCEC:.c=.lst) $(SOURCECPP:.cpp=.lst)
 
 # Phony targets; all and clean
 .phony: all bin lib clean listing prog identify package help

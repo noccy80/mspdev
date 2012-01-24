@@ -9,8 +9,9 @@
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 
-# Source files, C and Assembly
+# Source files, C, C++  and Assembly
 SOURCEC   = main.c
+SOURCECPP =
 SOURCEASM =
 
 # bin:binary file, lib:library, prog:program device
