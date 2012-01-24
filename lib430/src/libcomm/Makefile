@@ -9,8 +9,7 @@
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCES   = fifo.c huart.c suart.c usci.c usi.c io.c 
-SOURCESA  =
+SOURCEC   = fifo.c huart.c suart.c usci.c usi.c io.c 
 BUILD     = lib
 TARGET    = libcomm
 INCLUDES  = -I..

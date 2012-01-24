@@ -9,8 +9,7 @@
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCES   = hd44780.c
-SOURCESA  =
+SOURCEC   = hd44780.c
 BUILD     = lib
 TARGET    = liblcd
 INCLUDES  = -I../libarduino

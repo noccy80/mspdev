@@ -9,8 +9,8 @@
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCES   = hal.c gpio.c
-SOURCESA  =
+SOURCEC   = hal.c gpio.c
+SOURCEASM =
 BUILD     = lib
 TARGET    = libhal
 INCLUDES  = -I. -I..
