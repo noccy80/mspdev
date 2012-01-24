@@ -7,7 +7,7 @@
  *
  * @author Christopher Vagnetoft <noccylabs.info>
  * @license GNU General Public License (GPL) v2 or later
- */
+' */
 
 #include <msp430.h>
 #include <legacymsp430.h>

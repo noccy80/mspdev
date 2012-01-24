@@ -9,5 +9,6 @@ include ../../skeleton/common.mk
 
 LIBS     = -L../../lib430/$(MCU)/lib
 INCLUDES = -I../../lib430/$(MCU)/include
-LIBS    += -lair
+LIBS    += 
+# -lair
 

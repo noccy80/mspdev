@@ -43,7 +43,13 @@ inline int digitalRead(WORD pin)
 	return (P1OUT & (1 << pin)) > 0;
 }
 
+inline void interrupts() {
+	// Interrupt enable
+}
 
+inline void noInterrupts() {
+	// Interrupt disable
+}
 
 void delayMicroseconds(unsigned int time){
 	TACCR0 = time-1; // Upper limit of count for TAR

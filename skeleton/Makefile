@@ -8,12 +8,25 @@
 # type, as either "lib" or "bin". If bin, an .elf binary will be created as
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
-#
-SOURCES   = main.c
-SOURCESA  =
-BUILD     = bin prog
-TARGET    = main
-INCLUDES  =
-LIBS      =
 
+# Source files, C and Assembly
+SOURCEC   = main.c
+SOURCEASM =
+
+# bin:binary file, lib:library, prog:program device
+BUILD     = bin prog
+
+# Target binary without extension.
+TARGET    = main
+
+# Include paths, f.ex. -I. -Isome/path
+INCLUDES  =
+
+# Libraries to link with, f.ex. -lcomm
+LIBS      =
+# Specify the lib directories, f.ex. -Llib -Lsome/path
+LIBPATH   = 
+
+# If you don't have common.mk for some reason you can manually download it from
+# theNoccyLabs repository at http://sv.noccy.com/mspdev/skeleton/common.mk 
 include common.mk
