@@ -4,23 +4,16 @@ This is the wireless library of lib430. It contains drivers for wireless
 chipsets, as well as protocols to allow for communication in a sensor network
 of any layout including star and point-to-point.
 
-## Included Protocols
-
-This code contains a FLOSS implementation of the Anaren AIR firmware and wireless
-protocol stack for the MSP430 series MCU. It has been designed to operate in a
-driver-agnostic fashion without any requirements of the CC1101 but any wireless
-driver can be used.
-
- * Anaren AIR Wireless Protocol
- * NiNet - The Net who says Ni!
-
-_Anaren AIR is a Registered Trademark of Anaren Inc._
-_NoccyLabs is not affiliated with Anaren nor any other hardware manufacturer in any way._
-
 ## Included Drivers
 
  * TI CC1101 (-DWITH-CC1101)
  * HopeRF RFM70 (-DWITH-RFM70)
+
+## Important
+
+ * Devices of different packet formats will be unable to communicate with each
+   other. The RFM70 packets consist of a 1 byte preample, 3-5 bytes of adressing
+   followed by the packet control, payload and crc. 
 
 ## Extending
 
