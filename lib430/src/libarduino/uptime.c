@@ -9,8 +9,12 @@ void uptime_init() {
 
 	// Get the controller clock
 	// Set up the timer
+	WDTCTL = WDTPW | WDTCNTCL;
+	WDTCTL = WDTPW | WDTCNTCL | WDTSSEL;
 	WDTCTL = WDTPW | WDTHOLD;
-	// TODO: Start the timer
+	// Start the timer, clock/8192 interval
+	WDTCTL = WDTPW | WDTCNTCL | WDTTMSEL | WDTIS0
+
 
 }
 
