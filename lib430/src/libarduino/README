@@ -11,6 +11,23 @@ feel familiar to Android developers.
  * Since the MSP430 with GCC is limited to C at this time, only C-syntax can
    be used. This means that objects aren't available in the same way.
 
+## Compiling
+
+Compile lib430 with the makefile such as:
+
+    MCU=msp430g2553 make lib
+
+Then copy the .a file as well as the include files to your desired location.
+Or you can use `chef` in the *lib430* root folder to build for your desired
+targets.
+
+### Linking with
+
+If you used `chef` and the *[mspdev Makefile][1]* (with [common.mk][2]) you should be good with just adding
+`-larduino` to the libraries define in the Makefile. This will get you all the
+loop-wrapping goodness, but you of course also need to `#include <arduino.h>`
+for things to work as intended.
+
 ## Using libArduino
 
  * libArduino makes use of the WDT to count the uptime with a granlarity of
@@ -19,20 +36,6 @@ feel familiar to Android developers.
  * `#include <arduino.h>` in your source code, add `-larduino` your GCC
    command line to link with the library.
  * Define your own `main()` and `loop()` methods.
-
-## Changelog
-
-### 27 jan 2012
-
- * Added support for `millis()` and `micros()`. `uptime_init()` is called before
-   `loop()`
-
-### Variable types
-
-The following variable types have been mapped to the appropriate MSP vartypes:
-
- * `WORD` as `unsigned int` _(2 bytes)_
- * `byte` as `unsigned char` _(1 byte)_
 
 ### Constants
 
@@ -43,6 +46,13 @@ The following constants are defined to aid when working with digital IO
  * `INPUT`
  * `OUTPUT`
 	
+### Variable types
+
+The following variable types have been mapped to the appropriate MSP vartypes:
+
+ * `WORD` as `unsigned int` _(2 bytes)_
+ * `byte` as `unsigned char` _(1 byte)_
+
 ### Digital I/O
 
 Methods to do digital I/O to be compatible with the Arduino SDK.
@@ -63,22 +73,13 @@ Methods to control the MCU to be compatible with the Arduino SDK.
 
  * `main()` stub, making use of `loop()` and `setup()`.
 
-## Compiling
+## Changelog
 
-Compile lib430 with the makefile such as:
+### 27 jan 2012
 
-    MCU=msp430g2553 make lib
+ * Added support for `millis()` and `micros()`. `uptime_init()` is called before
+   `loop()`
 
-Then copy the .a file as well as the include files to your desired location.
-Or you can use `chef` in the *lib430* root folder to build for your desired
-targets.
-
-## Using
-
-If you used `chef` and the *[mspdev Makefile][1]* (with [common.mk][2]) you should be good with just adding
-`-larduino` to the libraries define in the Makefile. This will get you all the
-loop-wrapping goodness, but you of course also need to `#include <arduino.h>`
-for things to work as intended.
 
 [1]: http://svn.noccy.com/mspdev/skeleton/Makefile "Skeleton Makefile"
 [2]: http://svn.noccy.com/mspdev/skeleton/common.mk "Common Makefile Rules"

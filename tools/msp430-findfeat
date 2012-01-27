@@ -1,4 +1,9 @@
 #!/bin/bash
+
+if [ -z "$1" ]; then
+	echo "Use: `basename $0` <feature>"
+else
+
 COMPATIBLE=`mspdebug --fet-list`
 for f in /usr/msp430/include/msp*.h; do 
 	grep -i $1 $f &> /dev/null
@@ -7,12 +12,9 @@ for f in /usr/msp430/include/msp*.h; do
 	if [ "$FOUND" == "0" ]; then
 		echo $COMPATIBLE | grep -i $MCU &> /dev/null
 		if [ "$?" == "0" ]; then
-			echo -n "OK: "
-		else
-			echo -n "UNSUP: "
+			echo "$MCU"
 		fi
-	else
-		echo -n "MISS: "
 	fi
-	echo "$MCU"
 done
+
+fi

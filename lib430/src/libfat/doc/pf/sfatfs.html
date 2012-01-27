@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="Petit FatFs" href="../00index_p.html">
+<link rel="stylesheet" href="../css_e.css" type="text/css" media="screen" title="ELM Default">
+<link rel="stylesheet" href="../css_p.css" type="text/css" media="screen" title="ELM Default">
+<title>Petit FatFs - FATFS</title>
+</head>
+
+<body>
+
+<div class="para">
+<h2>FATFS</h2>
+<p>The <tt>FATFS</tt> structure holds dynamic work area of the logical drive and a file. It is given by application program and registerd/unregisterd to the Petit FatFs module with pf_mount function. There is no member that can be changed by application programs.</p>
+<pre>
+typedef struct {
+    BYTE    fs_type;     /* FAT sub type */
+    BYTE    csize;       /* Number of sectors per cluster */
+    BYTE    flag;        /* File status flags */
+    BYTE    pad1;
+    WORD    n_rootdir;   /* Number of root directory entries (0 on FAT32) */
+    CLUST   n_fatent;    /* Number of FAT entries (= number of clusters + 2) */
+    DWORD   fatbase;     /* FAT start sector */
+    DWORD   dirbase;     /* Root directory start sector (Cluster# on FAT32) */
+    DWORD   database;    /* Data start sector */
+    DWORD   fptr;        /* File read/write pointer */
+    DWORD   fsize;       /* File size */
+    CLUST   org_clust;   /* File start cluster */
+    CLUST   curr_clust;  /* File current cluster */
+    DWORD   dsect;       /* File current data sector */
+} FATFS;
+</pre>
+</div>
+
+<p class="foot"><a href="../00index_p.html">Return</a></p>
+</body>
+</html>
