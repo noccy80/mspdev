@@ -31,7 +31,7 @@ while getopts ":m:vhbra:lcpi" opt; do
 			LIBDIR="${NAME}${MCU}/lib"
 			INCDIR="${NAME}${MCU}/include"
 			shift
-			echo "-L$LIBDIR -I$INCDIR $@"		
+			echo "-L$LIBDIR -I$INCDIR $@"
 			exit 0
 			;;
 		v)
@@ -98,9 +98,15 @@ case "$OP" in
 				make clean &> /dev/null
 				make lib &>../../$MCU/$LIB.log
 			fi
-			echo "Installing"
-			cp $LIB.a ../../$MCU/lib/ &>/dev/null
-			cp *.h ../../$MCU/include/ &>/dev/null
+			if [ "$?" == "0" ]; then
+				LIBCOUNT="`ls -al *.a 2>/dev/null | wc -l`"
+				HCOUNT="`ls -al *.h 2>/dev/null | wc -l`"
+				echo "Successful ($LIBCOUNT libraries, $HCOUNT headers)"
+				cp $LIB.a ../../$MCU/lib/ &>/dev/null
+				cp *.h ../../$MCU/include/ &>/dev/null
+			else
+				echo "Failed - see $MCU/$LIB.log"
+			fi
 			cd ../..
 		done
 		chmod 666 $MCU/lib/*.a
