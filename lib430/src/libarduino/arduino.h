@@ -5,41 +5,38 @@
 #include <stdint.h>
 
 #ifndef WORD
-	#define WORD unsigned int
-	#define byte unsigned char
-
+#define WORD unsigned int
 #endif
 
+#ifndef byte
+#define byte unsigned char
+#endif
 
-// ----- Constants 
+// Constants
 #define LOW 0
 #define HIGH 1
-	
-#define INPUT 0
-#define OUTPUT 1	
-	
 
-	
-// digital I/O 	
-inline void pinMode(int pin, int isOutput){ 			
+#define INPUT 0
+#define OUTPUT 1
+
+// digital I/O
+inline void pinMode(int pin, int isOutput){
 	if(isOutput){
 		P1DIR |= (1 << pin);
-	} 
+	}
 	else{
 		P1DIR &= (~(1 << pin));
-	} 
+	}
 }
 
-inline void digitalWrite(WORD pin, WORD setOrReset)
-{
-	if (setOrReset) 
+inline void digitalWrite(WORD pin, WORD setOrReset) {
+	if (setOrReset)
 		P1OUT |= ( 1 << pin);
 	else
 		P1OUT &= (~(1 << pin));
 }
 
-inline int digitalRead(WORD pin)
-{
+inline int digitalRead(WORD pin) {
 	return (P1OUT & (1 << pin)) > 0;
 }
 
@@ -56,7 +53,7 @@ void delayMicroseconds(unsigned int time){
 	TACTL = MC_1|ID_0|TASSEL_2|TACLR; // Set up and start Timer A
 	while ((TACTL & TAIFG) == 0){ // Wait for overflow
 	} // doing nothing
-	TACTL &= (~TAIFG); // Clear overflow flag		
+	TACTL &= (~TAIFG); // Clear overflow flag
 }
 
 void delayMicrosecondszz(unsigned int time){
@@ -64,15 +61,22 @@ void delayMicrosecondszz(unsigned int time){
 	TACTL = MC_1|ID_0|TASSEL_2|TACLR; // Set up and start Timer A
 	// __low_power_mode_3 ();
 	//__delay_cycles
-}	
+}
 
-inline void delayMilliseconds(unsigned int delay){	
+inline void delayMilliseconds(unsigned int delay){
 	while(delay > 60){
 		delayMicroseconds(60000);
 		delay -= 60;
 	}
 	if (delay) delayMicroseconds((delay << 10) - (delay << 4) - (delay << 3));
 }
+
+
+void uptime_init();
+
+unsigned long millis();
+unsigned long micros();
+
 
 #endif // __ARDUINO_H__
 

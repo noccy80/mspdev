@@ -10,7 +10,7 @@
 
 #define MIDI_DIR_IN         1
 #define MIDI_DIR_OUT        2
-#define MIDI_DIR_BOTH       MIDI_DIR_IN | MIDI_DIR_OUTwwwww
+#define MIDI_DIR_BOTH       MIDI_DIR_IN | MIDI_DIR_OUT
 
 // Bit 7 set for messages, upper nibble message type
 #define MIDI_MESSAGE_MASK   0xF0

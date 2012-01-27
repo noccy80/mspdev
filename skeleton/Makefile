@@ -24,8 +24,8 @@ TARGET    = main
 INCLUDES  =
 
 # Libraries to link with, f.ex. -lcomm
+# ...and where to find them f.ex. -Llib -Lsome/path
 LIBS      =
-# Specify the lib directories, f.ex. -Llib -Lsome/path
 LIBPATH   = 
 
 # If you don't have common.mk for some reason you can manually download it from

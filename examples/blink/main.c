@@ -17,7 +17,7 @@
 #define  LED_DIR   P1DIR
 #define  LED_OUT   P1OUT
 
-unsigned char twink = 0;
+volatile unsigned char twink = 0;
 
 void initLEDs(void) {
 
@@ -57,6 +57,7 @@ int main(void) {
 
 	while(1) {
 		//Loop forever, interrupts take care of the rest
+		__bis_SR_register(CPUOFF + GIE);
 	}
 
 }

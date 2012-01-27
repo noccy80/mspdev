@@ -21,6 +21,7 @@
 MSPDEBUG?= mspdebug
 MSPTYPE ?= rf2500
 BUILD   ?= bin prog
+SOURCEC ?= $(SOURCES)
 
 # The MCU to use can either be defined on the command line:
 #   export MCU=msp430g2253

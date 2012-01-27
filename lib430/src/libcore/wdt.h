@@ -1,7 +1,7 @@
 #ifndef __WDT_H__
 #define __WDT_H__
 
-static inline void wdt_hold(void) {
+inline void wdt_hold(void) {
 
 	// Halt the watchdog timer - According to the datasheet the watchdog timer
 	// starts automatically after powerup. It must be configured or halted at

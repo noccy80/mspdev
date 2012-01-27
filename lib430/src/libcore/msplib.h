@@ -12,7 +12,7 @@
 #define GPIO_BASE_IE 3
 #define GPIO_BASE_RESISTORS 7
 
-static void __inline__ brief_pause(register unsigned int n)
+inline void brief_pause(register unsigned int n)
 {
     __asm__ __volatile__ (
 		"1: \n"

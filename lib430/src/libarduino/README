@@ -11,7 +11,21 @@ feel familiar to Android developers.
  * Since the MSP430 with GCC is limited to C at this time, only C-syntax can
    be used. This means that objects aren't available in the same way.
 
-## What's in it?
+## Using libArduino
+
+ * libArduino makes use of the WDT to count the uptime with a granlarity of
+   100µs. This means you can not, and should not use the watchdog timer in
+   your applications.
+ * `#include <arduino.h>` in your source code, add `-larduino` your GCC
+   command line to link with the library.
+ * Define your own `main()` and `loop()` methods.
+
+## Changelog
+
+### 27 jan 2012
+
+ * Added support for `millis()` and `micros()`. `uptime_init()` is called before
+   `loop()`
 
 ### Variable types
 

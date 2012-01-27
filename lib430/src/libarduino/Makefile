@@ -9,7 +9,7 @@
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCEC   = main.c
+SOURCEC   = arduino.c uptime.c
 BUILD     = lib
 TARGET    = libarduino
 INCLUDES  = -I. -I.. -I../libcore
