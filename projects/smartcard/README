@@ -1,0 +1,32 @@
+SmartCard Interface
+===================
+
+This project contains a generic framework for writing smartcard-oriented
+applications for the msp430. It comes with support for the ISO standard
+smart cards.
+
+## Interfacing
+
+You can interface with the smart card reader over SPI. This requires a total
+of three pins, MISO, MOSI and CLK. 
+
+The first byte is always a command byte, 8 bits, holding the following
+values:
+
+ * cmd:0 - Read (0) or write (1)
+ * cmd:1 - Burst mode (1) or byte mode (0)
+ * cmd:2..6 - Reserved
+ * cmd:7 - Burst read - must be the only bit set.
+
+These constants are defined as:
+
+ * `CMD_READ 0x00` and `CMD_WRITE 0x01`
+ * `CMD_BURST_MODE 0x02`
+ * `CMD_BURST_READ 0x80`
+
+### Reading from a smart card
+
+ 1. Send `sccom_send(CMD_READ | CMD_BURST_MODE, "file:path")`
+ 2. Repeatedly call `sccom_read(CMD_BURST_READ, &buffer, buffer_size, &read)` until `read` comes back as 0.
+ 3. Send `sccom_close();`
+ 
