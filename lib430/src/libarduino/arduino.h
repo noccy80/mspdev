@@ -40,6 +40,15 @@ inline int digitalRead(WORD pin) {
 	return (P1OUT & (1 << pin)) > 0;
 }
 
+inline int analogRead(WORD pin) {
+	// Do dac conversion here
+	return 0;
+}
+
+inline void analogWrite(WORD pin, int value) {
+	// Setup pin for PWM via WDT.
+}
+
 inline void interrupts() {
 	// Interrupt enable
 }
