@@ -33,6 +33,8 @@ export MCU ?= $(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "De
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
 CC       = msp430-gcc
+NAKENASM = naken430asm
+GCCASM   = msp430-gcc
 OBJCOPY  = msp430-objcopy
 SIZE     = msp430-size --format=sysv
 STRIP    = msp430-strip
@@ -42,8 +44,9 @@ CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-fu
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings
-OBJS     = $(SOURCEC:.c=.o) $(SOURCEASM:.asm=.o) $(SOURCECPP:.cpp=.o)
+OBJS     = $(SOURCEC:.c=.c.o) $(SOURCEASM:.asm=.asm.o) $(SOURCECPP:.cpp=.cpp.o)
 LSTS     = $(SOURCEC:.c=.lst) $(SOURCECPP:.cpp=.lst)
+ASMTYPE ?= gcc
 
 # Phony targets; all and clean
 .phony: all bin lib clean listing prog identify package help
@@ -69,7 +72,7 @@ endif
 listing: $(LSTS)
 
 # Compile the object files
-%.o: %.c
+%.c.o: %.c
 ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
 	@echo $(MCU)
@@ -77,12 +80,19 @@ ifeq ($(MCU),)
 endif
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-%.o: %.asm
+%.asm.o: %.asm
 ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
 	@exit 1
 endif
+ifeq ($(ASMTYPE),gcc)
+	@echo "Building $< with naken430asm ($(ASMTYPE)) into $@"
 	$(CC) -c $(ASFLAGS) -o $@ $<
+endif
+ifeq ($(ASMTYPE),naken)
+	@echo "Building $< with GCC ($(ASMTYPE)) into $@"
+	$(NAKENASM) -e -o $@ $<
+endif
 
 # Create hex files
 %.hex: %.elf
