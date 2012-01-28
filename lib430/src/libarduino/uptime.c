@@ -13,8 +13,8 @@ void uptime_init() {
 	WDTCTL = WDTPW | WDTCNTCL | WDTSSEL;
 	WDTCTL = WDTPW | WDTHOLD;
 	// Start the timer, clock/8192 interval
-	WDTCTL = WDTPW | WDTCNTCL | WDTTMSEL | WDTIS0
-
+	WDTCTL = WDTPW | WDTCNTCL | WDTTMSEL | WDTIS0;
+	// We can also later use this for PWM output
 
 }
 
@@ -26,12 +26,14 @@ interrupt(TIMER0_A0_VECTOR) clockctl_isr(void) {
 
 unsigned long micros() {
 
+	// These calculations are bogus. We need to fix this so we know the click.
 	return (mcu_ms * 10);
 
 }
 
 unsigned long millis() {
 
+	// These calculations are bogus. We need to fix this so we know the click.
 	return (mcu_ms / 100);
 
 }
