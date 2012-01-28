@@ -92,7 +92,6 @@ case "$OP" in
 		export MCU
 
 		for LIB in $LIBS; do
-			echo -n "   :: $LIB: "
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean &> /dev/null
@@ -101,11 +100,11 @@ case "$OP" in
 			if [ "$?" == "0" ]; then
 				LIBCOUNT="`ls -al *.a 2>/dev/null | wc -l`"
 				HCOUNT="`ls -al *.h 2>/dev/null | wc -l`"
-				echo "Successful ($LIBCOUNT libraries, $HCOUNT headers)"
+				printf "   %s %-20s: %-15s : (%d libraries, %d headers)\n" "··" $LIB "Successful" $LIBCOUNT $HCOUNT
 				cp $LIB.a ../../$MCU/lib/ &>/dev/null
 				cp *.h ../../$MCU/include/ &>/dev/null
 			else
-				echo "Failed - see $MCU/$LIB.log"
+				printf "   %s %-20s: %-15s : See %s\n" "  " $LIB "Failed" "$MCU/$LIB.log"
 			fi
 			cd ../..
 		done
