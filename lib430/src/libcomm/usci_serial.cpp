@@ -60,7 +60,7 @@ interrupt(USCIAB0RX_VECTOR) USCI0RX_ISR(void) {
 /**
  * main - echo back to the user whatever they type
  */
-int main(void) {
+int usci_main(void) {
     WDTCTL = WDTPW + WDTHOLD; // Stop WDT
 
     BCSCTL1 = CALBC1_16MHZ; // set DCO clock for MCLK and SMCLK
@@ -80,4 +80,12 @@ int main(void) {
             usci0.xmit((uint8_t) c);
         }
     }
+    
+    return 0;
 }
+
+int putchar(int character) {
+	usci0.xmit(character);
+	return 1;
+}
+

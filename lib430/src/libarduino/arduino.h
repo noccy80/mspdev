@@ -4,11 +4,7 @@
 #include <msp430.h>
 #include <stdint.h>
 
-#ifdef WITH_HUART
-#include <huart.h>
-#else
-#include <suart.h>
-#endif // WITH_HUART
+#include <uart.h>
 
 #ifndef WORD
 #define WORD unsigned int

@@ -60,4 +60,11 @@ struct Serial {
 
 };
 
+#ifdef CPLUSPLUS
+extern "c" {
+#endif
+int putchar(int character);
+#ifdef CPLUSPLUS
+}
+#endif
 #endif /* HW_SERIAL_H */

@@ -93,8 +93,9 @@ case "$OP" in
 		fi
 		echo "== Cooking for: $MCU =="
 		if [ ! -z "$CXXFLAGS" ]; then
-			echo "   ·· Defines: $CXXFLAGS"
+			echo "   :: CXXFLAGS=$CXXFLAGS"
 		fi
+		echo "   :: Installing to $MCU/lib"
 		rm -rf $MCU
 		mkdir -p $MCU/include $MCU/lib
 		export MCU
@@ -103,20 +104,20 @@ case "$OP" in
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean &> /dev/null
-				make lib CXXFLAGS="$DEFINED" &>../../$MCU/$LIB.log
+				make lib CXXFLAGS="$CXXFLAGS" &>../../$MCU/$LIB.log
 			fi
 			if [ "$?" == "0" ]; then
 				LIBCOUNT="`ls -al *.a 2>/dev/null | wc -l`"
 				HCOUNT="`ls -al *.h 2>/dev/null | wc -l`"
-				printf "   %s %-20s: %-15s : (%d libraries, %d headers)\n" "··" $LIB "Successful" $LIBCOUNT $HCOUNT
+				printf "   %s %-20s |%4s| (%d libraries, %d headers)\n" "··" $LIB " OK " $LIBCOUNT $HCOUNT
 				cp $LIB.a ../../$MCU/lib/ &>/dev/null
 				cp *.h ../../$MCU/include/ &>/dev/null
 			else
-				printf "   %s %-20s: %-15s : See %s\n" "  " $LIB "Failed" "$MCU/$LIB.log"
+				printf "   %s %-20s |%4s| Failed, see %s\n" "  " $LIB "" "$MCU/$LIB.log"
 			fi
 			cd ../..
 		done
-		chmod 666 $MCU/lib/*.a
+		ls $MCU/lib/*.a &>/dev/null && echo "   :: Chmodding libraries..." && chmod 666 $MCU/lib/*.a
 		chmod 666 $MCU/include/*.h
 		LIBCOUNT="`ls -al $MCU/lib/*.a 2>/dev/null | wc -l`"
 		HCOUNT="`ls -al $MCU/include/*.h 2>/dev/null | wc -l`"

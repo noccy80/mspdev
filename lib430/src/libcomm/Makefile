@@ -10,12 +10,8 @@
 # the binary flashed on the device after build, use "bin prog".
 #
 SOURCEC   = fifo.c usci.c usi.c io.c
-SOURCECPP = 
-ifeq ($(WITH_HUART),1)
-SOURCECPP+= usci_serial.cpp
-else
-SOURCEC  += suart.c
-endif
+SOURCECPP = usci_serial.cpp
+# SOURCEC  += suart.c
 BUILD     = lib
 TARGET    = libcomm
 INCLUDES  = -I..
