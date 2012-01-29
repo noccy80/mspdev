@@ -92,7 +92,9 @@ case "$OP" in
 			exit 1
 		fi
 		echo "== Cooking for: $MCU =="
-		echo "   <> $DEFINED"
+		if [ ! -z "$CXXFLAGS" ]; then
+			echo "   ·· Defines: $CXXFLAGS"
+		fi
 		rm -rf $MCU
 		mkdir -p $MCU/include $MCU/lib
 		export MCU
@@ -101,7 +103,7 @@ case "$OP" in
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean &> /dev/null
-				make lib $DEFINED &>../../$MCU/$LIB.log
+				make lib CXXFLAGS="$DEFINED" &>../../$MCU/$LIB.log
 			fi
 			if [ "$?" == "0" ]; then
 				LIBCOUNT="`ls -al *.a 2>/dev/null | wc -l`"

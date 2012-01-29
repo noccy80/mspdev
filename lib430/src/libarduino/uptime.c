@@ -5,8 +5,9 @@
 
 volatile unsigned long mcu_ms = 0;
 
-void uptime_init() {
-
+void uptime_init()
+{
+#ifdef UPTIME_USE_WDT
 	// Get the controller clock
 	// Set up the timer
 	WDTCTL = WDTPW | WDTCNTCL;
@@ -15,25 +16,28 @@ void uptime_init() {
 	// Start the timer, clock/8192 interval
 	WDTCTL = WDTPW | WDTCNTCL | WDTTMSEL | WDTIS0;
 	// We can also later use this for PWM output
-
+#else
+	#warning "Still no support for TA0, so you will get no bang here unless you write it"
+#endif
 }
 
-interrupt(TIMER0_A0_VECTOR) clockctl_isr(void) {
-
+#ifdef UPTIME_USE_WDT
+interrupt(WDT_VECTOR) clockctl_isr(void)
+#else
+interrupt(TIMER0_A0_VECTOR) clockctl_isr(void)
+#endif // UPTIME_USE_WDT
+{
 	mcu_ms++;
-
 }
 
-unsigned long micros() {
-
+unsigned long micros()
+{
 	// These calculations are bogus. We need to fix this so we know the click.
 	return (mcu_ms * 10);
-
 }
 
-unsigned long millis() {
-
+unsigned long millis()
+{
 	// These calculations are bogus. We need to fix this so we know the click.
 	return (mcu_ms / 100);
-
 }

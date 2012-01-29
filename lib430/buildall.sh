@@ -1,10 +1,23 @@
 #!/bin/bash
 if [ ! -e MCUS ]; then
-	echo "You must first create a file named MCUS and populate it with one microcontroller per line"
+	echo "For the BuildAll script to work, you need to create a file named MCUS"
+	echo "in the same folder, and populate it with the keyword 'build' followed"
+	echo "by a the mcu and any defines, for example:"
+	echo ""
+	echo '  build msp430g2553 "-DWITH_HUART=1 -DUPTIME_USE_WDT"'
+	echo ""
 	exit 1
 fi
-for f in `cat MCUS`; do 
-	define="`echo $f: | cut -d':' -f2`"
-	mcu="`echo $f: | cut -d':' -f1`"
-	./chef $define -m $mcu -b
-done
+function build() {
+
+	if [ "$2" == "" ]; then
+		export CXXFLAGS=""
+	else
+		export CXXFLAGS="$2"
+	fi
+	./chef -m $1 -b
+
+}
+
+source MCUS
+
