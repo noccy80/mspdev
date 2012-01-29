@@ -1,8 +1,12 @@
 #!/bin/bash
 LIBS="libair libarduino libcomm libcore libfat libhal liblcd libmidi libsound"
 OP=""
-while getopts ":m:vhbra:lcpi" opt; do
+DEFINED=""
+while getopts ":m:vhbra:lcpid:" opt; do
 	case $opt in
+		d)
+			DEFINED="$OPTARG"
+			;;
 		m)
 			MCU="$OPTARG"
 			;;
@@ -40,7 +44,7 @@ while getopts ":m:vhbra:lcpi" opt; do
 			echo "`basename $0` - lib430 Builder"
 			echo "(c) 2011-2012, NoccyLabs.info"
 			echo
-			echo "Usage: `basename $0` [-m <mcu>] [-v] -b"
+			echo "Usage: `basename $0` [-m <mcu>] [-d <defines>][-v] -b"
 			echo "       `basename $0` [-m <mcu>] -r"
 			echo "       `basename $0` -l"
 			echo "       `basename $0` -c"
@@ -49,6 +53,7 @@ while getopts ":m:vhbra:lcpi" opt; do
 			echo "       `basename $0` -i"
 			echo ""
 			echo "  -m  MCU (msp430g2553,...)"
+			echo "  -d  Pass on one or more defines, quote the string please"
 			echo "  -p  Package module"
 			echo "  -r  Remove modules"
 			echo "  -l  List modules"
@@ -87,6 +92,7 @@ case "$OP" in
 			exit 1
 		fi
 		echo "== Cooking for: $MCU =="
+		echo "   <> $DEFINED"
 		rm -rf $MCU
 		mkdir -p $MCU/include $MCU/lib
 		export MCU
@@ -95,7 +101,7 @@ case "$OP" in
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean &> /dev/null
-				make lib &>../../$MCU/$LIB.log
+				make lib $DEFINED &>../../$MCU/$LIB.log
 			fi
 			if [ "$?" == "0" ]; then
 				LIBCOUNT="`ls -al *.a 2>/dev/null | wc -l`"

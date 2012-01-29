@@ -2,7 +2,6 @@
 #include <wdt.h>
 #include <msplib.h>
 
-
 void setup(void);
 void loop(void);
 
@@ -18,3 +17,5 @@ int main(void) {
 	for(;;){ loop(); }
 
 }
+
+

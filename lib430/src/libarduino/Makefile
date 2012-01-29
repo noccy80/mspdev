@@ -12,7 +12,7 @@
 SOURCEC   = arduino.c uptime.c
 BUILD     = lib
 TARGET    = libarduino
-INCLUDES  = -I. -I.. -I../libcore
+INCLUDES  = -I. -I.. -I../libcore -I../libcomm
 LIBS      =
 
 include ../../../skeleton/common.mk

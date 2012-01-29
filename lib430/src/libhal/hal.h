@@ -58,6 +58,9 @@ enum gpio_offsets {
 	GPIO_OFFS_RES   = 7
 };
 
+#ifndef P3IN_
+#define P3IN_ 0
+#endif
 const uint8_t _PBADDR[] = { P1IN_, P2IN_, P3IN_ };
 
 

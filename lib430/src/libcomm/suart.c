@@ -133,8 +133,11 @@ interrupt(PORT1_VECTOR) PORT1_ISR(void) {
  * @brief Timer A0 Interrupt Service Routine (ISR)
  *
  */
+#ifdef TIMER0_A0_VECTOR
 interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
-
+#else
+interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
+#endif
 	if(!_uart_isReceiving) {
 	
 		CCR0 += Bit_time;			// Add Offset to CCR0  

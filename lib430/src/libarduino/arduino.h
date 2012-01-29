@@ -4,6 +4,12 @@
 #include <msp430.h>
 #include <stdint.h>
 
+#ifdef WITH_HUART
+#include <huart.h>
+#else
+#include <suart.h>
+#endif // WITH_HUART
+
 #ifndef WORD
 #define WORD unsigned int
 #endif
@@ -80,7 +86,9 @@ inline void delayMilliseconds(unsigned int delay){
 	if (delay) delayMicroseconds((delay << 10) - (delay << 4) - (delay << 3));
 }
 
+#define delay(N) delayMilliseconds(N)
 
+void Serial_write(unsigned char val);
 void uptime_init();
 
 unsigned long millis();
