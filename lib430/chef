@@ -114,6 +114,7 @@ case "$OP" in
 				cp *.h ../../$MCU/include/ &>/dev/null
 			else
 				printf "   %s %-20s |%4s| Failed, see %s\n" "  " $LIB "" "$MCU/$LIB.log"
+				cat ../../$MCU/$LIB.log | grep -i error > ../../$MCU/$LIB.err
 			fi
 			cd ../..
 		done
