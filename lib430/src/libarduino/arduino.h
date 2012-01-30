@@ -87,7 +87,6 @@ inline void delayMilliseconds(unsigned int delay){
 
 #define delay(N) delayMilliseconds(N)
 
-void Serial_write(unsigned char val);
 void uptime_init();
 
 unsigned long millis();

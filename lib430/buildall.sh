@@ -1,12 +1,14 @@
 #!/bin/bash
 if [ ! -e MCUS ]; then
-	echo "For the BuildAll script to work, you need to create a file named MCUS"
-	echo "in the same folder, and populate it with the keyword 'build' followed"
-	echo "by a the mcu and any defines, for example:"
-	echo ""
-	echo '  build msp430g2553 "-DWITH_HUART=1 -DUPTIME_USE_WDT"'
-	echo ""
-	exit 1
+	cp MCUS.example MCUS
+	if [ "`which editor`" == "" ]; then
+		echo "I have created MCUS for you, but you need to edit it yourself."
+		echo "Then re-run this script."
+		exit 1
+	else
+		editor MCUS
+		$0
+	fi
 fi
 function build() {
 

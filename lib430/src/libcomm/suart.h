@@ -44,6 +44,11 @@ void suart_transmit(unsigned int byte);
 bool suart_datawaiting();
 unsigned char suart_receive();
 
+#define uart_flush() suart_flush()
+#define uart_transmit(B) suart_transmit(B)
+#define uart_datawaiting() suart_datawaiting()
+#define uart_receive() suart_receive()
+
 // Hooked interrupt vectors
 interrupt(PORT1_VECTOR) PORT1_ISR(void);
 interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void);
