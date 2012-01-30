@@ -10,7 +10,6 @@
 
 #include <msp430.h>
 #include <legacymsp430.h>
-#include "ta0compat.h"
 #define ARDUINO_MAIN
 #include <arduino.h>
 
@@ -47,6 +46,9 @@ void loop(void) {
 	pinMode(LED1,OUTPUT);
 	digitalWrite(LED0,LOW);
 	digitalWrite(LED1,HIGH);
+	delay(1000);
+	digitalWrite(LED1,LOW);
+	delay(1000);
 
 }
 
