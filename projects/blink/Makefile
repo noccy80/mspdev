@@ -11,7 +11,6 @@
 
 # Source files, C and Assembly
 SOURCEC   = main.c
-SOURCEASM =
 
 # bin:binary file, lib:library, prog:program device
 BUILD     = bin prog
@@ -19,14 +18,17 @@ BUILD     = bin prog
 # Target binary without extension.
 TARGET    = blink
 
-# Include paths, f.ex. -I. -Isome/path
-INCLUDES  =
-
-# Libraries to link with, f.ex. -lcomm
-LIBS      =
-# Specify the lib directories, f.ex. -Llib -Lsome/path
-LIBPATH   = 
+ASMTYPE   = naken
 
 # If you don't have common.mk for some reason you can manually download it from
 # theNoccyLabs repository at http://sv.noccy.com/mspdev/skeleton/common.mk 
 include ../../skeleton/common.mk
+
+# Include paths, f.ex. -I. -Isome/path
+INCLUDES  = -I../../lib430/$(MCU)/include
+
+# Libraries to link with, f.ex. -lcomm
+LIBS      = -lcomm
+# Specify the lib directories, f.ex. -Llib -Lsome/path
+LIBPATH   = -L../../lib430/$(MCU)/lib
+

@@ -13,31 +13,16 @@
 #define ARDUINO_MAIN
 #include <arduino.h>
 
-//#define  LED0      BIT0
-//#define  LED1      BIT6
 #define  LED0      0
 #define  LED1      6
-#define  LED_DIR   P1DIR
-#define  LED_OUT   P1OUT
 
 volatile unsigned char twink = 0;
 
 void setup(void) {
 
-	int n;
 	pinMode(LED0,OUTPUT);
-/*
-	for(n = 0; n < 7; n++) {
-		pinMode(n,OUTPUT);
-	}
-	for(n = 0; n < 7; n++) {
-		digitalWrite(n,1);
-	}
-	P1DIR = 0xFF;
-	P1OUT = 0xFF;
-*/
 	digitalWrite(LED0,HIGH);
-	eint();
+	delay(2000);
 
 }
 

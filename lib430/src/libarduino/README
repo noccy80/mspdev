@@ -2,9 +2,10 @@
 
 ------------------------------------------------------------------------------
 
-This is the Arduinoish SDK component of *lib430*. It allows you to implement
-your program much like an Arduino sketch. Functions are provided that look and
-feel familiar to Android developers.
+Now it is possible to write your code with the same simplicity as with the
+Arduino. This is the Arduinoish SDK component of *lib430*. It allows you to 
+implement your program much like an Arduino sketch. Functions are provided
+that look and feel familiar to Android developers.
 
 ## Differences
 

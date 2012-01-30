@@ -40,7 +40,8 @@ SIZE     = msp430-size --format=sysv
 STRIP    = msp430-strip
 # Flags and command lines
 #  if your main never returns: -mendup-at=main  (saves 6 bytes of ram)
-CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-functions -g -O2 -Wall -Wunused $(INCLUDES)
+CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-functions \
+	-g -O2 -Wall -Wunused $(INCLUDES) $(CXXFLAGS)
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings
@@ -66,7 +67,7 @@ ifeq ($(MCU),)
 	@echo "ERROR: MCU not defined or programmer not connected."
 	@exit 1
 endif
-	$(CC) $(LDFLAGS) -o $(LIBPATH) $(TARGET).elf $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) $(LIBPATH) -o $(TARGET).elf $(OBJS) $(LIBS) 
 	$(SIZE) $(TARGET).elf
 
 listing: $(LSTS)
@@ -78,7 +79,16 @@ ifeq ($(MCU),)
 	@echo $(MCU)
 	@exit 1
 endif
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(INCLUDES) -o $@ $<
+
+# Compile the object files
+%.cpp.o: %.cpp
+ifeq ($(MCU),)
+	@echo "ERROR: MCU not defined or programmer not connected."
+	@echo $(MCU)
+	@exit 1
+endif
+	$(CC) -c $(CFLAGS) $(INCLUDES) -o $@ $<
 
 %.asm.o: %.asm
 ifeq ($(MCU),)
@@ -87,7 +97,7 @@ ifeq ($(MCU),)
 endif
 ifeq ($(ASMTYPE),gcc)
 	@echo "Building $< with naken430asm ($(ASMTYPE)) into $@"
-	$(CC) -c $(ASFLAGS) -o $@ $<
+	$(CC) -D_GNU_ASSEMBLER_ -c $(ASFLAGS) -o $@ $<
 endif
 ifeq ($(ASMTYPE),naken)
 	@echo "Building $< with GCC ($(ASMTYPE)) into $@"
