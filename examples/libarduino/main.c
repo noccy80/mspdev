@@ -1,8 +1,5 @@
 /**
- * Blink example for MSP430
- *
- * Snatched from hackaday.com and rewritten to compile for a number of
- * different MCUs in the MSP430 series.
+ * libarduino example for MSP430
  *
  * @author Christopher Vagnetoft <noccylabs.info>
  * @license GNU General Public License (GPL) v2 or later
@@ -15,8 +12,6 @@
 
 #define  LED0      0
 #define  LED1      6
-
-volatile unsigned char twink = 0;
 
 void setup(void) {
 
