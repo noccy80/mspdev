@@ -1,9 +1,20 @@
-s#ifndef __RFM70_H__
+#ifndef __RFM70_H__
 #define __RFM70_H__
 
-#include <spi.h>
+#include <stdint.h>
 
-// Radio State
+/**
+ * @brief RFM70 Radio Module Driver for libair
+ *
+ * This module implements a majority of the available features of the RFM70
+ * radio module. For examples, see examples/rfm70
+ *
+ * @author Christopher Vagnetoft (NoccyLabs)
+ */
+
+// #include <spi.h>
+
+// Radio States
 #define RFM70_MODE_SLEEP		0x00
 #define RFM70_MODE_SB1			0x01
 #define RFM70_MODE_SB2			0x02
@@ -43,6 +54,14 @@ s#ifndef __RFM70_H__
 #define RFM70_REG_DYNPD			0x1C
 #define RFM70_REG_FEATURE		0x1D 
 
+#ifndef GPIOPIN
+#define GPIOPIN unsigned long
+#endif
+
+typedef struct _RFM70 {
+    int foo;
+} RFM70;
+
 int rfm70_initialize( RFM70 *radio,
 	GPIOPIN pClock, GPIOPIN pDataInBi, GPIOPIN pDataOut,
 	long options
@@ -54,6 +73,6 @@ unsigned int rfm70_get_register( RFM70* radio , unsigned int register);
 
 
 
-SPI_SESSION spisess;
+// SPI_SESSION spisess;
 
 #endif
