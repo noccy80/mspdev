@@ -77,7 +77,10 @@ echo -n "   Build examples [y/n]? "
 read ans
 if [ "$ans" == "y" ]; then
 	echo "   Building..."
-	pushd examples/blink; make; popd
+	pushd examples/blink; make bin; popd
+	pushd examples/libarduino; make bin; popd
+
+	pushd examples/blink; make prog; popd
 fi
 echo
 echo 'All done!'
