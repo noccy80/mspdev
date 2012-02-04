@@ -1,0 +1,21 @@
+#!/bin/bash
+
+
+if [ "`which downthemall`" == "" ]; then
+	curl http://svn.noccy.com/opensnippets/downthemall/trunk/downthemall > ./downthemall
+	chmod +x ./downthemall
+fi
+
+test -d .cache || mkdir .cache
+cd .cache
+
+echo -n "Architecture: "; uname -i
+SITE="http://ftp.debian.org/debian/pool/main/"
+COMPONENTS="g/gcc-msp430 g/gdb-msp430 m/msp430-libc m/msp430mcu m/mspdebug b/binutils-msp430"
+ARCHITECTURE="`uname -i`"
+
+for COMPONENT in $COMPONENTS; do
+	URL="$SITE$COMPONENT/"
+	downthemall -p "*_$ARCHITECTURE*" -d -q $URL
+done
+
