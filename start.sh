@@ -4,7 +4,8 @@ echo "Hello, and welcome to the mspdev quickstarter!"
 echo
 echo "This script will get everything going for you in just a few short steps."
 echo
-echo "You will be prompted for each step."
+echo "You will be prompted for each step. Answer the question with a lowercase 'y' to"
+echo "complete the specified step. Any other key will skip it."
 echo
 
 echo
@@ -51,6 +52,7 @@ echo "   This will build lib430 for the devices listed in the MCUS file. if this
 echo "   does not exist, it will be created from the MCUS.example file. This is a good"
 echo "   thing to do. Just remember to rebuild it with the buildall.sh script when the"
 echo "   source has been updated."
+echo
 echo -n "   Build lib430 [y/n]? "
 read ans
 if [ "$ans" == "y" ]; then
@@ -75,7 +77,7 @@ echo -n "   Build examples [y/n]? "
 read ans
 if [ "$ans" == "y" ]; then
 	echo "   Building..."
-	pushd examples/blink; make bin; popd
+	pushd examples/blink; make; popd
 fi
 echo
 echo 'All done!'
