@@ -12,7 +12,7 @@
 SOURCEC   = hd44780.c
 BUILD     = lib
 TARGET    = liblcd
-INCLUDES  = -I../libarduino
+INCLUDES  = -I../libarduino -I ../libcomm
 LIBS      =
 
 include ../../../skeleton/common.mk
