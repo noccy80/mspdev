@@ -20,6 +20,11 @@ function build() {
 	./chef -m $1 -b
 
 }
+function docs() {
+
+	./chef -D
+
+}
 
 source MCUS
 

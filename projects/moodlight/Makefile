@@ -14,6 +14,9 @@ SOURCEC   = main.c
 SOURCECPP =
 SOURCEASM =
 
+# Libraries
+LIBS      = -larduino
+
 # bin:binary file, lib:library, prog:program device
 BUILD     = bin prog
 
@@ -24,6 +27,7 @@ TARGET    = main
 # theNoccyLabs repository at http://sv.noccy.com/mspdev/skeleton/common.mk 
 include ../../skeleton/common.mk
 
+# This sets all the pointers for the libraries in order.
 LIB430    = ../../lib430
-LIBS      = -larduino
+# Load LibArduino
 include ../../skeleton/lib430.mk

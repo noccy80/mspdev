@@ -73,7 +73,7 @@ void setup() {
 	// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
 	// should output an LED change every 1 second. Try this out and see how
 	// inaccurate the VLO can be
-	TACCR0 = 5;
+	TACCR0 = 4;
 
 	//Enable global interrupts
 	WRITE_SR(GIE);
@@ -138,8 +138,8 @@ void demo() {
 	int delay = 1000;
 	// Multipliers for each step (a) and between changes (b).
 	// Note that multiplier a is used TWICE, so set it accordingly.
-	int mula = 5;
-	int mulb = 20;
+	int mula = 10;
+	int mulb = 30;
 
 	while(1) {
 
@@ -214,7 +214,7 @@ interrupt(TIMER0_A0_VECTOR) timer_isr(void) {
 		digitalWrite(OUT_RED,(red_val>step)?LOW:HIGH);
 		digitalWrite(OUT_GREEN,(green_val>step)?LOW:HIGH);
 		digitalWrite(OUT_BLUE,(blue_val>step)?LOW:HIGH);
-		__delay_cycles(10);
+		__delay_cycles(5);
 	}
 
 }

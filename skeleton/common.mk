@@ -20,7 +20,7 @@
 # point to the proper location. Also, the driver is defined here:
 MSPDEBUG?= mspdebug
 MSPTYPE ?= rf2500
-BUILD   ?= bin prog
+BUILD   ?= bin prog docs
 SOURCEC ?= $(SOURCES)
 
 # The MCU to use can either be defined on the command line:
@@ -28,7 +28,8 @@ SOURCEC ?= $(SOURCES)
 # Or explicitly defined in the makefile:
 #   MCU=msp430g2553
 # Or the preferred way, have it reported by mspdebug:
-export MCU ?= $(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]")
+#export MCU ?= $(shell $(MSPDEBUG) -q $(MSPTYPE) "exit" 2>/dev/null | grep -i "Device:" | cut -c 9- | tr "[A-Z]" "[a-z]")
+export MCU ?= $(shell msp430-identify)
 
 # Compiler and other binaries. No need to change these really, unless you know
 # what you are doing.
@@ -36,7 +37,7 @@ CC       = msp430-gcc
 NAKENASM = naken430asm
 GCCASM   = msp430-gcc
 OBJCOPY  = msp430-objcopy
-SIZE     = msp430-size --format=sysv -x
+SIZE     = msp430-size -x
 STRIP    = msp430-strip
 # Flags and command lines
 #  if your main never returns: -mendup-at=main  (saves 6 bytes of ram)
@@ -48,6 +49,8 @@ LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 OBJS     = $(SOURCEC:.c=.c.o) $(SOURCEASM:.asm=.asm.o) $(SOURCECPP:.cpp=.cpp.o)
 LSTS     = $(SOURCEC:.c=.lst) $(SOURCECPP:.cpp=.lst)
 ASMTYPE ?= gcc
+AR      ?= msp430-ar
+ARLFAGS ?= r
 
 # Phony targets; all and clean
 .phony: all bin lib clean listing prog identify package help
@@ -59,14 +62,16 @@ bin: $(TARGET).elf $(TARGET).hex
 
 # Build library
 $(TARGET).a: $(OBJS)
-	$(AR) $(ARFLAGS) -o $(TARGET).a $(OBJS)
+	printf "[AR ] %s.a: %s\n" "$(TARGET)" "$(OBJS)"
+	ar r -o $(TARGET).a $(OBJS)
 
 # Build binary
 $(TARGET).elf: $(OBJS)
 ifeq ($(MCU),)
-	@echo "ERROR: MCU not defined or programmer not connected."
-	@exit 1
+	echo "ERROR: MCU not defined or programmer not connected."
+	exit 1
 endif
+	printf "[LD ] %s.elf: %s\n" "$(TARGET)" "$(OBJS)"
 	$(CC) $(LDFLAGS) $(LIBPATH) -o $(TARGET).elf $(OBJS) $(LIBS) 
 	$(SIZE) $(TARGET).elf
 
@@ -75,41 +80,45 @@ listing: $(LSTS)
 # Compile the object files
 %.c.o: %.c
 ifeq ($(MCU),)
-	@echo "ERROR: MCU not defined or programmer not connected."
-	@echo $(MCU)
-	@exit 1
+	echo "ERROR: MCU not defined or programmer not connected."
+	echo $(MCU)
+	exit 1
 endif
+	printf "[CC ] %s\n" "$@"
 	$(CC) -c $(CFLAGS) $(INCLUDES) -o $@ $<
 
 # Compile the object files
 %.cpp.o: %.cpp
 ifeq ($(MCU),)
-	@echo "ERROR: MCU not defined or programmer not connected."
-	@echo $(MCU)
-	@exit 1
+	echo "ERROR: MCU not defined or programmer not connected."
+	echo $(MCU)
+	exit 1
 endif
+	printf "[CPP] %s\n" "$@"
 	$(CC) -c $(CFLAGS) $(INCLUDES) -o $@ $<
 
 %.asm.o: %.asm
 ifeq ($(MCU),)
-	@echo "ERROR: MCU not defined or programmer not connected."
-	@exit 1
+	echo "ERROR: MCU not defined or programmer not connected."
+	exit 1
 endif
 ifeq ($(ASMTYPE),gcc)
-	@echo "Building $< with naken430asm ($(ASMTYPE)) into $@"
+	printf "[ASM] %s (%s)\n" "$@" "gcc"
 	$(CC) -D_GNU_ASSEMBLER_ -c $(ASFLAGS) -o $@ $<
 endif
 ifeq ($(ASMTYPE),naken)
-	@echo "Building $< with GCC ($(ASMTYPE)) into $@"
+	printf "[ASM] %s (%s)\n" "$@" "naken"
 	$(NAKENASM) -e -o $@ $<
 endif
 
 # Create hex files
 %.hex: %.elf
+	printf "[OBJ] %s\n" "$@"
 	$(OBJCOPY) -O ihex $< $@
 
 # rule for making assembler source listing, to see the code
 %.lst: %.c
+	printf "[LST] %s\n" "$@"
 	$(CC) -c $(CFLAGS) -Wa,-anlhd $< > $@
 
 # Clean
@@ -120,11 +129,17 @@ else
 	rm -fr $(TARGET).hex $(TARGET).elf $(TARGET).map $(OBJS) $(LSTS)
 endif
 
+# Docs
+docs: Doxyfile
+	printf "[DOC] Doxygen\n"
+	doxygen
+
 prog: $(TARGET).elf
+	echo "[:::] programming device: $(MCU)"
 	$(MSPDEBUG) -q $(MSPTYPE) "prog $(TARGET).elf"
 
 sim: $(TARGET).elf
-	@echo "Type 'prog $(TARGET).elf' to load the program in the simulator"
+	echo "Type 'prog $(TARGET).elf' to load the program in the simulator"
 	$(MSPDEBUG) sim 
 
 identify:
@@ -164,3 +179,4 @@ help:
 	@echo "  identify  Identify the attached MCU"
 	@echo "  package   Create tarball package"
 
+.SILENT: 

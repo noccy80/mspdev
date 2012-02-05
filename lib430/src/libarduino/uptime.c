@@ -32,12 +32,12 @@ interrupt(TIMER0_A0_VECTOR) clockctl_isr(void)
 
 unsigned long micros()
 {
-	// These calculations are bogus. We need to fix this so we know the click.
+	///@todo These calculations are bogus. We need to fix this so we know the click.
 	return (mcu_ms * 10);
 }
 
 unsigned long millis()
 {
-	// These calculations are bogus. We need to fix this so we know the click.
+	///@todo These calculations are bogus. We need to fix this so we know the click.
 	return (mcu_ms / 100);
 }

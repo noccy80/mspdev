@@ -1,5 +1,10 @@
 #!/bin/bash
 
+DISTRO="linux/unknown"
+uname -v | grep -i ubuntu &>/dev/null && DISTRO="linux/debian"
+uname -v | grep -i debian &>/dev/null && DISTRO="linux/debian"
+echo "`basename $0` ($DISTRO)"
+echo
 echo "Hello, and welcome to the mspdev quickstarter!"
 echo
 echo "This script will get everything going for you in just a few short steps."
@@ -9,7 +14,24 @@ echo "complete the specified step. Any other key will skip it."
 echo
 
 echo
-echo "1. INSTALL MSP430-GCC"
+echo "== CLEAN EVERYTHING =========================================================="
+echo
+echo "   This will clear all temporary build files."
+echo
+echo -n "   Clean everything [y/n]? "
+read ans
+if [ "$ans" == "y" ]; then
+	echo "   Building..."
+	pushd lib430; ./clean.sh; popd
+	pushd examples/blink; make clean; popd
+	pushd examples/libarduino; make clean; popd
+	pushd examples/blink; make clean; popd
+fi
+echo
+echo 'All done!'
+
+echo
+echo "== INSTALL MSP430-GCC AND MSPDEBUG ==========================================="
 echo
 echo "   This is the environmen, msp430-gcc. This needs for you to have downthemall"
 echo "   for php installed, which in turn depends on lepton. Saying y here is likely"
@@ -18,14 +40,28 @@ echo
 echo -n "   Install helpers [y/n]? "
 read ans
 if [ "$ans" == "y" ]; then
-	echo "   Downloading msp430-gcc into tools/.cache ..."
-	pushd tools
-	./msp430-install
-	popd
+	case "$DISTRO" in
+	"linux/debian")
+		echo "   Downloading msp430-gcc into tools/.cache ..."
+		pushd tools
+		ARCH="`uname -i`"
+		test -d .cache || mkdir .cache
+		cd .cache
+		curl -o mspdev-$ARCH.tgz "http://files.noccylabs.info/mspdev-$ARCH.tgz"
+		cd ..
+		sudo apt-get -y install mspdebug
+		sudo dpkg -i .cache/$ARCH/binutils-msp430_*.deb .cache/$ARCH/gcc-msp430_*-1_*.deb .cache/$ARCH/gdb-msp430_*.deb .cache/$ARCH/msp430-libc_*.deb
+		sudo apt-get -f install
+		popd
+		;;
+	"unknown")
+		echo "Sorry, unknown platform"
+		;;
+	esac
 fi
 
 echo
-echo "2. INSTALL HELPERS"
+echo "== INSTALL HELPERS ==========================================================="
 echo
 echo "   The helpers consist of:"
 echo "    - msp430-comm - quick serial comm setup thingie"
@@ -37,16 +73,17 @@ read ans
 if [ "$ans" == "y" ]; then
 	echo "   Installing..."
 	if [ ! -d "~/bin" ]; then
-		mkdir ~/bin
+		mkdir -p ~/bin
 		export PATH="~/bin:$PATH"
 	fi
 	for bin in msp430-comm msp430-findfeat msp430-identify; do
-		ln -s ./tools/$bin ~/bin/$bin
+		rm -rf ~/bin/$bin
+		cp ./tools/$bin ~/bin/$bin
 	done
 fi
 
 echo
-echo "3. BUILD LIB430"
+echo "== BUILD LIB430 =============================================================="
 echo
 echo "   This will build lib430 for the devices listed in the MCUS file. if this file"
 echo "   does not exist, it will be created from the MCUS.example file. This is a good"
@@ -68,7 +105,7 @@ fi
 echo
 
 echo
-echo "4. BUILD EXAMPLES"
+echo "== BUILD EXAMPLES ============================================================"
 echo
 echo "   This will build the examples for the microcontroller that is attached on the"
 echo "   launchpad via usb. It will then program the blink example onto the device."

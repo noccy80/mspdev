@@ -2,8 +2,11 @@
 LIBS="libair libarduino libcomm libcore libfat libhal liblcd libmidi libsound"
 OP=""
 DEFINED=""
-while getopts ":m:vhbra:lcpid:" opt; do
+while getopts ":m:vhbra:lcpid:D" opt; do
 	case $opt in
+		D)
+			OP="docs"
+			;;
 		d)
 			DEFINED="$OPTARG"
 			;;
@@ -83,6 +86,22 @@ case "$OP" in
 				make clean &> /dev/null
 			fi
 			echo "Clean"
+			cd ../..
+		done
+		;;
+	"docs")
+		echo "== Cooking docs =="
+
+		for LIB in $LIBS; do
+			rm -rf docs/$LIB
+			mkdir -p docs
+			cd src/$LIB
+			if [ -e Doxyfile ]; then
+				echo -n "$LIB: "
+				make docs &> /dev/null
+				echo "Done"
+				mv html ../../docs/$LIB
+			fi
 			cd ../..
 		done
 		;;

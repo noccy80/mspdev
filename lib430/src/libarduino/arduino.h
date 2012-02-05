@@ -4,7 +4,14 @@
 #include <msp430.h>
 #include <stdint.h>
 
+/**
+ * @brief Arduino style setup function
+ */
 void setup();
+
+/**
+ * @brief Arduino style loop function
+ */
 void loop();
 
 #include <uart.h>
@@ -17,15 +24,26 @@ void loop();
 #define byte unsigned char
 #endif
 
-// Constants
+///@const Low pin state
 #define LOW 0
+///@const High pin state
 #define HIGH 1
 
+///@const Input pin
 #define INPUT 0
-#define OUTPUT 1
+///@const Output pin
+#define OUTPUT 1 
 
 // digital I/O
-inline void pinMode(int pin, int isOutput){
+/**
+ * @brief Set the pin mode to INPUT or OUTPUT
+ *
+ * This will set the pin mode. Very inefficient for multiple assignments.
+ *
+ * @param int pin The pin
+ * @param int isOutput Either OUTPUT or INPUT
+ */
+inline void pinMode(WORD pin, WORD isOutput){
 	if(isOutput){
 		P1DIR |= (1 << pin);
 	}
@@ -34,6 +52,12 @@ inline void pinMode(int pin, int isOutput){
 	}
 }
 
+/**
+ * @brief Set the state of an output pin
+ *
+ * @param WORD pin The pin
+ * @param WORD setOrReset Either HIGH or LOW
+ */
 inline void digitalWrite(WORD pin, WORD setOrReset) {
 	if (setOrReset)
 		P1OUT |= ( 1 << pin);
@@ -41,27 +65,57 @@ inline void digitalWrite(WORD pin, WORD setOrReset) {
 		P1OUT &= (~(1 << pin));
 }
 
+/**
+ * @brief Read the digital input state of a pin
+ *
+ * @param WORD pin The pin
+ */
 inline int digitalRead(WORD pin) {
 	return (P1OUT & (1 << pin)) > 0;
 }
 
+/**
+ * @brief Read analog input via ADC10
+ * @todo Not functional :(
+ * @param WORD pin The pin
+ * @return int The analog value
+ */
 inline int analogRead(WORD pin) {
 	// Do dac conversion here
 	return 0;
 }
 
+/**
+ * @brief Write analog (pwm) output to pin
+ * @todo Not functional :(
+ * @param WORD pin The pin
+ * @param int value The value
+ */
 inline void analogWrite(WORD pin, int value) {
 	// Setup pin for PWM via WDT.
 }
 
+/**
+ * @brief Enable interrupts.
+ */
 inline void interrupts() {
-	// Interrupt enable
+	eint();
 }
 
+/**
+ * @brief Disable interrupts
+ */
 inline void noInterrupts() {
-	// Interrupt disable
+	dint();
 }
 
+/**
+ * @brief Timer-based implementation for sleeping.
+ *
+ * Warning! Don't use this if you depend on TIMER0_A0
+ *
+ * @param unsigned int time The time to sleep
+ */
 void delayMicroseconds(unsigned int time){
 	TACCR0 = time-1; // Upper limit of count for TAR
 	TACTL = MC_1|ID_0|TASSEL_2|TACLR; // Set up and start Timer A
@@ -85,14 +139,35 @@ inline void delayMilliseconds(unsigned int delay){
 	if (delay) delayMicroseconds((delay << 10) - (delay << 4) - (delay << 3));
 }
 
+///@define Delay function. You should use __delay_cycles instead.
 #define delay(N) delayMilliseconds(N)
 
+/**
+ * @brief Initialize the uptime routines.
+ */
 void uptime_init();
 
+/**
+ * @brief Return thu number of milliseconds elapsed since startup.
+ *
+ * @return unsigned long The number of milliseconds
+ */
 unsigned long millis();
+
+/**
+ * @brief Return thu number of milliseconds elapsed since startup.
+ *
+ * @return unsigned long The number of milliseconds
+ */
 unsigned long micros();
 
 #ifdef ARDUINO_MAIN
+/**
+ * @brief Arduino main function.
+ *
+ * @note Only included if ARDUINO_MAIN is defined!
+ * @return int Function doesn't return.
+ */
 int main(void) {
 
 	// Halt the watchdog timer - According to the datasheet the watchdog timer

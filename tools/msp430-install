@@ -9,13 +9,24 @@ fi
 test -d .cache || mkdir .cache
 cd .cache
 
-echo -n "Architecture: "; uname -i
+if [ -z "$ARCHITECTURE" ]; then
+	ARCHITECTURE="`uname -i`"
+fi
+test -d $ARCHITECTURE && rm -rf $ARCHITECTURE
+mkdir $ARCHITECTURE
+
 SITE="http://ftp.debian.org/debian/pool/main/"
 COMPONENTS="g/gcc-msp430 g/gdb-msp430 m/msp430-libc m/msp430mcu m/mspdebug b/binutils-msp430"
-ARCHITECTURE="`uname -i`"
 
+echo ":: Architecture: $ARCHITECTURE"
+
+cd $ARCHITECTURE
 for COMPONENT in $COMPONENTS; do
 	URL="$SITE$COMPONENT/"
 	downthemall -p "*_$ARCHITECTURE*" -d -q $URL
 done
+cd ..
 
+if [ "$1" == "tarball" ]; then
+	tar cvfz ../mspdev-$ARCHITECTURE.tgz $ARCHITECTURE
+fi
