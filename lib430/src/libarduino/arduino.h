@@ -76,7 +76,7 @@ inline int digitalRead(WORD pin) {
 
 /**
  * @brief Read analog input via ADC10
- * @todo Not functional :(
+ * @todo Write me!
  * @param WORD pin The pin
  * @return int The analog value
  */
@@ -87,7 +87,7 @@ inline int analogRead(WORD pin) {
 
 /**
  * @brief Write analog (pwm) output to pin
- * @todo Not functional :(
+ * @todo Write me!
  * @param WORD pin The pin
  * @param int value The value
  */
