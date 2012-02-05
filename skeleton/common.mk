@@ -36,7 +36,7 @@ CC       = msp430-gcc
 NAKENASM = naken430asm
 GCCASM   = msp430-gcc
 OBJCOPY  = msp430-objcopy
-SIZE     = msp430-size --format=sysv
+SIZE     = msp430-size --format=sysv -x
 STRIP    = msp430-strip
 # Flags and command lines
 #  if your main never returns: -mendup-at=main  (saves 6 bytes of ram)

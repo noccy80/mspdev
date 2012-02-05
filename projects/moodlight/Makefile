@@ -24,11 +24,6 @@ TARGET    = main
 # theNoccyLabs repository at http://sv.noccy.com/mspdev/skeleton/common.mk 
 include ../../skeleton/common.mk
 
-# Include paths, f.ex. -I. -Isome/path
-INCLUDES  = -I../../lib430/$(MCU)/include
-
-# Libraries to link with, f.ex. -lcomm
-# ...and where to find them f.ex. -Llib -Lsome/path
+LIB430    = ../../lib430
 LIBS      = -larduino
-LIBPATH   = -L../../lib430/$(MCU)/lib
-
+include ../../skeleton/lib430.mk
