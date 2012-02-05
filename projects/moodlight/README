@@ -1,7 +1,7 @@
 MoodLight Proof of Concept
 ==========================
 
-Note, this project is built on top of [lib430](1) so you need to check out the
+Note, this project is built on top of [lib430][1] so you need to check out the
 entire mspdev source tree in order to build it for your microcontrollers.
 
 ## What it is
@@ -24,4 +24,4 @@ Use the makefile:
 
   $ make
 
-[1][/mspdev/lib430/README]
+[1](/mspdev/lib430/README)
