@@ -127,47 +127,73 @@ void loop() {
  * Fades through a preset pattern
  */
 void demo() {
+
+	// Our counter
 	int n;
+	// The delay constant
 	int delay = 1000;
+	// Multipliers for each step (a) and between changes (b).
+	// Note that multiplier a is used TWICE, so set it accordingly.
 	int mula = 5;
 	int mulb = 20;
 
 	while(1) {
 
-	for (n = 0; n < max; n++) {
-		set_color(n,max - n,0);
-		__delay_cycles(delay * mula);
-		__delay_cycles(delay * mula);
-	}
-	__delay_cycles(delay * mulb);
+		// Green to Red
+		for (n = 0; n < max; n++) {
+			set_color(n,max - n,0);
+			__delay_cycles(delay * mula);
+			__delay_cycles(delay * mula);
+		}
+		__delay_cycles(delay * mulb);
 
-	for (n = 0; n < max; n++) {
-		set_color(max - n, 0, n);
-		__delay_cycles(delay * mula);
-		__delay_cycles(delay * mula);
-	}
-	__delay_cycles(delay * mulb);
+		// Red to Blue
+		for (n = 0; n < max; n++) {
+			set_color(max - n, 0, n);
+			__delay_cycles(delay * mula);
+			__delay_cycles(delay * mula);
+		}
+		__delay_cycles(delay * mulb);
 
-	for (n = 0; n < max; n++) {
-		set_color(n, n, max);
-		__delay_cycles(delay * mula);
-		__delay_cycles(delay * mula);
-	}
-	__delay_cycles(delay * mulb);
+		// Blue to White
+		for (n = 0; n < max; n++) {
+			set_color(n, n, max);
+			__delay_cycles(delay * mula);
+			__delay_cycles(delay * mula);
+		}
+		__delay_cycles(delay * mulb);
 
-	for (n = 0; n <max; n++) {
-		set_color(max, max, max - n);
-		__delay_cycles(delay * mula);
-		__delay_cycles(delay * mula);
-	}
-	__delay_cycles(delay * mulb);
+		// White to Yellow
+		for (n = 0; n <max; n++) {
+			set_color(max, max, max - n);
+			__delay_cycles(delay * mula);
+			__delay_cycles(delay * mula);
+		}
+		__delay_cycles(delay * mulb);
 
-	for (n = 0; n < max; n++) {
-		set_color(max - n, max, 0);
-		__delay_cycles(delay * mula);
-		__delay_cycles(delay * mula);
-	}
-	__delay_cycles(delay * mulb);
+		// Yellow to Cyan
+		for (n = 0; n < max; n++) {
+			set_color(0, max, n);
+			__delay_cycles(delay * mula);
+			__delay_cycles(delay * mula);
+		}
+		__delay_cycles(delay * mulb);
+
+		// Cyan to Purple
+		for (n = 0; n < max; n++) {
+			set_color(n, max - n, max);
+			__delay_cycles(delay * mula);
+			__delay_cycles(delay * mula);
+		}
+		__delay_cycles(delay * mulb);
+
+		// Purple to green
+		for (n = 0; n < max; n++) {
+			set_color(max - n, n, max -n);
+			__delay_cycles(delay * mula);
+			__delay_cycles(delay * mula);
+		}
+		__delay_cycles(delay * mulb);
 
 	}
 
