@@ -1,8 +1,9 @@
 MoodLight Proof of Concept
 ==========================
 
-Note, this project is built on top of [lib430][1] so you need to check out the
-entire mspdev source tree in order to build it for your microcontrollers.
+Note, this project is built on top of [lib430](/mspdev/lib430/README) so 
+you need to check out the entire mspdev source tree in order to build it
+for your microcontrollers.
 
 ## What it is
 
@@ -24,4 +25,13 @@ Use the makefile:
 
   $ make
 
-[1](/mspdev/lib430/README)
+## If you don't have lib430 built for your microcontroller
+
+Then use the start.sh script from the mspdev root instead:
+
+  $ ./start.sh
+
+## License
+
+Licensed under the GNU GPL Version 3 or later.
+Copyright (c) 2012, NoccyLabs
