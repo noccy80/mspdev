@@ -40,6 +40,10 @@ volatile int red_val = 0;
 volatile int green_val = 0;
 volatile int blue_val = 0;
 
+// Function prototypes
+void demo();
+void ambient();
+
 /**
  * @brief Arduino style setup routine
  *
@@ -92,6 +96,15 @@ void set_color(int r, int g, int b) {
 }
 
 /**
+ * @brief The main loop
+ *
+ * Currently runs through a demo program
+ */
+void loop() {
+	demo();
+}
+
+/**
  * @brief Future loop reading input from photoresistors
  *
  * The photoresistors should be covered with colored filters.
@@ -99,8 +112,8 @@ void set_color(int r, int g, int b) {
  * The green input should be covered with red and blue filters
  * and the blue input should be covered with red and green
  * filters.
- *
-void loop2() {
+ */
+void ambient() {
 
 	int r, g, b;
 	r = analogRead(IN_RED);
@@ -110,15 +123,6 @@ void loop2() {
 	// This is bogus, the value should be scaled properly!
 	set_color(r/10, g/10, b/10);
 
-}
-
-/**
- * @brief The main loop
- *
- * Currently runs through a demo program
- */
-void loop() {
-	demo();
 }
 
 /**
@@ -173,7 +177,7 @@ void demo() {
 
 		// Yellow to Cyan
 		for (n = 0; n < max; n++) {
-			set_color(0, max, n);
+			set_color(max - n, max, n);
 			__delay_cycles(delay * mula);
 			__delay_cycles(delay * mula);
 		}
