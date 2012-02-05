@@ -1,4 +1,6 @@
 /**
+ * @file suart.h
+ * @brief Software UART implementation (Header file)
  *
  * Half Duplex Software UART on the LaunchPad
  *

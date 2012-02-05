@@ -1,3 +1,7 @@
+/**
+ * @file suart.c
+ * @brief Software UART implementation
+ */
 #include "suart.h"
 #include "fifo.h"
 #include <libhal/hal.h>

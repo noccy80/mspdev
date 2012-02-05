@@ -1,14 +1,14 @@
-/*
- * ringbuffer.h - template for a circular buffer
+/**
+ * @file ringbuffer.h
+ * @brief Template for a circular buffer.
  *
- * License: Do with this code what you want. However, don't blame
+ * @license License: Do with this code what you want. However, don't blame
  * me if you connect it to a heart pump and it stops.  This source
  * is provided as is with no warranties. It probably has bugs!!
  * You have been warned!
  *
- * Author: Rick Kimball
- * email: rick@kimballsoftware.com
- * Version: 1.00 Initial version 05-12-2011
+ * @author Rick Kimball <rick@kimballsoftware.com>
+ * @version 1.00 Initial version 05-12-2011
  */
 
 #ifndef RINGBUFFER_H_
