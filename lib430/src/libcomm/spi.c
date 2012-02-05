@@ -1,3 +1,7 @@
+/**
+ * @file spi.c
+ * @brief SPI Implementation
+ */
 #include <spi.h>
 
 int spi_setup(SPI_SESSION* spisess, PORTPIN pClock, PORTPIN pDataInBi) {

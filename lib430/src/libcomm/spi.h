@@ -1,3 +1,7 @@
+/**
+ * @file spi.h
+ * @brief SPI Implementation (Header files)
+ */
 #ifndef __SPI_H__
 #define __SPI_H__
 

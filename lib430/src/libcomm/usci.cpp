@@ -26,7 +26,7 @@
 #include <stdint.h>
 #include "config.h"
 #include "ringbuffer.h"
-#include "usci_serial.h"
+#include "usci.h"
 
 /**
  *  create a ring buffer that holds up to 16 uint8_t bytes
