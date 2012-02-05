@@ -1,3 +1,11 @@
+/**
+ * @file hd44780.c
+ * @brief Hitachi HD44780 Driver
+ *
+ * Based on code from Hive76
+ * https://groups.google.com/forum/#!topic/hive76-discussion/4PNA7SmirK0
+ */
+
 #include "hd44780.h"
 
 void HD44780_send(HD44780 *lcd, uint8_t value, uint8_t mode) {

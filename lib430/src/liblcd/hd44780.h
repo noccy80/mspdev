@@ -1,3 +1,11 @@
+/**
+ * @file hd44780.h
+ * @brief Hitachi HD44780 Driver (Header file)
+ *
+ * Based on code from Hive76
+ * https://groups.google.com/forum/#!topic/hive76-discussion/4PNA7SmirK0
+ */
+
 #ifndef __HD44780_H__
 #define __HD44780_H__
 
@@ -6,13 +14,6 @@
 #include <stdint.h>
 
 #include <arduino.h>
-
-/**
- * @brief Definitions for the Hitachi HD44780 series LCD display
- *
- * Based on code from Hive76
- * https://groups.google.com/forum/#!topic/hive76-discussion/4PNA7SmirK0
- */
 
 // commands
 #define LCD_CLEARDISPLAY 0x01

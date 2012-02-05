@@ -1,11 +1,15 @@
+/**
+ * @file font5x8.h
+ * @brief 5x8 Font Data
+ *
+ * This font was created by Philippe Lucidarme and is available
+ * from http://piclist.com/techref/datafile/charset/8x6.htm
+ */
+
 #ifndef __ASSET_FONT_5X8
 #define __ASSET_FONT_5X8
 #define __FONT __ASSET_FONT
 
-// 5x8 Font data
-// This font was created by Philippe Lucidarme and is available
-// from http://piclist.com/techref/datafile/charset/8x6.htm
-//
 // Note: This table is arranged according to ASCII codes 0 to 255
 const font5x8[][6] = {
 {0x00,0x00,0x00,0x00,0x00,0x00},   //   0x00 0

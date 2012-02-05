@@ -1,6 +1,6 @@
 /**
  * @file ili9163lcd.c
- * @brief ILI9163 128x128 LCD library
+ * @brief ILI9163 128x128 LCD Driver
  *
  * This code has been ported from the ili9163lcd library for avr made
  * by Simon Inns, to run on a msp430.

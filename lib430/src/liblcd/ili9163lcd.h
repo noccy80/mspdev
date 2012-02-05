@@ -1,25 +1,28 @@
-/************************************************************************
-	ili9163lcd.h
-
-    ILI9163 128x128 LCD library
-    Copyright (C) 2012 Simon Inns
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-	Email: simon.inns@gmail.com
-
-************************************************************************/
+/**
+ * @file ili9163lcd.h
+ * @brief ILI9163 128x128 LCD Driver (Header file)
+ *
+ * This code has been ported from the ili9163lcd library for avr made
+ * by Simon Inns, to run on a msp430.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Simon Inns <simon.inns@gmail.com>
+ * @author Christopher Vagnetoft (NoccyLabs)
+ * @copyright (C) 2012 Simon Inns
+ * @copyright parts (C) 2012 NoccyLabs
+ */
 
 #ifndef ILI9163LCD_H_
 #define ILI9163LCD_H_
