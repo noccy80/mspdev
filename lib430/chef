@@ -101,6 +101,8 @@ case "$OP" in
 				make docs &> /dev/null
 				echo "Done"
 				mv html ../../docs/$LIB
+				mkdir ../../docs/$LIB/latex
+				mv latex ../../docs/$LIB/latex
 			fi
 			cd ../..
 		done
