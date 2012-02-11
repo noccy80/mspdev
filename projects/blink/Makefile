@@ -28,7 +28,8 @@ include ../../skeleton/common.mk
 INCLUDES  = -I../../lib430/$(MCU)/include
 
 # Libraries to link with, f.ex. -lcomm
-LIBS      = -lcomm
+LIBS      = 
+# -lcomm
 # Specify the lib directories, f.ex. -Llib -Lsome/path
 LIBPATH   = -L../../lib430/$(MCU)/lib
 

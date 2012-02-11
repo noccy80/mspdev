@@ -11,8 +11,8 @@
 #include <msp430.h>
 #include <legacymsp430.h>
 #include "ta0compat.h"
-#include <stdio.h>
-#include <uart.h>
+//#include <uart.h>
+//#include <stdio.h>
 
 #define  LED0      BIT0
 #define  LED1      BIT6
@@ -72,7 +72,7 @@ interrupt(TIMER0_A0_VECTOR) TIMERA0_ISR(void) {
 interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
 #endif
 	twink = !twink;
-	printf("Twink is %d\n", twink);
+	//printf("Twink is %d\n", twink);
 	LED_OUT = (twink)?LED0:LED1;
 
 }
