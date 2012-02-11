@@ -135,7 +135,7 @@ void demo() {
 	// Our counter
 	int n;
 	// The delay constant
-	int delay = 1000;
+	int delay = 3000;
 	// Multipliers for each step (a) and between changes (b).
 	// Note that multiplier a is used TWICE, so set it accordingly.
 	int mula = 10;
@@ -161,7 +161,7 @@ void demo() {
 
 		// Blue to White
 		for (n = 0; n < max; n++) {
-			set_color(n, n, max);
+			set_color(0, n, max);
 			__delay_cycles(delay * mula);
 			__delay_cycles(delay * mula);
 		}
@@ -169,7 +169,7 @@ void demo() {
 
 		// White to Yellow
 		for (n = 0; n <max; n++) {
-			set_color(max, max, max - n);
+			set_color(n, max, max - n);
 			__delay_cycles(delay * mula);
 			__delay_cycles(delay * mula);
 		}
@@ -193,7 +193,7 @@ void demo() {
 
 		// Purple to green
 		for (n = 0; n < max; n++) {
-			set_color(max - n, n, max -n);
+			set_color(max - n, 0, max -n);
 			__delay_cycles(delay * mula);
 			__delay_cycles(delay * mula);
 		}
@@ -211,10 +211,10 @@ interrupt(TIMER0_A0_VECTOR) timer_isr(void) {
 
 	int step;
 	for (step = 1; step < 11; step++) {
-		digitalWrite(OUT_RED,(red_val>step)?LOW:HIGH);
-		digitalWrite(OUT_GREEN,(green_val>step)?LOW:HIGH);
-		digitalWrite(OUT_BLUE,(blue_val>step)?LOW:HIGH);
-		__delay_cycles(5);
+		digitalWrite(OUT_RED,(red_val<step)?HIGH:LOW);
+		digitalWrite(OUT_GREEN,(green_val<step)?HIGH:LOW);
+		digitalWrite(OUT_BLUE,(blue_val<step)?HIGH:LOW);
+		__delay_cycles(2);
 	}
 
 }

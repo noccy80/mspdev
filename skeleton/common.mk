@@ -71,7 +71,7 @@ ifeq ($(MCU),)
 	echo "ERROR: MCU not defined or programmer not connected."
 	exit 1
 endif
-	printf "[LD ] %s.elf: %s\n" "$(TARGET)" "$(OBJS)"
+	printf "[LD ] %s.elf: %s (%s)\n" "$(TARGET)" "$(OBJS)" "$(LIBS)"
 	$(CC) $(LDFLAGS) $(LIBPATH) -o $(TARGET).elf $(OBJS) $(LIBS) 
 	$(SIZE) $(TARGET).elf
 
