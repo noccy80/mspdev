@@ -1,0 +1,44 @@
+
+# liblcd - LCD control library (lib430)
+
+-------------------------------------------------------------------------------
+
+## License
+
+This progrma is free software: you can redistribute it and/or modify it under 
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see http://www.gnu.org/licenses/
+
+## Supported controllers
+
+### Hitachi HD44780
+
+The hd44780 driver supports up to 4 rows of 20 characters. 
+
+## Planned
+
+### Ilitech ILI9163
+
+## Examples
+
+Examples are still to come.
+
+## Compiler defines
+
+### HD44780
+
+#### Enable check of busy state
+
+Defining `HD44780_BUSYCHECK` as `1` will make the hd44780 driver check the
+busy flag after each operation, rather than using a time-based approach. 
+
+    HD44780_BUSYCHECK=[1|0]
+

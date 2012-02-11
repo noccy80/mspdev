@@ -1,23 +1,45 @@
 /**
  * @file hd44780.c
- * @brief Hitachi HD44780 Driver
+ * @brief Hitachi HD44780 Driver (liblcd)
  *
- * Based on code from Hive76
- * https://groups.google.com/forum/#!topic/hive76-discussion/4PNA7SmirK0
+ * Based on code from Hive76 and heavily rewritten to give access to both 4-
+ * and 8-bit operation and neutralize the dependency on the arduino style
+ * syntax and headers.
+ *
+ * @author Hive76
+ * @author Christopher Vagnetoft <noccylabs.info>
  */
 
 #include "hd44780.h"
 
-void HD44780_send(HD44780 *lcd, uint8_t value, uint8_t mode) {
+// NEW
+/*
+void hd44780_init(HD44780* lcd) {
+
+}
+
+void hd44780_write(HD44780* lcd) {
+
+}
+*/
+
+
+void hd44780_send(HD44780 *lcd, uint8_t value, uint8_t mode) {
 	digitalWrite(lcd->_rs_pin, mode);
 	HD44780_write4bits(lcd, value>>4);
 	HD44780_write4bits(lcd, value);
 }
 
+void hd44780_write_cgram(HD44780* lcd, int offset, int data) {
+	
+}
+
+int hd4470_read_cgram(HD44780* lcd, int offset, int bytes, char* data) {
+	return 0;	
+}
 
 
-
-void HD44780_init(HD44780* lcd, int rs, int enable, int db4, int db5, int db6, int db7) {
+int HD44780_init(HD44780* lcd, int rs, int enable, int db4, int db5, int db6, int db7) {
 	lcd->_rs_pin = rs;
 	lcd->_enable_pin = enable;
 
@@ -30,6 +52,7 @@ void HD44780_init(HD44780* lcd, int rs, int enable, int db4, int db5, int db6, i
 	pinMode(enable, OUTPUT);
 
 	lcd->_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+	return 1;	
 }
 
 void HD44780_begin(HD44780 *lcd, uint8_t cols, uint8_t lines) {
@@ -94,7 +117,7 @@ void HD44780_begin(HD44780 *lcd, uint8_t cols, uint8_t lines) {
 	HD44780_clear(lcd);
 
 	// Initialize to default text direction (for romance languages)
-	lcd->_displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+	lcd->_displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECR;
 	// set the entry mode
 	HD44780_command(lcd, LCD_ENTRYMODESET | lcd->_displaymode);
 
@@ -107,11 +130,11 @@ void HD44780_write4bits(HD44780 *lcd, uint8_t value) {
 		digitalWrite(lcd->_data_pins[4+i], (value >> i) & 0x01);
 	}
 
-	HD44780_pulseEnable(lcd);
+	hd44780_strobeenable(lcd);
 }
 
 
-void HD44780_pulseEnable(HD44780 *lcd) {
+void hd44780_strobeenable(HD44780 *lcd) {
 	digitalWrite(lcd->_enable_pin, LOW);
 	delayMicroseconds(2);    
 	digitalWrite(lcd->_enable_pin, HIGH);
@@ -134,18 +157,16 @@ void HD44780_print_byte(HD44780 *lcd, uint8_t b) {
 	HD44780_write(lcd, b);
 }
 
-void HD44780_print_string(HD44780 *lcd, const char c[]) {
-	while (*c)
-	HD44780_print_byte(lcd, *c++);
+void HD44780_print_string(HD44780 *lcd, const char* c) {
+	while (*c) HD44780_print_byte(lcd, *c++);
 }
 
 void HD44780_setCursor(HD44780 *lcd, uint8_t col, uint8_t row) {
-	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 }; 
 	if ( row > lcd->_numlines ) { 
 		row = lcd->_numlines-1;    // we count rows starting w/0 
 	} 
 
-	HD44780_command(lcd, LCD_SETDDRAMADDR | (col + row_offsets[row])); 
+	HD44780_command(lcd, LCD_SETDDRAMADDR | (col + hd44780_row_offset[row])); 
 } 
 
 void HD44780_scrollDisplayLeft(HD44780 *lcd) {
