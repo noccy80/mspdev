@@ -1,5 +1,5 @@
 #!/bin/bash
-LIBS="libair libarduino libcomm libcore libfat libhal liblcd libmidi libsound"
+LIBS="libair libarduino libcomm libcore libgpio libfat libhal liblcd libmidi libsound"
 OP=""
 DEFINED=""
 while getopts ":m:vhbra:lcpid:D" opt; do
@@ -83,7 +83,8 @@ case "$OP" in
 			echo -n " :: $LIB: "
 			cd src/$LIB
 			if [ -e Makefile ]; then
-				make clean &> /dev/null
+				make clean 
+# &> /dev/null
 			fi
 			echo "Clean"
 			cd ../..

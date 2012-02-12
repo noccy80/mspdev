@@ -64,10 +64,22 @@ Some projects that use lib430:
  * [Blink - Simple LED blinker](/mspdev/projects/blink/README "README for Blink")
  * [RGBlink - A RGB blinker](/mspdev/projects/rgblink/README "README for RGBlink")
  * [MIDIPAD - A control surface for MIDI gadgets](/mspdev/projects/midipad/README "README for MIDIPAD")
+ 
+### Status
+
+Currently not all libraries compile for all devices. This is being worked on,
+so please consider the current code a work in progress. Contributions are
+welcome, see the section "patches" further down this document.
   
 ## Building
 
     ./chef -m msp430g2553
+
+Alternatively you can make use of the buildall.sh script:
+
+    ./buildall.sh
+
+Feel free to tweak the MCUS file to contain the controllers you work with.
 
 ### Removing builds
 
@@ -83,7 +95,7 @@ Some projects that use lib430:
 
 ## Patches
  
-Patches are accepted via e-mail to lib430-patches@noccylabs.info as long as
+Patches are accepted via e-mail to lib430@groups.google.com as long as
 they can be applied to the current trunk. They should be performed from the
 lib430 root folder:
  
