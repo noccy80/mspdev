@@ -4,12 +4,14 @@
 
 function build() {
 
-	rm -rf $1
+	echo "Purging $1..."
+	test -e $1 && rm -rf $1
 
 }
 function docs() {
 
-	rm -rf html
+	echo "Cleaning docs..."
+	test -e && rm -rf html
 
 }
 
