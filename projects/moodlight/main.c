@@ -6,6 +6,10 @@
  * tool will be able to read input from three photoresistors to produce a
  * matching colors.
  *
+ * It is set to support 262144 colors with 64 intensities for each of the
+ * primaries red, green and blue. This can be tweaked with the max constant
+ * below.
+ *
  * This was all really written as a proof-of-concept that you can use simple
  * and cheap photoresistors with colored filters to construct a mood light
  * that adjusts its color from the ambient color in the environment. Whether
@@ -18,6 +22,7 @@
 // Our includes
 #include <msp430.h>
 #include <legacymsp430.h>
+#include "bcd.h"
 
 // This is the main "sketch", if we are to borrow the words from the aurduino.
 #define ARDUINO_MAIN
@@ -25,20 +30,22 @@
 
 // Output pins
 #define OUT_RED 2
-#define OUT_GREEN 3
-#define OUT_BLUE 1
+#define OUT_GREEN 1
+#define OUT_BLUE 3
 // Input pins, for reading and adc
 #define IN_RED 5
 #define IN_GREEN 6
 #define IN_BLUE 7
 
 // Max is a bad name, but this is how many intensity levels exist
-#define max 10
+const int max = 64;
 
 // Volatile variables to store the red, green and blue values.
 volatile int red_val = 0;
 volatile int green_val = 0;
 volatile int blue_val = 0;
+
+volatile int display = 0;;
 
 // Function prototypes
 void demo();
@@ -58,9 +65,12 @@ void setup() {
 	digitalWrite(OUT_GREEN, HIGH);
 	digitalWrite(OUT_BLUE, HIGH);
 
-	pinMode(IN_RED, INPUT);
-	pinMode(IN_GREEN, INPUT);
-	pinMode(IN_BLUE, INPUT);
+	//pinMode(IN_RED, INPUT);
+	//pinMode(IN_GREEN, INPUT);
+	//pinMode(IN_BLUE, INPUT);
+
+	P2DIR = 0xFF;
+	P2SEL = 0x00;
 
 	//Set ACLK to use internal VLO (12 kHz clock)
 	BCSCTL3 |= LFXT1S_2;
@@ -73,7 +83,7 @@ void setup() {
 	// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
 	// should output an LED change every 1 second. Try this out and see how
 	// inaccurate the VLO can be
-	TACCR0 = 6;
+	TACCR0 = 2;
 
 	//Enable global interrupts
 	WRITE_SR(GIE);
@@ -133,71 +143,40 @@ void ambient() {
 void demo() {
 
 	// Our counter
-	int n;
+	int n, m;
 	// The delay constant
-	int delay = 3000;
+	int delay = 2000;
 	// Multipliers for each step (a) and between changes (b).
 	// Note that multiplier a is used TWICE, so set it accordingly.
 	int mula = 10;
-	int mulb = 30;
+	int mulb = 10;
+
+	display = 0;
 
 	while(1) {
 
 		// Green to Red
-		for (n = 0; n < max; n++) {
-			set_color(n,max - n,0);
-			__delay_cycles(delay * mula);
-			__delay_cycles(delay * mula);
+		for (m = 0; m < 6; m++) {
+			for (n = 0; n < max; n++) {
+				switch(m) {
+					case 0:
+						set_color(n,0,0); break;
+					case 1:
+						set_color(max,n,0); break;
+					case 2:
+						set_color(max-n,max,0); break;
+					case 3:
+						set_color(0,max -n,n); break;
+					case 4:
+						set_color(n,0,max); break;
+					case 5:
+						set_color(max - n,0,max -n); break;
+				}
+				__delay_cycles(delay * mula);
+				__delay_cycles(delay * mula);
+			}
+			__delay_cycles(delay * mulb);
 		}
-		__delay_cycles(delay * mulb);
-
-		// Red to Blue
-		for (n = 0; n < max; n++) {
-			set_color(max - n, 0, n);
-			__delay_cycles(delay * mula);
-			__delay_cycles(delay * mula);
-		}
-		__delay_cycles(delay * mulb);
-
-		// Blue to White
-		for (n = 0; n < max; n++) {
-			set_color(0, n, max);
-			__delay_cycles(delay * mula);
-			__delay_cycles(delay * mula);
-		}
-		__delay_cycles(delay * mulb);
-
-		// White to Yellow
-		for (n = 0; n <max; n++) {
-			set_color(n, max, max - n);
-			__delay_cycles(delay * mula);
-			__delay_cycles(delay * mula);
-		}
-		__delay_cycles(delay * mulb);
-
-		// Yellow to Cyan
-		for (n = 0; n < max; n++) {
-			set_color(max - n, max, n);
-			__delay_cycles(delay * mula);
-			__delay_cycles(delay * mula);
-		}
-		__delay_cycles(delay * mulb);
-
-		// Cyan to Purple
-		for (n = 0; n < max; n++) {
-			set_color(n, max - n, max);
-			__delay_cycles(delay * mula);
-			__delay_cycles(delay * mula);
-		}
-		__delay_cycles(delay * mulb);
-
-		// Purple to green
-		for (n = 0; n < max; n++) {
-			set_color(max - n, 0, max -n);
-			__delay_cycles(delay * mula);
-			__delay_cycles(delay * mula);
-		}
-		__delay_cycles(delay * mulb);
 
 	}
 
@@ -209,12 +188,12 @@ void demo() {
  */
 interrupt(TIMER0_A0_VECTOR) timer_isr(void) {
 
-	int step;
-	for (step = 1; step < 11; step++) {
-		digitalWrite(OUT_RED,(red_val<step)?HIGH:LOW);
-		digitalWrite(OUT_GREEN,(green_val<step)?HIGH:LOW);
-		digitalWrite(OUT_BLUE,(blue_val<step)?HIGH:LOW);
-		__delay_cycles(2);
-	}
+	static int step = 0;
+	P1OUT = 0xFF;
+	digitalWrite(OUT_RED,(red_val<step)?LOW:HIGH);
+	digitalWrite(OUT_GREEN,(green_val<step)?LOW:HIGH);
+	digitalWrite(OUT_BLUE,(blue_val<step)?LOW:HIGH);
+	step++;
+	if (step>max) step = 0;
 
 }

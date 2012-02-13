@@ -10,12 +10,12 @@
 # the binary flashed on the device after build, use "bin prog".
 
 # Source files, C, C++  and Assembly
-SOURCEC   = main.c
+SOURCEC   = main.c bcd.c
 SOURCECPP =
 SOURCEASM =
 
 # Libraries
-LIBS      = -larduino
+LIBS      = 
 
 # bin:binary file, lib:library, prog:program device
 BUILD     = bin prog
