@@ -54,6 +54,7 @@ while getopts ":m:vhbra:lcpid:D" opt; do
 			echo "       `basename $0` -a <info-here>"
 			echo "       `basename $0` -h"
 			echo "       `basename $0` -i"
+			echo "       `basename $0` -D"
 			echo ""
 			echo "  -m  MCU (msp430g2553,...)"
 			echo "  -d  Pass on one or more defines, quote the string please"
@@ -62,6 +63,7 @@ while getopts ":m:vhbra:lcpid:D" opt; do
 			echo "  -l  List modules"
 			echo "  -c  Clean modules"
 			echo "  -a  Create patch with description"
+			echo "  -D  Build docs with Doxygen"
 			echo "  -h  Show this help"
 			exit 1
 			;;
@@ -99,6 +101,7 @@ case "$OP" in
 			cd src/$LIB
 			if [ -e Doxyfile ]; then
 				echo -n "$LIB: "
+				export MCU=na
 				make docs &> /dev/null
 				echo "Done"
 				mv html ../../docs/$LIB

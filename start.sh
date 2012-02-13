@@ -1,8 +1,14 @@
 #!/bin/bash
 
-DISTRO="linux/unknown"
-uname -v | grep -i ubuntu &>/dev/null && DISTRO="linux/debian"
-uname -v | grep -i debian &>/dev/null && DISTRO="linux/debian"
+function get_distro() {
+	echo -n "Determining distribution ... "
+	DISTRO="linux/unknown"
+	uname -v | grep -i ubuntu &>/dev/null && DISTRO="linux/debian"
+	uname -v | grep -i debian &>/dev/null && DISTRO="linux/debian"
+}
+
+get_distro
+
 echo "`basename $0` ($DISTRO)"
 echo
 echo "Hello, and welcome to the mspdev quickstarter!"
@@ -26,10 +32,11 @@ if [ "$ans" == "y" ]; then
 	pushd examples/blink; make clean; popd
 	pushd examples/libarduino; make clean; popd
 	pushd examples/blink; make clean; popd
+	echo 'All done!'
 fi
 echo
-echo 'All done!'
 
+if [ "`which msp430-gcc`" == "" ]; then
 echo
 echo "== INSTALL MSP430-GCC AND MSPDEBUG ==========================================="
 echo
@@ -58,6 +65,7 @@ if [ "$ans" == "y" ]; then
 		echo "Sorry, unknown platform"
 		;;
 	esac
+fi
 fi
 
 echo
@@ -110,6 +118,8 @@ echo
 echo "   This will build the examples for the microcontroller that is attached on the"
 echo "   launchpad via usb. It will then program the blink example onto the device."
 echo
+echo '   MAKE SURE THAT YOUR LAUNCHPAD IS ATTACHED BEFORE CONTINUING!'
+echo
 echo -n "   Build examples [y/n]? "
 read ans
 if [ "$ans" == "y" ]; then
@@ -118,6 +128,6 @@ if [ "$ans" == "y" ]; then
 	pushd examples/libarduino; make bin; popd
 
 	pushd examples/blink; make prog; popd
+echo 'All done!'
 fi
 echo
-echo 'All done!'

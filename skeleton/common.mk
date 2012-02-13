@@ -46,11 +46,18 @@ CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-fu
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings
-OBJS     = $(SOURCEC:.c=.c.o) $(SOURCEASM:.asm=.asm.o) $(SOURCECPP:.cpp=.cpp.o)
+OBJS     = $(SOURCEC:.c=.c.o) $(SOURCEASM:.asm=.asm.o) $(SOURCEASM:.s43=.s43.o) $(SOURCECPP:.cpp=.cpp.o)
 LSTS     = $(SOURCEC:.c=.lst) $(SOURCECPP:.cpp=.lst)
 ASMTYPE ?= gcc
 AR      ?= msp430-ar
 ARLFAGS ?= r
+
+HDR_ASM  = [\033[0;32m%-3s\033[0m]
+HDR_CC   = [\033[0;34m%-3s\033[0m]
+HDR_AR   = [\033[0;33m%-3s\033[0m]
+HDR_LD   = [\033[0;36m%-3s\033[0m]
+HDR_HEX  = [\033[0;36m%-3s\033[0m]
+HDR_LST  = [\033[0;35m%-3s\033[0m]
 
 # Phony targets; all and clean
 .phony: all bin lib clean listing prog identify package help
@@ -62,8 +69,8 @@ bin: $(TARGET).elf $(TARGET).hex
 
 # Build library
 $(TARGET).a: $(OBJS)
-	printf "[AR ] %s.a: %s\n" "$(TARGET)" "$(OBJS)"
-	ar r -o $(TARGET).a $(OBJS)
+	printf "$(HDR_AR) %s.a: %s\n" "AR" "$(TARGET)" "$(OBJS)"
+	ar r -o $(TARGET).a $(OBJS) 2>/dev/null
 
 # Build binary
 $(TARGET).elf: $(OBJS)
@@ -71,12 +78,12 @@ ifeq ($(MCU),)
 	echo "ERROR: MCU not defined or programmer not connected."
 	exit 1
 endif
-	printf "[LD ] %s.elf: %s (%s)\n" "$(TARGET)" "$(OBJS)" "$(LIBS)"
+	printf "$(HDR_LD) %s.elf: %s (%s)\n" "LD" $(TARGET)" "$(OBJS)" "$(LIBS)"
 	$(CC) $(LDFLAGS) $(LIBPATH) -o $(TARGET).elf $(OBJS) $(LIBS) 
 	$(SIZE) $(TARGET).elf
 
 listing: $(LSTS)
-
+	
 # Compile the object files
 %.c.o: %.c
 ifeq ($(MCU),)
@@ -84,7 +91,7 @@ ifeq ($(MCU),)
 	echo $(MCU)
 	exit 1
 endif
-	printf "[CC ] %s\n" "$@"
+	printf "$(HDR_CC) %s\n" "CC" "$@"
 	$(CC) -c $(CFLAGS) $(INCLUDES) -o $@ $<
 
 # Compile the object files
@@ -94,7 +101,7 @@ ifeq ($(MCU),)
 	echo $(MCU)
 	exit 1
 endif
-	printf "[CPP] %s\n" "$@"
+	printf "$(HDR_CC) %s\n" "CPP" "$@"
 	$(CC) -c $(CFLAGS) $(INCLUDES) -o $@ $<
 
 %.asm.o: %.asm
@@ -102,23 +109,25 @@ ifeq ($(MCU),)
 	echo "ERROR: MCU not defined or programmer not connected."
 	exit 1
 endif
-ifeq ($(ASMTYPE),gcc)
-	printf "[ASM] %s (%s)\n" "$@" "gcc"
-	$(CC) -D_GNU_ASSEMBLER_ -c $(ASFLAGS) -o $@ $<
-endif
-ifeq ($(ASMTYPE),naken)
-	printf "[ASM] %s (%s)\n" "$@" "naken"
+	printf "$(HDR_ASM) %s (%s)\n" "ASM" "$@" "naken"
 	$(NAKENASM) -e -o $@ $<
+
+%.s43.o: %.s43
+ifeq ($(MCU),)
+	echo "ERROR: MCU not defined or programmer not connected."
+	exit 1
 endif
+	printf "$(HDR_ASM) %s (%s)\n" "S43" "$@" "gcc"
+	$(CC) -D_GNU_ASSEMBLER_ -c $(ASFLAGS) -o $@ $<
 
 # Create hex files
 %.hex: %.elf
-	printf "[OBJ] %s\n" "$@"
+	printf "$(HDR_HEX) %s\n" "OBJ" "$@"
 	$(OBJCOPY) -O ihex $< $@
 
 # rule for making assembler source listing, to see the code
 %.lst: %.c
-	printf "[LST] %s\n" "$@"
+	printf "$(HDR_LST) %s\n" "LST" "$@"
 	$(CC) -c $(CFLAGS) -Wa,-anlhd $< > $@
 
 # Clean
@@ -131,11 +140,11 @@ endif
 
 # Docs
 docs: Doxyfile
-	printf "[DOC] Doxygen\n"
-	doxygen
+	printf "[\033[38;5;148m%-3s\033[39m] Doxygen\n" "DOC"
+	doxygen 2>doxygen.err >doxygen.log
 
 prog: $(TARGET).elf
-	echo "[:::] programming device: $(MCU)"
+	printf "[\033[38;5;148m%-3s\033[39m] programming device: %s" "MSP" "$(MCU)"
 	$(MSPDEBUG) -q $(MSPTYPE) "prog $(TARGET).elf"
 
 sim: $(TARGET).elf

@@ -2,6 +2,7 @@
 #define __ARDUINO_H__
 
 #include <msp430.h>
+#include <legacymsp430.h>
 #include <stdint.h>
 
 /**
@@ -95,6 +96,22 @@ inline void analogWrite(WORD pin, int value) {
 	// Setup pin for PWM via WDT.
 }
 
+int constrain(int val, int min, int max);
+int map(int val, int amin, int amax, int bmin, int bmax);
+
+/**
+ * @brief Serial IO begin function
+ */
+void Serial_begin(int baud);
+/**
+ * @brief Arduino style function mappings
+ */
+/*
+typedef struct _Serial {
+	void (*begin)(int baud);
+} Serial;
+Serial.begin = Serial_begin;
+*/
 /**
  * @brief Enable interrupts.
  */
