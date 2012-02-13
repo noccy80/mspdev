@@ -15,7 +15,7 @@ SOURCECPP =
 SOURCEASM =
 
 # Libraries
-LIBS      = 
+LIBS      = -larduino
 
 # bin:binary file, lib:library, prog:program device
 BUILD     = bin prog

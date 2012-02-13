@@ -53,7 +53,7 @@ AR      ?= msp430-ar
 ARLFAGS ?= r
 
 HDR_ASM  = [\033[0;32m%-3s\033[0m]
-HDR_CC   = [\033[0;34m%-3s\033[0m]
+HDR_CC   = [\033[0;32m%-3s\033[0m]
 HDR_AR   = [\033[0;33m%-3s\033[0m]
 HDR_LD   = [\033[0;36m%-3s\033[0m]
 HDR_HEX  = [\033[0;36m%-3s\033[0m]
@@ -78,7 +78,7 @@ ifeq ($(MCU),)
 	echo "ERROR: MCU not defined or programmer not connected."
 	exit 1
 endif
-	printf "$(HDR_LD) %s.elf: %s (%s)\n" "LD" $(TARGET)" "$(OBJS)" "$(LIBS)"
+	printf "$(HDR_LD) %s.elf: %s %s\n" "LD" "$(TARGET)" "$(strip $(OBJS))" "$(if $(LIBS),(+$(subst -l,,$(LIBS))),)"
 	$(CC) $(LDFLAGS) $(LIBPATH) -o $(TARGET).elf $(OBJS) $(LIBS) 
 	$(SIZE) $(TARGET).elf
 
@@ -122,7 +122,7 @@ endif
 
 # Create hex files
 %.hex: %.elf
-	printf "$(HDR_HEX) %s\n" "OBJ" "$@"
+	printf "$(HDR_HEX) %s: %s\n" "HEX" "$@" "$<"
 	$(OBJCOPY) -O ihex $< $@
 
 # rule for making assembler source listing, to see the code
@@ -144,8 +144,8 @@ docs: Doxyfile
 	doxygen 2>doxygen.err >doxygen.log
 
 prog: $(TARGET).elf
-	printf "[\033[38;5;148m%-3s\033[39m] programming device: %s" "MSP" "$(MCU)"
-	$(MSPDEBUG) -q $(MSPTYPE) "prog $(TARGET).elf"
+	printf "[\033[38;5;148m%-3s\033[39m] programming device: \033[1m%s\033[0m\n" "MSP" "$(MCU)"
+	$(MSPDEBUG) -q $(MSPTYPE) "prog $(TARGET).elf" >/dev/null 2>/dev/null
 
 sim: $(TARGET).elf
 	echo "Type 'prog $(TARGET).elf' to load the program in the simulator"
