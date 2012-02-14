@@ -1,5 +1,5 @@
 #!/bin/bash
-test -z "$LIB430LIBS" || LIB430LIBS="libair libarduino libcomm libcore libgpio libhal liblcd libmidi libsound"
+test -z "$LIB430LIBS" && LIB430LIBS="libair libarduino libcomm libcore libgpio libhal liblcd libmidi libsound"
 OP=""
 DEFINED=""
 while getopts ":m:vhbra:lcpid:D" opt; do
