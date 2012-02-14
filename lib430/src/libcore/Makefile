@@ -9,11 +9,11 @@
 # well as a .hex file, and if lib an .a library file will be created. To have
 # the binary flashed on the device after build, use "bin prog".
 #
-SOURCEC   = timer.c
+SOURCEC   = timers.c hooks.c
 SOURCEASM =
 BUILD     = lib
 TARGET    = libcore
-INCLUDES  = -I. -I..
+INCLUDES  = -I. -I.. -I../libgpio
 LIBS      =
 
 include ../../../skeleton/common.mk
