@@ -1,5 +1,5 @@
 #!/bin/bash
-LIBS="libair libarduino libcomm libcore libgpio libfat libhal liblcd libmidi libsound"
+test -z "$LIB430LIBS" || LIB430LIBS="libair libarduino libcomm libcore libgpio libhal liblcd libmidi libsound"
 OP=""
 DEFINED=""
 while getopts ":m:vhbra:lcpid:D" opt; do
@@ -81,7 +81,7 @@ case "$OP" in
 		ls -al | grep msp430*
 		;;
 	"clean")
-		for LIB in $LIBS; do
+		for LIB in $LIB430LIBS; do
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean 
@@ -94,7 +94,7 @@ case "$OP" in
 	"docs")
 		echo "== Cooking docs =="
 
-		for LIB in $LIBS; do
+		for LIB in $LIB430LIBS; do
 			rm -rf docs/$LIB
 			mkdir -p docs
 			cd src/$LIB
@@ -123,7 +123,7 @@ case "$OP" in
 		mkdir -p $MCU/include $MCU/lib
 		export MCU
 
-		for LIB in $LIBS; do
+		for LIB in $LIB430LIBS; do
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean &> /dev/null
@@ -132,7 +132,7 @@ case "$OP" in
 			if [ "$?" == "0" ]; then
 				printf "   %s %-20s |%4s| " "··" $LIB " OK "
 				DEST="../../$MCU/"
-				INST="`make install | tail --lines 1`"
+				INST="`make install 2>/dev/null | tail --lines 1`"
 				printf "%s\n" "$INST"
 			else
 				printf "   %s %-20s |%4s| Failed, see %s\n" "  " $LIB "" "$MCU/$LIB.log"
