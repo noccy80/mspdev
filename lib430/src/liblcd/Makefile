@@ -16,3 +16,5 @@ INCLUDES  = -I../libarduino -I ../libcomm
 LIBS      =
 
 include ../../../skeleton/common.mk
+include ../../../skeleton/install.mk
+

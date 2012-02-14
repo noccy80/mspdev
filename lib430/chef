@@ -82,13 +82,12 @@ case "$OP" in
 		;;
 	"clean")
 		for LIB in $LIBS; do
-			echo -n " :: $LIB: "
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean 
 # &> /dev/null
 			fi
-			echo "Clean"
+			printf "   %s %-20s |%4s| Make clean\n" "··" $LIB " OK "
 			cd ../..
 		done
 		;;
@@ -100,10 +99,9 @@ case "$OP" in
 			mkdir -p docs
 			cd src/$LIB
 			if [ -e Doxyfile ]; then
-				echo -n "$LIB: "
 				export MCU=na
 				make docs &> /dev/null
-				echo "Done"
+				printf "   %s %-20s |%4s| %d files\n" "··" $LIB " OK " `find html -iname "*" | wc -l`
 				mv html ../../docs/$LIB
 				mkdir ../../docs/$LIB/latex
 				mv latex ../../docs/$LIB/latex
@@ -135,8 +133,7 @@ case "$OP" in
 				LIBCOUNT="`ls -al *.a 2>/dev/null | wc -l`"
 				HCOUNT="`ls -al *.h 2>/dev/null | wc -l`"
 				printf "   %s %-20s |%4s| (%d libraries, %d headers)\n" "··" $LIB " OK " $LIBCOUNT $HCOUNT
-				cp $LIB.a ../../$MCU/lib/ &>/dev/null
-				cp *.h ../../$MCU/include/ &>/dev/null
+				DEST="../../$MCU/" make install
 			else
 				printf "   %s %-20s |%4s| Failed, see %s\n" "  " $LIB "" "$MCU/$LIB.log"
 				cat ../../$MCU/$LIB.log | grep -i error > ../../$MCU/$LIB.err

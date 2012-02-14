@@ -17,3 +17,5 @@ INCLUDES  = -I. -I.. -I../libcore
 LIBS      =
 
 include ../../../skeleton/common.mk
+include ../../../skeleton/install.mk
+
