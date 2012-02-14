@@ -1,0 +1,8 @@
+strtol.o: \
+ $(TOPDIR)/src/strtol.cpp \
+ $(TOPDIR)/include/rw/_defs.h \
+ $(TOPDIR)/include/rw/_config.h \
+ $(TOPDIR)/build/include/config.h \
+ $(TOPDIR)/include/rw/_config-gcc.h \
+ $(TOPDIR)/src/strtol.h \
+ $(TOPDIR)/include/ansi/errno.h \

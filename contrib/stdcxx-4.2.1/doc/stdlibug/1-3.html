@@ -1,0 +1,70 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>Usage Notes</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="1-2.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="1-4.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>1.3 Usage Notes</H2>
+<A NAME="131"><H3>1.3.1 Compatibility Issues</H3></A>
+<P>This implementation of the C++ Standard Library conforms to <I>ISO/IEC 14882:2003 --  International Standard for Information Systems  --  Programming Language C++</I>.  This release is source compatible with previous 2.x implementations.</P>
+<P>1.x implementations of the library were based on <I>ANSI's Working Paper for Draft Proposed International Standard for Information Systems  --  Programming Language C++</I>.  The draft standard differs from the final standard in some areas.  As a result, source written to 1.x implementations of the library will be incompatible with this implementation in these areas.  See the readme file for details.</P>
+<P>Please note that some compiler and library vendors have not yet implemented the whole range of language features defined by the ANSI/ISO standard. </P>
+<BLOCKQUOTE><HR><B>
+NOTE -- The C++ Standard Library is not yet fully implemented by all compilers. You may experience difficulty if you attempt to use features of the library that are unsupported by your compiler.
+</B><HR></BLOCKQUOTE>
+<P>In the <I>User's Guide</I>, we draw your attention to places in the code where this might be a problem. If your vendor is still in the process of meeting the standard, some of the techniques demonstrated in this <I>User's Guide</I> may not work. We include them anyway to demonstrate the full range of capabilities of the standard C++ language. Compilers will catch up, and this guide will be more useful to you if it is as complete as possible.</P>
+<A NAME="132"><H3>1.3.2 The std Namespace</H3></A>
+<P>Everything in the Apache C++ Standard Library is contained in the <SAMP>std</SAMP> namespace. You must specify a <SAMP>using</SAMP> directive or explicitly scope any name from the library.</P>
+<P>To use the <B><I><A HREF="../stdlibref/vector.html">vector</A></I></B> class, for example, you could include one of the following <SAMP>using</SAMP> directives:</P>
+
+<UL><PRE>
+using namespace std;       // Brings all names from std
+                           // into current scope. 
+
+using std::vector;         // Brings vector into
+                           // current scope.
+</PRE></UL>
+<P>or explicitly scope <B><I><A HREF="../stdlibref/vector.html">vector</A></I></B> whenever it is used: </P>
+
+<UL><PRE>
+std::vector&lt;int&gt; v; 
+</PRE></UL>
+<BLOCKQUOTE><HR><B>
+NOTE -- To enhance this manual's readability,  namespace scoping is usually omitted in the text. You should assume that everything in the Apache C++ Standard Library is scoped in namespace <SAMP>std</SAMP> unless otherwise stated.
+</B><HR></BLOCKQUOTE>
+
+<BR>
+<HR>
+<A HREF="1-2.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="1-4.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

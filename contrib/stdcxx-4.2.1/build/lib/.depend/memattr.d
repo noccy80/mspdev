@@ -1,0 +1,10 @@
+memattr.o: \
+ $(TOPDIR)/src/memattr.cpp \
+ $(TOPDIR)/include/ansi/errno.h \
+ $(TOPDIR)/include/rw/_defs.h \
+ $(TOPDIR)/include/rw/_config.h \
+ $(TOPDIR)/build/include/config.h \
+ $(TOPDIR)/include/rw/_config-gcc.h \
+ $(TOPDIR)/include/ansi/string.h \
+ $(TOPDIR)/include/ansi/stddef.h \
+ $(TOPDIR)/include/ansi/time.h \

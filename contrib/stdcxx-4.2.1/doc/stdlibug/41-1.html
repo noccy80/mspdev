@@ -1,0 +1,58 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>User-Defined Character Types</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="41.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="41-2.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>41.1 User-Defined Character Types</H2>
+<A NAME="idx965"><!></A>
+<P>One of the fundamental differences between the new, templated iostreams and the traditional iostreams is the ability of the new iostreams to accommodate user-defined character types. It's now possible to use the C++ iostreams interface with arbitrary character-like types, as well as with ordinary <SAMP>char</SAMP>s. </P>
+<P>Of course, this flexibility comes at a price. Any user-defined character type must satisfy certain requirements. The type really must act like an ordinary <SAMP>char</SAMP> in most circumstances. In addition, several classes must be defined to support the type in the iostreams environment.</P>
+<A NAME="4111"><H3>41.1.1 Requirements for User-Defined Character Types</H3></A>
+<A NAME="idx966"><!></A>
+<P>In general, user-defined character types must meet the requirements of a POD type:</P>
+
+<UL><PRE>
+struct Echar
+{
+  char c;
+  char i;
+};
+
+</PRE></UL>
+
+<BR>
+<HR>
+<A HREF="41.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="41-2.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

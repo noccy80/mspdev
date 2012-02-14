@@ -1,0 +1,56 @@
+Ice Cream Store simulation from Chapter 9
+pumping queue with event 0
+pumping queue with event 0
+pumping queue with event 2
+pumping queue with event 7
+pumping queue with event 8
+pumping queue with event 12
+pumping queue with event 12
+pumping queue with event 12
+pumping queue with event 14
+pumping queue with event 17
+Time: 0 group of 2 customers arrives is seated
+Time: 0 group of 4 customers arrives is seated
+Time: 2 group of 3 customers arrives is seated
+Time: 3 serviced order for 4
+Time: 3 serviced order for 1
+Time: 3 serviced order for 1
+Time: 3 serviced order for 3
+Time: 4 serviced order for 4
+Time: 4 serviced order for 1
+Time: 4 group of size 4 leaves
+Time: 5 serviced order for 2
+Time: 5 serviced order for 1
+Time: 5 serviced order for 3
+Time: 7 group of 1 customers arrives is seated
+Time: 7 group of size 2 leaves
+Time: 7 group of size 3 leaves
+Time: 8 group of 3 customers arrives is seated
+Time: 10 serviced order for 3
+Time: 12 group of 2 customers arrives is seated
+Time: 12 group of 3 customers arrives is seated
+Time: 12 serviced order for 2
+Time: 12 serviced order for 2
+Time: 12 serviced order for 4
+Time: 12 group of 1 customers arrives is seated
+Time: 14 serviced order for 3
+Time: 14 serviced order for 4
+Time: 14 group of 2 customers arrives is seated
+Time: 15 serviced order for 4
+Time: 16 serviced order for 1
+Time: 16 serviced order for 3
+Time: 16 serviced order for 2
+Time: 17 serviced order for 2
+Time: 17 serviced order for 2
+Time: 17 group of 2 customers arrives is seated
+Time: 18 group of size 1 leaves
+Time: 19 group of size 1 leaves
+Time: 21 group of size 2 leaves
+Time: 21 group of size 3 leaves
+Time: 21 group of size 3 leaves
+Time: 21 serviced order for 3
+Time: 21 serviced order for 4
+Time: 24 group of size 2 leaves
+Time: 27 group of size 2 leaves
+Total profits 20.65
+End of ice cream store simulation

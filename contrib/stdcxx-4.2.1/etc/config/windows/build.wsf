@@ -1,0 +1,602 @@
+<?xml version="1.0" ?><!-- -*- SGML -*- -->
+<package>
+    <comment>
+        Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+    </comment>
+    <job id="build" prompt="no">
+        <?job error="false" debug="false" ?>
+        <runtime>
+            <description>
+Builds specified solution configuration
+            </description>
+            <named helpstring="Name of the compiler configuration"
+                name="CONFIG" required="true" type="string"/>
+            <named helpstring="Output directory for modules" 
+                name="BUILDDIR" required="true" type="string"/>
+            <named helpstring="Top directory of stdcxx sources tree" 
+                name="TOPDIR" required="false" type="string"/>
+            <named helpstring="Name of the solution configuration" 
+                name="BUILDTYPE" required="true" type="string"/>
+            <named helpstring="Build projects only, do not execute tests" 
+                name="BUILDONLY" required="false" type="string"/>
+            <example>cscript build.wsf /CONFIG:msvc-7.1 /BUILDTYPE:11d
+            </example>
+            <usage>
+Usage: cscript build.wsf /CONFIG:@CONFIG /BUILDDIR:@BUILDDIR
+/TOPDIR:@TOPDIR /BUILDTYPE:@BUILDTYPE [/BUILDONLY:@BUILDONLY]
+where
+@CONFIG is the compiler configuration (msvc-7.1, icc-9.0, etc).
+@BUILDDIR is the root of the build directory.
+@TOPDIR is the root of the stdcxx source tree.
+@BUILDTYPE is the build type (11d, 11s, etc).
+@BUILDONLY is one of { yes, no } - execute or not the tests.
+            </usage>
+        </runtime>
+        <object id="fso" progid="Scripting.FileSystemObject"/>
+        <object id="WshShell" progid="WScript.Shell"/>
+        <script language="JScript" src="config.js"/>
+        <script language="JScript" src="data.js"/>
+        <script language="JScript" src="utilities.js"/>
+        <script language="JScript" src="devenv_consts.js"/>
+        <script language="JScript" src="filterdef.js"/>
+        <script language="JScript" src="projectdef.js"/>
+        <script language="JScript" src="projects.js"/>
+        <script id="build" language="JScript">
+<![CDATA[
+//
+// Solution generation script for Stdcxx library
+//
+
+// constants
+var currentCfg = "";
+var slnDir = "";
+var srcDir = "";
+var buildType = "";
+var longConfName = "";
+var buildOnly = false;
+var outputPane = null;
+var winconfigDir = "\\etc\\config\\windows";
+var postBuildInvoked;
+var rxBuildDir = null;
+var rxTopDir = null;
+
+var description = new build; // run
+
+function event_ProjectBuildStarted(Cfg)
+{
+    // clear output window
+    outputPane.Clear();
+
+    if (null != Cfg)
+    {
+        // delete old BuildLog.htm
+        var path = Cfg.Evaluate(Cfg.IntermediateDirectory) + "\\BuildLog.htm";
+        if (fso.FileExists(path))
+            fso.DeleteFile(path);
+    }
+}
+
+function getBuildLog(path)
+{
+    var log = "";
+
+    try
+    {
+        var ForReading = 1;
+        var format = UNICODELOG ? -1 : 0;
+        var logStrm = fso.OpenTextFile(path, ForReading, false, format);
+        log = logStrm.ReadAll();
+        logStrm.Close();
+        log = stripTags(log);
+        var line = "-------";
+        log = log.replace("Build Log", "").replace("Command Lines", line);
+        log = log.replace("Output Window", line).replace("Results", line);
+    }
+    catch (e)
+    {
+        log = "";
+    }
+
+    return log;
+}
+
+function removeLogClutter(log)
+{
+    if ("" != slnDir)
+    {
+        if (null == rxBuildDir)
+        {
+            var buildDir = slnDir.replace(/\\/g, "\\\\");
+            rxBuildDir = new RegExp("(" + buildDir + ")", "ig");
+        }
+        log = log.replace(rxBuildDir, "$(BUILDDIR)");
+    }
+
+    if ("" != srcDir)
+    {
+        if (null == rxTopDir)
+        {
+            var topDir = srcDir.replace(/\\/g, "\\\\");
+            rxTopDir = new RegExp("(" + topDir + ")", "ig");
+        }
+        log = log.replace(rxTopDir, "$(TOPDIR)");
+    }
+
+    log = log.replace(/^Build log was saved at.*$/gm, "");
+
+    return log;
+}
+
+function event_ProjectBuildFinished(Cfg, Warnings, Errors, Canceled)
+{
+    postBuildInvoked = true;
+
+    var log = "";
+    var htm = "BuildLog.htm";
+
+    if (null != Cfg)
+    {
+        try
+        {
+            // try get log from BuildLog.htm file
+            var path = Cfg.Evaluate(Cfg.IntermediateDirectory) + "\\" + htm;
+            log = getBuildLog(path);
+        }
+        catch (e)
+        {
+            log = "";
+        }
+    }
+
+    if (0 == log.length)
+    {
+        // try get log from output window
+        var sel = outputPane.TextDocument.Selection;
+        sel.SelectAll();
+        log = sel.Text;
+
+        var log2 = "";
+        var begin = 0;
+
+        while (true)
+        {
+            // find BuildLog.htm path
+            var proto = "file://";
+            begin = log.indexOf(proto, begin);
+            if (0 > begin)
+                break;
+
+            begin += proto.length;
+            var end = log.indexOf(htm, begin);
+            if (0 > end)
+                break;
+
+            var path = log.substring(begin, end + htm.length);
+            log2 += getBuildLog(path);
+        }
+
+        if (0 < log2.length)
+            log = log2;
+    }
+
+    WScript.Echo(removeLogClutter(log));
+}
+
+function BuildProject(solutionBuild, projectName)
+{
+    var projectFile = "";
+    var projects = dte.Solution.Projects;
+    for (var i = 1; i <= projects.Count && 0 == projectFile.length; ++i)
+    {
+        var project = projects.Item(i);
+        if (project.Name == projectName)
+            projectFile = project.UniqueName;
+    }
+
+    if (0 < projectFile.length)
+    {
+        event_ProjectBuildStarted(null);
+
+        postBuildInvoked = false;
+
+        solutionBuild.BuildProject(longConfName, projectFile, true);
+
+        if (!postBuildInvoked)
+            event_ProjectBuildFinished(null, 0, 0, 0);
+
+        return solutionBuild.LastBuildInfo;
+    }
+
+    WScript.Echo("Error: project " + projectName + " not found\n");
+    return 1;
+}
+
+function DiffTime(start, end)
+{
+    var msec = end - start;
+    var min = Math.floor(msec / 60000);
+    var sec = Math.floor(msec % 60000 / 1000);
+    msec %= 1000;
+    return min + "m" + sec + "." + msec + "s";
+}
+
+function TimeEcho(msg, time)
+{
+    WScript.Echo("### real time (" + msg + "):");
+    WScript.Echo(DiffTime(time, new Date()) + "\n");
+}
+
+// the main function of the script
+function build()
+{
+    WScript.Echo("Solution build script");
+    WScript.Echo("Checking arguments...");
+    
+    readAndCheckArguments();
+
+    // get solution object
+    InitVSObjects(currentCfg, false);
+    
+    dte.SuppressUI = true;
+    
+    var solutionName = slnDir + "\\" + currentCfg + ".sln";
+
+    WScript.Echo("Loading solution...");
+    var solution = dte.Solution;
+
+    var retCode = 0;
+    var prop = null;
+    var propVal;
+    var oldLogging = null;
+    var iSettings = null;
+    var oldIccIdx = null;
+    var oldPlatIdx = null;
+    var projectEngine = null;
+    var events = null;
+
+    do
+    {
+        try
+        {
+            solution.Open(solutionName);
+        }
+        catch (e)
+        {
+            WScript.StdErr.WriteLine("Build: Failed to open solution file: " + solutionName);
+            retCode = 2;
+            break;
+        }
+        
+        var solutionBuild = solution.SolutionBuild;
+
+        // fix 'Call was Rejected By Callee' error
+        // http://msdn2.microsoft.com/en-us/library/ms228772(vs.80).aspx
+        var ntimes = 60;
+        for (var i = 0; i < ntimes; ++i)
+        {
+            try
+            {
+                projectEngine = solution.Projects.Item(1).Object.VCProjectEngine;
+                break;
+            }
+            catch (e)
+            {
+                if (0 > e.description.indexOf("Call was rejected by callee")
+                    || i == ntimes - 1)
+                {
+                    WScript.StdErr.WriteLine("Build: " + e.description);
+                    retCode = 7;
+                    break;
+                }
+                else
+                    WScript.Sleep(1000);
+            }
+        }
+
+        if (retCode)
+            break;
+        
+        events = projectEngine.Events;
+        try
+        {
+            WScript.ConnectObject(events, "event_");
+        }
+        catch (e)
+        {
+            events = null;
+        }
+        
+        var runTests = false;
+        
+        vsWindowKindOutput = "{34E76E81-EE4A-11D0-AE2E-00A0C90FFFC3}";
+        var outWindow = dte.Windows.Item(vsWindowKindOutput).Object;
+        outputPane = outWindow.OutputWindowPanes.Item("Build");
+
+        // save ConcurrentBuilds property value
+        try
+        {
+            prop = dte.Properties("Environment", "ProjectsAndSolution").Item("ConcurrentBuilds");
+            propVal = prop.Value;
+            prop.Value = 1;
+        }
+        catch (e)
+        {
+            // current version of devenv not support that property
+            prop = null;
+        }
+
+        if ("" != ICCVER)
+        {
+            // select proper Intel C++ compiler
+            try
+            {
+                iSettings = dte.GetObject("IntelOptions");
+            }
+            catch (e)
+            {
+                WScript.StdErr.WriteLine(
+                    "Build: Intel C++ not installed or installed incorrectly.");
+                retCode = 1;
+                break;
+            }
+
+            oldIccIdx = iSettings.CurrentCompilerIndex;
+            oldPlatIdx = iSettings.CurrentPlatformIndex;
+            WScript.Echo("Current compiler: " +
+                         iSettings.Compiler(oldIccIdx).Name);
+
+            var ICPlatform = "IA32";
+            if ("x64" == PLATFORM)
+                ICPlatform = "EM64T";
+
+            for (var i = 0; i < iSettings.PlatformsCount; ++i)
+            {
+                iSettings.CurrentPlatformIndex = i;
+                if (ICPlatform == iSettings.CurrentPlatformName)
+                    break;
+            }
+
+            if (i >= iSettings.PlatformsCount)
+            {
+                WScript.StdErr.WriteLine(
+                    "Build: Installed ICC does not support " + PLATFORM + " platform.");
+                retCode = 1;
+                break;
+            }
+
+            var rx = new RegExp("(^.*C\\+\\+ " + ICCVER + ".*)");
+
+            for (var i = 1; i <= iSettings.CompilersCount; ++i)
+            {
+                var compname = iSettings.Compiler(i).Name;
+                if (null != rx.exec(compname))
+                    break;
+            }
+
+            if (i <= iSettings.CompilersCount)
+            {
+                iSettings.CurrentCompilerIndex = i;
+                WScript.Echo("Selected compiler: " +
+                             iSettings.Compiler(i).Name);
+            }
+            else
+            {
+                WScript.StdErr.WriteLine(
+                    "Build: ICC " + ICCVER + " not found.");
+                retCode = 1;
+                break;
+            }
+        }
+
+        // save BuildLogging property value
+        oldLogging = projectEngine.BuildLogging;
+        projectEngine.BuildLogging = true;
+
+        WScript.Echo("Performing configure step...\n");
+        var start = new Date();
+        var res = BuildProject(solutionBuild, ".configure");
+        TimeEcho ("config", start);
+        if (0 < res)
+        {
+            retCode = 3;
+            break;
+        }   
+
+        WScript.Echo("Compiling stdcxx library...\n");
+        start = new Date();
+        res = BuildProject(solutionBuild, ".stdcxx");
+        TimeEcho ("lib", start);
+        if (0 < res)
+        {
+            retCode = 4;
+            break;
+        }   
+
+        WScript.Echo("Compiling examples...\n");
+        start = new Date();
+        BuildProject(solutionBuild, ".stdcxx_examples");
+        TimeEcho ("examples", start);
+
+        WScript.Echo("Compiling rwtest library...\n");
+        start = new Date();
+        res = BuildProject(solutionBuild, ".rwtest");
+        TimeEcho ("rwtest", start);
+        if (0 == res)
+        {
+            runTests = true;
+            WScript.Echo("Compiling tests...\n");
+            start = new Date();
+            BuildProject(solutionBuild, ".stdcxx_tests");
+            TimeEcho ("tests", start);
+        }
+
+        WScript.Echo("Compiling utils...\n");
+        // compile exec utility
+        start = new Date();
+        var resExec = BuildProject(solutionBuild, "util_exec");
+        // compile rest utils
+        start = new Date();
+        var resUtils = BuildProject(solutionBuild, ".stdcxx_utils");
+        TimeEcho ("bin", start);
+        if (0 < resExec)
+        {
+            retCode = 5;
+            break;
+        }
+
+        if (buildOnly)
+           break;
+
+        start = new Date();
+        if (0 >= resUtils)
+        {
+            WScript.Echo("Running locales tests...");
+            BuildProject(solutionBuild, ".stdcxx_testlocales");
+        }   
+
+        if (runTests)
+        {
+            WScript.Echo("Running tests...\n");
+            start = new Date();
+            BuildProject(solutionBuild, ".stdcxx_runtests");
+        }
+        
+        WScript.Echo("Running examples...\n");
+        start = new Date();
+        BuildProject(solutionBuild, ".stdcxx_runexamples");
+        TimeEcho ("runall", start);
+    }
+    while (false);
+
+    if (null != iSettings)
+    {
+        if (null != oldIccIdx)
+            iSettings.CurrentCompilerIndex = oldIccIdx;
+        if (null != oldPlatIdx)
+            iSettings.CurrentPlatformIndex = oldPlatIdx;
+
+        iSettings = null;
+    }
+
+    if (null != oldLogging)
+        projectEngine.BuildLogging = oldLogging;
+
+    projectEngine = null;
+
+    if (null != events)
+    {
+        WScript.DisconnectObject(events);
+        events = null;
+    }
+
+    outputPane = null;
+
+    // restore ConcurrentBuilds property value
+    if (null != prop)
+        prop.Value = propVal;
+        
+    WScript.Echo("Closing the VisualStudio...");
+    solution = null;
+    dte.Quit();
+    dte = null;
+
+    WScript.Echo("Exiting...");
+    WScript.Quit(retCode);
+}
+
+// performs checking of the script parameters
+function readAndCheckArguments()
+{
+    if (!WScript.Arguments.Named.Exists("CONFIG"))
+    {
+        WScript.StdErr.WriteLine(
+            "Build: Missing required argument.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+    
+    if (!WScript.Arguments.Named.Exists("BUILDDIR"))
+    {
+        WScript.StdErr.WriteLine(
+            "Build: Missing required argument BUILDDIR.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+
+    if (!WScript.Arguments.Named.Exists("BUILDTYPE"))
+    {
+        WScript.StdErr.WriteLine(
+            "Build: Missing required argument BUILDTYPE.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+    
+    currentCfg = WScript.Arguments.Named("CONFIG");
+    
+    slnDir = WScript.Arguments.Named("BUILDDIR");
+    slnDir = fso.GetAbsolutePathName (slnDir) + "\\" + currentCfg;
+
+    if (WScript.Arguments.Named.Exists("TOPDIR"))
+    {
+        srcDir = WScript.Arguments.Named("TOPDIR");
+    }
+    else
+    {
+        // try to deduce it
+        var myDir = WScript.ScriptFullName;
+        var dirIndex = myDir.indexOf(winconfigDir);
+        if (0 <= dirIndex)
+            srcDir = myDir.substr(0, dirIndex);
+        else
+            srcDir = "";
+    }
+
+    buildType = WScript.Arguments.Named("BUILDTYPE");
+    
+    for (var i = 0; i < confNames.length; ++i)
+    {
+        var lcfg = confNames[i];
+        var scfg = configs.get(lcfg).out;
+        if (buildType == scfg)
+        {
+            longConfName = lcfg;
+            break;
+        }
+    }
+    
+    if (0 == longConfName.length)
+    {
+        WScript.StdErr.WriteLine(
+            "Build: Invalid argument BUILDTYPE.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+    
+    if (WScript.Arguments.Named.Exists("BUILDONLY"))
+    {
+        var copyOption = WScript.Arguments.Named("BUILDONLY");
+        copyOption = copyOption.toLowerCase();
+        
+        if (copyOption == "yes" || copyOption == "y")
+            buildOnly = true;
+    }
+}
+]]>
+        </script>
+    </job>
+</package>

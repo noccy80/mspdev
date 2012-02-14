@@ -1,0 +1,61 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>The Standard Exception Hierarchy</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="18-1.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="18-3.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>18.2 The Standard Exception Hierarchy</H2>
+<A NAME="idx424"><!></A>
+<P>The C++ Standard Library implements the two-category error model described in <A HREF="18-1.html">Section&nbsp;18.1</A> with a set of classes. These classes, which are defined in the <SAMP>stdexcept</SAMP> header file, can be used to catch exceptions thrown by the library and to throw exceptions from your own code.</P>
+<P>The exception handling classes are related through inheritance. The inheritance hierarchy looks like this:</P>
+
+<A NAME="idx425"><!></A>
+<UL><PRE><B><I><A HREF="../stdlibref/exception.html">exception</A></I></B>
+   <B><I><A HREF="../stdlibref/logic-error.html">logic_error</A></I></B>
+      <B><I><A HREF="../stdlibref/domain-error.html">domain_error</A></I></B>
+      <B><I><A HREF="../stdlibref/invalid-argument.html">invalid_argument</A></I></B>
+      <B><I><A HREF="../stdlibref/length-error.html">length_error</A></I></B>
+      <B><I><A HREF="../stdlibref/out-of-range.html">out_of_range</A></I></B>
+   <B><I><A HREF="../stdlibref/runtime-error.html">runtime_error</A></I></B>
+      <B><I><A HREF="../stdlibref/range-error.html">range_error</A></I></B>
+      <B><I><A HREF="../stdlibref/overflow-error.html">overflow_error</A></I></B> 
+      <B><I><A HREF="../stdlibref/underflow-error.html">underflow_error</A></I></B> 
+</PRE></UL>
+<A NAME="idx426"><!></A>
+<P>Classes <B><I><A HREF="../stdlibref/logic-error.html">logic_error</A></I></B> and <B><I><A HREF="../stdlibref/runtime-error.html">runtime_error</A></I></B> inherit from class <B><I><A HREF="../stdlibref/exception.html">exception</A></I></B>. All other exception handling classes inherit from either <B><I>logic_error</I></B> or <B><I>runtime_error</I></B>.</P>
+
+<BR>
+<HR>
+<A HREF="18-1.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="18-3.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

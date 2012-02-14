@@ -1,0 +1,184 @@
+# -*- Makefile -*-
+#
+# $Id: makefile.common 580483 2007-09-28 20:55:52Z sebor $
+#
+# common makefile definitions shared by all GNUmakefile.*
+#
+########################################################################
+#
+# Licensed to the Apache Software  Foundation (ASF) under one or more
+# contributor  license agreements.  See  the NOTICE  file distributed
+# with  this  work  for  additional information  regarding  copyright
+# ownership.   The ASF  licenses this  file to  you under  the Apache
+# License, Version  2.0 (the  "License"); you may  not use  this file
+# except in  compliance with the License.   You may obtain  a copy of
+# the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the  License is distributed on an  "AS IS" BASIS,
+# WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+# implied.   See  the License  for  the  specific language  governing
+# permissions and limitations under the License.
+#
+# Copyright 1999-2007 Rogue Wave Software, Inc.
+#
+########################################################################
+
+SHELL        = /bin/sh 
+
+# specify path to find to avoid problems with example named 'find'
+FIND         = /usr/bin/find
+
+# set common variables used in makefiles
+BINDIR       = $(BUILDDIR)/bin
+LIBDIR       = $(BUILDDIR)/lib
+
+# provide a value if it isn't already set by make
+ifeq ($(CURDIR),)
+  CURDIR := $(shell pwd)
+endif
+
+INCLUDES     = -I$(TOPDIR)/include -I$(BUILDDIR)/include
+
+ALL_FILES := "*"
+
+ifneq ($(AS_EXT),"")
+  ifneq ($(AS_EXT),".")   # special value -- ignore atomic
+
+    # if the assembly file extension is non-empty and not the dot,
+    # add all files with that extension to the list of files to
+    # compile
+    ALL_FILES := $(foreach dir,$(SRCDIRS),\
+                     $(wildcard $(dir)/*.cpp $(dir)/*.msg $(dir)/*$(AS_EXT)))
+  endif
+endif
+
+ifeq ($(ALL_FILES),"*")
+  # traverse all subdirectories and get the names of all source files
+  ALL_FILES := $(foreach dir,$(SRCDIRS), $(wildcard $(dir)/*.cpp $(dir)/*.msg))
+endif
+
+
+# SRCDIRS must be defined in GNUmakefile that includes this file
+ifeq ($(ONE_REPOSITORY),)
+
+  # using a separate template instantiation repository for each source
+  # and object file (i.e., when each source produces one executable)
+  ifneq ($(CXX_REPOSITORY),)
+
+    # define a function, CXX.repo, that returns the name of the template
+    # instantiation repository from the name of a source or object file
+    # and a unique suffix (so that each program has its own and the same
+    # names with different definitions do not cause conflicts)
+    #
+    # e.g., Compaq C++ where this will expand to something like
+    #     -ptr foo.ti
+    # or IBM VisualAge/XLC++ where it will be along the lines of
+    #    --qtempinc=foo.ti
+    # or
+    #    --qtemplateregistry=foo.ti
+    #
+    ifeq ($(findstring =,$(CXX_REPOSITORY)),=)
+      CXX.repo = $(CXX_REPOSITORY)$(basename $(notdir $(1))).ti
+    else
+      CXX.repo = $(CXX_REPOSITORY) $(basename $(notdir $(1))).ti
+    endif
+  else   # ifeq ($(CXX_REPOSITORY),)
+    ifeq ($(CXX),CC)
+      ifeq ($(findstring SunOS,$(PLATFORM)),SunOS)
+        # set SUNWS_CACHE_NAME to the basename of the file being compiled
+        # followed by .ti, to override the default template repository,
+        # SunWS_cache
+        tmp := $(CXX)
+        CXX =
+        CXX += SUNWS_CACHE_NAME=$(*F).ti
+        CXX += $(tmp)
+
+        tmp := $(LD)
+        LD   =
+        LD  += SUNWS_CACHE_NAME=$(*F).ti
+        LD  += $(tmp)
+      endif   # SunOS
+    endif   # SunPro
+  endif # neq ($(CXX_REPOSITORY),)
+else   # ifneq ($(ONE_REPOSITORY),)
+  ifneq ($(CXX_REPOSITORY),)
+
+    # using a template instantiation repository shared by all sources
+    # (i.e., when creating a single executable or library out of all
+    # the object files
+    ifeq ($(findstring =,$(CXX_REPOSITORY)),=)
+      CXX.repo = $(CXX_REPOSITORY)repository.ti
+    else
+      CXX.repo = $(CXX_REPOSITORY) repository.ti
+    endif
+  endif
+endif
+
+CPPFLAGS    += $(INCLUDES)
+CXXFLAGS    += $(WARNFLAGS)
+
+VPATH       := $(SRCDIRS)
+
+SRCS        := $(notdir $(filter %.cpp %$(AS_EXT),$(ALL_FILES)))
+SRCS        := $(sort $(filter-out $(OMIT_SRCS),$(SRCS)))
+
+OBJS        := $(patsubst %.cpp,%.o,$(filter %.cpp,$(SRCS)))
+OBJS        += $(patsubst %$(AS_EXT),%.o,$(filter %$(AS_EXT),$(SRCS)))
+OBJS        := $(sort $(OBJS))
+
+DEPS        :=
+
+# message files - text files used to generate a catalog - see gencat(1)
+MSGFILES     = $(filter %.msg,$(ALL_FILES))
+
+
+ifeq ($(TARGET),)
+  # generate binaries or scripts (in constrained environments)
+  ifeq ($(NO_A_DOT_OUT),)
+    TARGET := $(patsubst %.o,%,$(OBJS))
+  else
+    TARGET := $(patsubst %.o,%.sh,$(OBJS))
+  endif
+endif #ifneq ($(TARGET),)
+
+# link with the produced library and the math library
+# (take care not to try to link the library with itself)
+ifeq ($(findstring $(LIBNAME),$(TARGET)),)
+  LDFLAGS += -L$(LIBDIR)
+  # set the GNU make variable LDLIBS to the names of the libraries
+  # to link with (make puts $(LDLIBS) last on the link line in
+  # implicit rules)
+  LDLIBS  := -l$(LIBBASE) $(LDLIBS) -lm
+endif  # ifneq ($(LIBNAME),$findstring ($(LIBNAME),$(TARGET)))
+
+
+# file to write log of the build to
+LOGFILE = /dev/null
+
+# if LOGFILE is being created, tee command output into it
+# IMPORTANT: $(TEEOPTS) must be last on the command line
+ifneq ($(LOGFILE),/dev/null)
+  TEEOPTS = 2>&1 | tee -a $(LOGFILE)
+endif
+
+# set the RUNTARGET variable to command line args if $RUN isn't set
+ifeq ($(RUN),)
+  RUNTARGET := $(filter-out run_all runall run,$(MAKECMDGOALS))
+else
+  RUNTARGET := $(RUN)
+endif
+
+ifeq ($(RUNTARGET),)
+  RUNTARGET := $(shell echo ./$(TARGET) | sed "s/ / .\//g")
+endif
+
+
+# append command line options to standard flags
+CPPFLAGS   += $(CPPOPTS)
+CXXFLAGS   += $(CXXOPTS)
+LDFLAGS    += $(LDOPTS)
+ARFLAGS    += $(AROPTS)
+RUNFLAGS   += $(RUNOPTS)

@@ -1,0 +1,283 @@
+<?xml version="1.0" ?>
+<package>
+    <comment>
+        Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+    </comment>
+    <job id="makelog" prompt="no">
+        <?job error="false" debug="false" ?>
+        <runtime>
+            <description>
+Gathers logs and makes the build summary log.
+            </description>
+            <named helpstring="The build directory" name="BUILDDIR" 
+                required="true" type="string"/>         
+            <named helpstring="The build type" name="BUILDTYPE" 
+                required="true" type="string"/>
+            <named helpstring="The configuration" name="CONFIG" 
+                required="true" type="string"/>
+            <example>
+cscript makelog.wsf /BUILDDIR"C:\stdcxx\build" /BUILDTYPE:11d /CONFIG:msvc-7.1
+            </example>
+            <usage>
+Usage: cscript makebuildlog.wsf /BUILDDIR:@BUILDDIR 
+/BUILDTYPE:@BUILDTYPE /CONFIG:@CONFIG
+where
+@BUILDDIR is the build directory,
+@BUILDTYPE is the build type (11d, 11s, etc).
+@CONFIG is the compiler configuration (msvc-7.1, icc-9.0, etc).
+            </usage>
+        </runtime>
+        <object id="fso" progid="Scripting.FileSystemObject"/>
+        <object id="WshShell" progid="WScript.Shell"/>
+        <script language="JScript" src="config.js"/>
+        <script language="JScript" src="utilities.js"/>
+        <script language="JScript" src="summary.js"/>
+        <script id="makelog" language="JScript">
+<![CDATA[
+//
+// Summary build log maker script
+//
+
+var buildDir = "";      // path to the root directory containing executables
+var buildDirBase = "";  // path to the root directory containing executables
+var buildType = "";     // the buid type (11d, 11s, etc)
+var buildCfg = "";      // the build configuration (MSVC-7.1, ICC-9.0, etc)
+
+var buildlogFile = "BuildLog.htm";
+var summaryFileName = "Summary.htm";
+var htmFolderName = "temphtm";
+var buildSummaryPrefix = "msvc-7.1-";
+
+var buildLogUnicode = 0;
+
+var libBuildDir = "src";
+var examplesBuildDir = "examples";
+var testsBuildDir = "tests";
+var rwtestBuildDir = "tests\\src";
+    
+var description = new makelog; // run
+
+// the main function of the script
+function makelog()
+{
+    readAndCheckArguments();
+
+    getCompilerOpts(buildCfg);
+    
+    var useUnicode = UNICODELOG;
+
+    if (useUnicode)
+        buildLogUnicode = -1;
+
+    // check for build failures
+    var sumTempFileNameEx = buildDir + "\\" + buildType + "\\" +
+        examplesBuildDir + "\\" + summaryFileName;
+    checkForFailures(buildDir + "\\" + buildType + "\\" + examplesBuildDir, buildType,
+        buildlogFile, sumTempFileNameEx, htmFolderName, true, useUnicode);
+    
+    var sumTempFileNameTst = buildDir + "\\" + buildType + "\\" +
+        testsBuildDir + "\\" + summaryFileName;
+    checkForFailures(buildDir + "\\" + buildType + "\\" + testsBuildDir, buildType,
+        buildlogFile, sumTempFileNameTst, htmFolderName, true, useUnicode);
+        
+    // make build summary log file
+    var fSum = makeSummaryLog(buildDirBase, buildSummaryPrefix, buildType);
+    var logPath = getSummaryLogPath(buildDirBase, 
+        buildSummaryPrefix, buildType);
+    
+    // read information about library
+    var libInfo = new ItemBuildInfo(".stdcxx");
+    getLibraryBuildInfo(buildDir + "\\" + buildType +
+        "\\" + libBuildDir, libInfo);
+    
+    // and test driver
+    var rwtestInfo = new ItemBuildInfo(".rwtest");
+    getTestDriverBuildInfo(buildDir + "\\" + buildType +
+        "\\" + rwtestBuildDir, rwtestInfo);
+        
+    // save headers for library and test driver
+    saveSummaryHeaderLib(fSum, libInfo, hdrLibrary);
+    saveSummaryHeaderTestDriver(fSum, rwtestInfo, hdrTestDriver);
+    
+    // save headers for examples and tests
+    saveSummaryHeaderMulti(fSum, buildDir + "\\" + buildType + "\\" + examplesBuildDir, 
+        buildType, hdrExamples);
+    saveSummaryHeaderMulti(fSum, buildDir + "\\" + buildType + "\\" + testsBuildDir, 
+        buildType, hdrTests);
+
+    // save build summary for library and test driver       
+    saveBuildSummarySingle(fSum, libInfo, hdrLibrary);
+    saveBuildSummarySingle(fSum, rwtestInfo, hdrTestDriver);
+    
+    // save build summary for examples and tests
+    saveBuildSummariesFromFolder(fSum,
+        buildDir + "\\" + buildType + "\\" + examplesBuildDir,
+        htmFolderName);
+    saveBuildSummariesFromFolder(fSum,
+        buildDir + "\\" + buildType + "\\" + testsBuildDir,
+        htmFolderName);
+        
+    closeSummaryLog(fSum);
+
+    deleteTemporaryFiles();
+    
+    var resLogPath = logPath.replace(/\\/mg, "/");  
+    WScript.Echo("Summary log was generated in file://" + resLogPath);
+    
+    WScript.Quit(0);
+}
+
+// performs checking of the script parameters
+function readAndCheckArguments()
+{
+    if (!WScript.Arguments.Named.Exists("BUILDDIR"))
+    {
+        WScript.StdErr.WriteLine(
+            "Generate: Missing required argument BUILDDIR.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+    
+    buildDir =  WScript.Arguments.Named("BUILDDIR");
+    buildDirBase = buildDir;
+    
+    if (!WScript.Arguments.Named.Exists("CONFIG"))
+    {
+        WScript.StdErr.WriteLine(
+            "Generate: Missing required argument CONFIG.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+    
+    buildCfg =  WScript.Arguments.Named("CONFIG");
+    buildSummaryPrefix = buildCfg + "-";
+    buildDir = buildDir + "\\" + buildCfg;
+    
+    if (WScript.Arguments.Named.Exists("BUILDTYPE"))
+        buildType = WScript.Arguments.Named("BUILDTYPE");
+    else
+        buildType = "11d";
+    
+    if (! fso.FolderExists(buildDir))
+    {
+        WScript.StdErr.WriteLine(
+            "Generate: Could not find directory " + buildDir);
+            
+        WScript.Quit(3);
+    }
+}
+
+// collects information about build process of the stdcxx library
+// libDir - output directory for the stdcxx library
+// libInfo - ItemBuildInfo object to hold the collected information
+function getLibraryBuildInfo(libDir, libInfo)
+{   
+    if (! fso.FolderExists(libDir))
+        return;
+        
+    var blogFilePath = libDir + "\\" + buildlogFile;
+    if (! fso.FileExists(blogFilePath))
+        return;
+        
+    var blogFile = fso.OpenTextFile(blogFilePath, 1, false, buildLogUnicode);
+    var blogData = blogFile.ReadAll();
+    
+    var posTmp = getCommandLinesInfo(libInfo, blogData, 0);
+    posTmp = getCompilationInfo(libInfo, blogData, posTmp);
+    posTmp = getBuildSummaryInfo(libInfo, blogData, posTmp);
+}
+
+// collects information about build process of the rwtest library
+// rwtestDir - output directory for the rwtest library
+// rwtestInfo - ItemBuildInfo object to hold the collected information
+function getTestDriverBuildInfo(rwTestDir, rwtestInfo)
+{
+    if (! fso.FolderExists(rwTestDir))
+        return;
+        
+    var blogFilePath = rwTestDir + "\\" + buildlogFile;
+    if (! fso.FileExists(blogFilePath))
+        return;
+        
+    var blogFile = fso.OpenTextFile(blogFilePath, 1, false, buildLogUnicode);
+    var blogData = blogFile.ReadAll();
+    
+    var posTmp = getCommandLinesInfo(rwtestInfo, blogData, 0);
+    posTmp = getCompilationInfo(rwtestInfo, blogData, posTmp);
+    posTmp = getBuildSummaryInfo(rwtestInfo, blogData, posTmp);
+}
+
+// removes the temporary files created by this script and by run_all.wsf script
+function deleteTemporaryFiles()
+{
+    // delete temphtm folders
+    deleteTempFolders(buildDir + "\\" + buildType + "\\" + examplesBuildDir, htmFolderName);
+        
+    deleteTempFolders(buildDir + "\\" + buildType + "\\" + testsBuildDir, htmFolderName);
+    
+    // delete Summary.htm files
+    var sumTempFileNameEx = buildDir + "\\" + buildType + "\\" + examplesBuildDir + "\\" + summaryFileName;
+        
+    if (fso.FileExists(sumTempFileNameEx))
+        fso.DeleteFile(sumTempFileNameEx);
+        
+    var sumTempFileNameTst = buildDir + "\\" + buildType + "\\" + testsBuildDir + "\\" + summaryFileName;
+        
+    if (fso.FileExists(sumTempFileNameTst))
+        fso.DeleteFile(sumTempFileNameTst);
+}
+
+// removes the subfolders with the specified name in specified folder
+// startDir - starting folder
+// tempName - name of the folder with temporary files
+function deleteTempFolders(startDir, tempName)
+{
+    if (!fso.FolderExists(startDir))
+        return;
+
+    var startFolder = fso.GetFolder(startDir);
+        
+    var enumHtmSubFolders = new Enumerator(startFolder.SubFolders);
+    for (; !enumHtmSubFolders.atEnd(); enumHtmSubFolders.moveNext())
+    {
+        var htmFName = enumHtmSubFolders.item().Name;
+        var htmParent = enumHtmSubFolders.item().ParentFolder.Name;
+        
+        if (htmFName == tempName)
+        {
+            try
+            {
+                fso.DeleteFolder(enumHtmSubFolders.item().Path);
+            }
+            catch(e)
+            {
+                WScript.StdErr.Write("Could not delete temporary folder " + 
+                    enumHtmSubFolders.item().Path);
+            }
+        }
+        else
+        {
+            deleteTempFolders(startDir + "\\" + htmFName, tempName);
+        }
+    }
+}
+
+]]>
+        </script>
+    </job>
+</package>

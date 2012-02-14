@@ -1,0 +1,118 @@
+comment_char %
+escape_char  /
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Licensed to the Apache Software  Foundation (ASF) under one or more
+% contributor  license agreements.  See  the NOTICE  file distributed
+% with  this  work  for  additional information  regarding  copyright
+% ownership.   The ASF  licenses this  file to  you under  the Apache
+% License, Version  2.0 (the  License); you may  not use  this file  
+% except in  compliance with the License.   You may obtain  a copy of
+% the License at
+%
+% http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the  License is distributed on an  "AS IS" BASIS,
+% WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+% implied.   See  the License  for  the  specific language  governing
+% permissions and limitations under the License.
+%
+% Copyright 1999-2007 Rogue Wave Software, Inc.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% German Language Locale for Luxemburg with Euro
+% Language: de
+% Territory: LU
+% Option: euro
+% Date: 2000-08-20
+% Users: general
+% Charset: ISO-8859-15
+% Distribution and use is free, also
+% for commercial purposes.
+
+LC_IDENTIFICATION
+title      "German locale for Luxemburg with Euro"
+source     "Free Software Foundation, Inc."
+address    "59 Temple Place - Suite 330, Boston, MA 02111-1307, USA"
+contact    ""
+email      "bug-glibc@gnu.org"
+tel        ""
+fax        ""
+language   "German"
+territory  "Luxemburg"
+revision   "1.0"
+date       "2000-08-20"
+%
+category  "de_LU:2000@euro";LC_IDENTIFICATION
+category  "de_LU:2000@euro";LC_CTYPE
+category  "de_LU:2000@euro";LC_COLLATE
+category  "de_LU:2000@euro";LC_TIME
+category  "de_LU:2000@euro";LC_NUMERIC
+category  "de_LU:2000@euro";LC_MONETARY
+category  "de_LU:2000@euro";LC_MESSAGES
+category  "de_LU:2000@euro";LC_PAPER
+category  "de_LU:2000@euro";LC_NAME
+category  "de_LU:2000@euro";LC_ADDRESS
+category  "de_LU:2000@euro";LC_TELEPHONE
+
+END LC_IDENTIFICATION
+
+LC_COLLATE
+copy "iso14651_t1"
+END LC_COLLATE
+
+LC_CTYPE
+copy "de_LU"
+END LC_CTYPE
+
+LC_MESSAGES
+copy "de_DE"
+END LC_MESSAGES
+
+LC_MONETARY
+int_curr_symbol           "<U0045><U0055><U0052><U0020>"
+currency_symbol           "<U20AC>"
+mon_decimal_point         "<U002C>"
+mon_thousands_sep         "<U002E>"
+mon_grouping              3;3
+positive_sign             ""
+negative_sign             "<U002D>"
+int_frac_digits           2
+frac_digits               2
+p_cs_precedes             1
+p_sep_by_space            1
+n_cs_precedes             1
+n_sep_by_space            1
+p_sign_posn               4
+n_sign_posn               4
+END LC_MONETARY
+
+LC_NUMERIC
+copy "de_DE"
+END LC_NUMERIC
+
+LC_TIME
+copy "de_LU"
+END LC_TIME
+
+LC_PAPER
+copy "de_LU"
+END LC_PAPER
+
+LC_TELEPHONE
+copy "de_LU"
+END LC_TELEPHONE
+
+LC_MEASUREMENT
+copy "de_LU"
+END LC_MEASUREMENT
+
+LC_NAME
+copy "de_LU"
+END LC_NAME
+
+LC_ADDRESS
+copy "de_LU"
+END LC_ADDRESS

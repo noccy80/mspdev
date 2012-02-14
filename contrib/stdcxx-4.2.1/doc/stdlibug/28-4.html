@@ -1,0 +1,58 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>Localization Using the Stream's Locale</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="28-3.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="28-5.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>28.4 Localization Using the Stream's Locale</H2>
+<A NAME="idx718"><!></A>
+<A NAME="idx719"><!></A>
+<P>Associated with each stream is a locale object that impacts the parsing and formatting of numeric values, and determines the code conversion, if any, which takes place when transfering text between external and internal representation. This is how localization of software takes place. As discussed in <A HREF="23-2.html#2322">Section&nbsp;23.2.2</A>, the representation of numbers often depends on cultural conventions. In particular, the <I>decimal point</I> need not be a period, as in the following example:</P>
+
+<UL><PRE>
+std::cout.imbue(std::locale("De_DE"));    // the actual locale name
+                                          // may vary
+std::cout &lt;&lt; 1000000.50 &lt;&lt; std::endl; 
+</PRE></UL>
+<P>The output is:</P>
+
+<UL><PRE>
+1000000,50
+</PRE></UL>
+<P>Other cultural conventions, like the grouping of digits, are irrelevant. There is no formatting of numeric values that involves grouping. (The standard does not specify whether the grouping information that is contained in a stream's locale's <SAMP>numpunct</SAMP> facet should be ignored or taken into account. In any case, there are no manipulators that allow you to enable or disable grouping.)</P>
+
+<BR>
+<HR>
+<A HREF="28-3.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="28-5.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

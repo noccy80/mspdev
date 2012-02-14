@@ -1,0 +1,110 @@
+# -*- Makefile -*-
+#
+# $Id: GNUmakefile.rwt 580483 2007-09-28 20:55:52Z sebor $
+#
+########################################################################
+#
+# Licensed to the Apache Software  Foundation (ASF) under one or more
+# contributor  license agreements.  See  the NOTICE  file distributed
+# with  this  work  for  additional information  regarding  copyright
+# ownership.   The ASF  licenses this  file to  you under  the Apache
+# License, Version  2.0 (the  "License"); you may  not use  this file
+# except in  compliance with the License.   You may obtain  a copy of
+# the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the  License is distributed on an  "AS IS" BASIS,
+# WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+# implied.   See  the License  for  the  specific language  governing
+# permissions and limitations under the License.
+#
+# Copyright 1999-2007 Rogue Wave Software, Inc.
+#
+########################################################################
+#
+# Usage:
+#
+#   $ make
+#
+#   To make all tests uder $(TOPDIR)/tests. Will generate a .d file
+#   an place in the directory $(DEPENDDIR) for every source file.
+#
+########################################################################
+
+# Generated when make is run in TOPDIR
+include ../makefile.in
+
+# The place where the sources are looked for;
+# used in the variables setup in makefile.common
+TESTDIR      = $(TOPDIR)/tests
+SRCDIRS      = $(TESTDIR)/src
+
+# include common variables setting for all makefiles
+ONE_REPOSITORY = 1
+include ../makefile.common
+
+# Reset LIBSUFFIX to .a until we decide to build a dynamic library
+LIBSUFFIX    = .a
+
+# Target library to be built
+RWTESTLIB    = librwtest$(BUILDTYPE)$(LIBSUFFIX)
+
+# Additional include directories: 
+INCLUDES    += -I$(TESTDIR)/include
+
+# VPATH to look for sources in (appended dir for test.cpp)
+VPATH       += $(TESTDIR)/src
+
+# For xlC 5.0.2.0
+ifneq ($(DEFAULT_SHROBJ),)
+  SOBJS = $(DEFAULT_SHROBJ)
+else
+  SOBJS = $(OBJS)
+endif
+
+
+# CXXPRELINK - command for compilers that use template
+# instantiation models that require a prelink stage
+ifneq ($(PRELINKFLAGS),)
+  CXXPRELINK = $(CXX) $(CPPFLAGS) $(PRELINKFLAGS) $(OBJS) $(LDFLAGS) $(LDLIBS)
+endif   # ($(PRELINKFLAGS),)
+
+ifneq ($(RPATH),)
+  LDFLAGS += $(RPATH)$(LIBDIR)
+endif
+
+########################################################################
+#  TARGETS
+########################################################################
+
+all:  $(RWTESTLIB)
+
+
+# do any directory specific cleanup using the realclean target
+realclean: clean dependclean
+	rm -f $(RWTESTLIB)
+
+
+# For the time being the rules are identical until we 
+# decide to build a shared library for rw test lib.
+ifeq ($(findstring shared,$(BUILDMODE)),shared)
+$(RWTESTLIB): $(OBJS)
+	@echo "$(CXXPRELINK)" >> $(LOGFILE)
+	$(CXXPRELINK) $(TEEOPTS)
+	@echo "$(AR) $(ARFLAGS) $(RWTESTLIB) $(SOBJS)" >> $(LOGFILE)
+	$(AR) $(ARFLAGS) $(RWTESTLIB) $(SOBJS)
+
+else
+$(RWTESTLIB): $(OBJS)
+	@echo "$(CXXPRELINK)" >> $(LOGFILE)
+	$(CXXPRELINK) $(TEEOPTS)
+	@echo "$(AR) $(ARFLAGS) $(RWTESTLIB) $(SOBJS)" >> $(LOGFILE)
+	$(AR) $(ARFLAGS) $(RWTESTLIB) $(SOBJS)
+
+endif # ($(findstring shared,$(BUILDMODE)),shared)
+
+
+# Common rules for all Makefile_s
+include ../makefile.rules

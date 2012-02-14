@@ -1,0 +1,52 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>Locales and Iostreams</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="42.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="42-2.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>42.1 Locales and Iostreams</H2>
+<A NAME="idx972"><!></A>
+<P>Within the C++ standard iostreams, <B><I><A HREF="../stdlibref/locale.html">locale</A></I></B> is a class. Class <B><I>locale</I></B> is used for two distinct purposes:</P>
+<UL>
+<LI><P CLASS="LIST">The formatting layer of iostreams uses <B><I><A HREF="../stdlibref/locale.html">locale</A></I></B> facilities for numeric formatting and character classification.</P></LI>
+<LI><P CLASS="LIST">The transport layer uses <B><I><A HREF="../stdlibref/locale.html">locale</A></I></B> facilities for code conversion.</P></LI>
+</UL>
+<P>In the standard iostream class templates, the formatting (stream) layer uses only the <B><I><A HREF="../stdlibref/ctype.html">ctype</A></I></B>, <B><I><A HREF="../stdlibref/num-put.html">num_put</A></I></B>, and <B><I><A HREF="../stdlibref/num-get.html">num_get</A></I></B> facets, while the transport (stream buffer) layer uses only the <B><I><A HREF="../stdlibref/codecvt.html">codecvt</A></I></B> facet. For more information on locales and facets, see <A HREF="24.html">Chapter&nbsp;24</A> and the sections of the <A HREF="../stdlibref/noframes.html"><I>Apache C++ Standard Library Reference Guide</I></A> devoted to the <B><I><A HREF="../stdlibref/locale.html">locale</A></I></B> class and the various facets.</P>
+<P>Each layer contains its own <B><I><A HREF="../stdlibref/locale.html">locale</A></I></B>, so the code conversion facility can be changed independent of numeric formatting. We simply change the <B><I>locale</I></B> associated with a stream buffer without altering the <B><I>locale</I></B> contained by the stream using that buffer.   On the other hand, changing a stream's <B><I>locale</I></B> also changes the <B><I>locale</I></B> contained by the associated stream buffer.</P>
+<P>The base class for all streams, <B><I><A HREF="../stdlibref/ios-base.html">ios_base</A></I></B>, contains a <B><I><A HREF="../stdlibref/locale.html">locale</A></I></B> object. This <B><I>locale</I></B> object can be accessed with the <SAMP>getloc()</SAMP> member function and replaced with the <SAMP>imbue()</SAMP> member function. Similarly, <B><I><A HREF="../stdlibref/basic-streambuf.html">basic_streambuf</A></I></B> also contains a <B><I>locale</I></B> object and it, too, defines <SAMP>getloc()</SAMP> and <SAMP>imbue()</SAMP> member functions  (the latter is <SAMP>protected</SAMP> and <SAMP>virtual</SAMP> and called from the publicly accessible <SAMP>pubimbue()</SAMP> member function).</P>
+
+<BR>
+<HR>
+<A HREF="42.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="42-2.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

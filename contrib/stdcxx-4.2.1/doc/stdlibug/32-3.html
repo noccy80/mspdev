@@ -1,0 +1,121 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>A Simple Extractor and Inserter for the Example</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="32-2.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="32-4.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>32.3 A Simple Extractor and Inserter for the Example</H2>
+<P>Following the read and write conventions of iostreams, we would insert and extract the date object like this:</P>
+
+<UL><PRE>
+date birthday(2,6,1952);
+std::cout &lt;&lt; birthday &lt;&lt; '\n';
+</PRE></UL>
+<P>or </P>
+
+<UL><PRE>
+date aDate;
+
+std::cout &lt;&lt; '\n' &lt;&lt; "Please, enter a date (day month year)"
+          &lt;&lt; '\n';
+std::cin  &gt;&gt; aDate;
+std::cout &lt;&lt; aDate &lt;&lt; '\n';
+</PRE></UL>
+<A NAME="idx781"><!></A>
+<P>For the next step, we would implement shift operators as inserters and extractors for <SAMP>date</SAMP> objects. Here is an extractor for class <SAMP>date</SAMP>:</P>
+
+<UL><PRE>
+template&lt;class charT, class Traits&gt;
+std::basic_istream&lt;charT, Traits&gt;&amp;                            //1
+operator&gt;&gt; (std::basic_istream&lt;charT,Traits&gt;&amp; is,             //2
+            date&amp; dat)                                        //3
+{
+  is &gt;&gt; dat.tm_date.tm_mday;                                  //4
+  is &gt;&gt; dat.tm_date.tm_mon;
+  is &gt;&gt; dat.tm_date.tm_year;
+  return is;                                                  //5
+}
+</PRE></UL>
+<TABLE CELLPADDING="3">
+
+<TR VALIGN="top"><TD><SAMP>//1</SAMP></TD><TD>The returned value for extractors (and inserters) is a reference to the stream, so that several extractions can be done in one expression.
+<TR VALIGN="top"><TD><SAMP>//2</SAMP></TD><TD>The first parameter usually is the stream from which the data shall be extracted.
+<TR VALIGN="top"><TD><SAMP>//3</SAMP></TD><TD>The second parameter is a reference, or alternatively a pointer, to an object of the user-defined type.
+<TR VALIGN="top"><TD><SAMP>//4</SAMP></TD><TD>In order to allow access to private data of the date class, the extractor must be declared as a friend function in class <SAMP>date</SAMP>.
+<TR VALIGN="top"><TD><SAMP>//5</SAMP></TD><TD>The return value is the stream from which the data was extracted.
+</TABLE>
+<A NAME="idx782"><!></A>
+<P>As the extractor accesses private data members of class date, it must be declared as a friend function to class date. The same holds for the inserter. Here's a more complete version of class <SAMP>date</SAMP>:</P>
+
+<UL><PRE>
+class date {
+public:
+  date(int d, int m, int y);
+  date(tm t);
+  date();
+  // more constructors and useful member functions
+
+private: 
+  std::tm tm_date;
+
+  template&lt;class charT, Traits&gt;
+  friend std::basic_istream&lt;charT, Traits&gt;
+  &amp;operator &gt;&gt;(std::basic_istream&lt;charT, Traits &gt;&amp; is, date&amp; dat);
+ 
+  template&lt;class charT, Traits&gt;
+  friend std::basic_ostream&lt;charT, Traits&gt;
+  &amp;operator &lt;&lt;(std::basic_ostream&lt;charT, Traits &gt;&amp; os,
+               const date&amp; dat);
+};
+</PRE></UL>
+<A NAME="idx783"><!></A>
+<P>The inserter can be built analogously, as shown below. The only difference is that you would hand over a <I>constant</I> reference to a date object, because the inserter is not supposed to modify the object it prints.</P>
+
+<UL><PRE>
+template&lt;class charT, class Traits&gt;
+std::basic_ostream&lt;charT, Traits&gt;&amp;
+operator &lt;&lt; (std::basic_ostream&lt;charT, Traits &gt;&amp; os,
+             const date&amp; dat)
+{
+  os &lt;&lt; dat.tm_date.tm_mon &lt;&lt; '-';
+  os &lt;&lt; dat.tm_date.tm_mday &lt;&lt; '-';
+  os &lt;&lt; dat.tm_date.tm_year ;
+  return os;
+}
+</PRE></UL>
+
+<BR>
+<HR>
+<A HREF="32-2.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="32-4.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

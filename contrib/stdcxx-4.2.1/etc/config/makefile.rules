@@ -1,0 +1,326 @@
+# -*- Makefile -*-
+#
+# $Id: makefile.rules 648752 2008-04-16 17:01:56Z faridz $
+#
+# common makefile rules shared by all GNUmakefile.*
+# 
+########################################################################
+#
+# Licensed to the Apache Software  Foundation (ASF) under one or more
+# contributor  license agreements.  See  the NOTICE  file distributed
+# with  this  work  for  additional information  regarding  copyright
+# ownership.   The ASF  licenses this  file to  you under  the Apache
+# License, Version  2.0 (the  "License"); you may  not use  this file
+# except in  compliance with the License.   You may obtain  a copy of
+# the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the  License is distributed on an  "AS IS" BASIS,
+# WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+# implied.   See  the License  for  the  specific language  governing
+# permissions and limitations under the License.
+#
+# Copyright 1999-2007 Rogue Wave Software, Inc.
+#
+########################################################################
+#
+# Running tests:
+# --------------
+# $ make [run | runall | run_all] [target] [target]... ; 
+#   runs the tests specified on the command line   
+# OR
+# $ make [run | runall | run_all] ; 
+#       runs all the tests producing a complete report
+# 
+# 
+########################################################################
+
+clean: cleantarget
+	rm -rf a.out core *.o *.i *.ii *.ti *.sh *.sta *.out  \
+        *$(LIBSUFFIX) $(CATFILE)                              \
+        tempinc cxx_repository SunWS_cache 2>/dev/null
+
+cleantarget:
+	rm -f $(TARGET)
+
+listtarget:
+	@echo $(TARGET)
+
+listsrc:
+	@echo $(SRCS)
+
+listobj:
+	@echo $(OBJS)
+
+listfiles:
+	@echo $(SRCDIRS)
+	@echo $(ALL_FILES)
+
+listvpath:
+	@echo $(VPATH)
+
+listruntarget:
+	@echo $(RUNTARGET)
+
+
+# create a catalog from text message files - see gencat(1)
+$(CATFILE): $(MSGFILES)
+	-gencat $@ $^
+
+
+ifeq ($(WITH_PURIFY),true)
+  ifeq ($(PURIFYFLAGS),)
+    PURIFYFLAGS  = -windows=no
+	PURIFYFLAGS += -log-file=stderr -view-file=$@.purify-view
+  endif
+
+  ifneq ($(OSNAME),AIX)
+	PURIFY = purify $(PURIFYFLAGS)
+  endif
+endif
+
+ifeq ($(WITH_CADVISE),true)
+  ifeq ($(CADVISEFLAGS),)
+    CADVISEFLAGS = +w
+  endif
+
+  CADVISE = cadvise $(CADVISEFLAGS)
+endif
+
+########################################################################
+#  COMMON RULES
+########################################################################
+
+ifeq ($(NO_DOT_O),)
+
+# compile and link in two separate steps
+
+  ifneq ($(AS_EXT),)
+    ifneq ($(AS_EXT),".")
+
+%.o: %$(AS_EXT)
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
+
+    endif   # ifneq ($(AS_EXT),".")
+  endif   # ifneq ($(AS_EXT),)
+
+# make the rule match for sources matching *.out.cpp
+%.out.o: %.out.cpp
+	$(CADVISE) $(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(call CXX.repo,$<) $<
+
+%.o: %.cpp
+	$(CADVISE) $(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(call CXX.repo,$<) $<
+
+# make the rule match for objects matching *.out.o
+%.out: %.out.o
+	$(PURIFY) $(LD) $< -o $@ $(LDFLAGS) $(LDLIBS) $(call CXX.repo,$<)
+
+%: %.o
+	$(PURIFY) $(LD) $< -o $@ $(LDFLAGS) $(LDLIBS) $(call CXX.repo,$<)
+
+# disable compilation and linking in the same step
+# %: %.cpp
+
+else
+
+# compile and link in one step to eliminate the space overhead of .o files
+%: %.cpp
+	$(CADVISE) $(PURIFY) $(CXX) $< -o $@ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) \
+               $(LDLIBS) $(call CXX.repo,$<)
+
+endif   # eq ($(NO_DOT_O),)
+
+
+# produce a .out file by running the executable
+%.out: %
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDIR) ./$< >$@ 2>&1
+
+# create a script that when run first builds the executable and then runs it
+# done to save even more space than `NO_DOT_O' on constrained systems
+%.sh: %.cpp
+	@(echo "generating $@..." ;                                         \
+        echo "#!$(SHELL)" > $@ ;                                            \
+        a_dot_out="$(PWD)/$(basename $@)."'$$''$$' ;                        \
+        tmp="$(CXX) $< -o $$a_dot_out $(CPPFLAGS) $(CXXFLAGS) "             \
+                    "$(LDFLAGS) $(LDLIBS)" ;                                \
+        tmp="$$tmp && $$a_dot_out "'$$''*'" && rm $$a_dot_out" ;            \
+        echo >> $@ ; echo "$$tmp" >> $@ ;                                   \
+        chmod +x $@)
+
+# run all tests, collect exit status and report statistics; the variable
+# RUN can be set to contain a list of executables to run without generating
+# a report (set to ALL to run all executables)
+# hung or runaway processes are killed after a customizable timeout period
+#
+# to avoid filling up disk space with files left behind by bad programs
+# creates and sets the POSIX TMPDIR environment variable to a temporary
+# directory before running the programs which is then removed when done
+#
+# PlumHall specific:
+# for all "top level" tests that failed to build, find and build all
+# subtests (the little tests the main test consists of)
+ifeq (,$(findstring cygwin,$(PLATFORM)))
+
+run runall run_all: $(BINDIR)/exec
+	@(LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDIR);                    \
+        PATH=$$PATH:.;                                                    \
+        TOPDIR=$(TOPDIR);                                                 \
+        TMPDIR=$${TMPDIR:-/tmp}/stdcxx-run-$$$$;                          \
+        export LD_LIBRARY_PATH PATH TMPDIR TOPDIR TZ;                     \
+        trap "rm -rf $$TMPDIR" HUP INT QUIT TERM EXIT;                    \
+        mkdir -p $$TMPDIR;                                                \
+        ./run $(RUNFLAGS) $(RUNTARGET);                                   \
+        exit 0)
+
+else
+# on Cygwin add $(LIBDIR) and $(BINDIR) to PATH
+run runall run_all: $(BINDIR)/exec
+	@(LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDIR);                    \
+        PATH=$$PATH:$(LIBDIR):$(BINDIR):.;                                \
+        TOPDIR=$(TOPDIR);                                                 \
+        TMPDIR=$${TMPDIR:-/tmp}/stdcxx-run-$$$$;                          \
+        export LD_LIBRARY_PATH PATH TMPDIR TOPDIR TZ;                     \
+        trap "rm -rf $$TMPDIR" HUP INT QUIT TERM EXIT;                    \
+        mkdir -p $$TMPDIR;                                                \
+        ./run $(RUNFLAGS) $(RUNTARGET);                                   \
+        exit 0)
+
+endif
+
+# include the automatically generated dependencies unless "clean"
+# or similar is one of the targets
+ifeq ($(findstring clean,$(MAKECMDGOALS)),)
+
+  ifeq ($(MAKECMDGOALS),)
+    # include all dependencies (can be slow when there are a lot of them)
+    DEPS += $(patsubst %.cpp,$(DEPENDDIR)/%.d,$(filter %.cpp,$(SRCS)))
+    DEPS += $(patsubst %$(AS_EXT),$(DEPENDDIR)/%.d,$(filter %$(AS_EXT),$(SRCS)))
+  else
+    # as a (potentially significant) optimization, include
+    # only the dependencies for the explicitly specified goals
+    DEPS += $(addprefix $(DEPENDDIR)/,$(basename $(MAKECMDGOALS)))
+    DEPS += $(addsuffix .d,$(DEPS))
+  endif
+
+  # (try to) include the dependency file(s), failing gracefully
+  # if they don't exist (e.g., in the case of a .PHONY goal)
+  -include $(DEPS)
+
+endif   # eq ($(findstring clean,$(MAKECMDGOALS)),)
+
+
+# generate dependencies only if they don't yet exist, removing anything
+# not under $(TOPDIR) or $(BUILDDIR) (e.g., system headers) from the list
+# this is done by splitting up dependencies using tr so that there is just
+# one per line and then replacing the values of $(TOPDIR) and $(BUILDDIR)
+# with the actual make variable names themselves
+# move IBM xlC generated .u files to the respective .d files
+
+define makedep
+    -@(if [ ! -f $@ ] ; then                                                 \
+           echo "generating dependencies for"                                \
+                `echo $< | sed "s:$(TOPDIR):$$""(TOPDIR):"` ;                \
+                                                                             \
+           stripexp="s:/$$::;s:[^/]*$$::";                                   \
+           RWTSRCDIR=`echo $(TOPDIR) | sed "$$stripexp"`rwtest;              \
+                                                                             \
+           sedexp1="s:\([^ :]\)\(  */\):\1 \\\@\2:" ;                        \
+           sedexp2="/:[^/]*$$/p;                                             \
+                   s:$$RWTSRCDIR:$$""(TOPDIR)/\.\./rwtest:gp;                \
+                   s:$(TOPDIR):$$""(TOPDIR):gp;                              \
+                   s:$(BUILDDIR):$$""(BUILDDIR):gp" ;                        \
+           depflags="$(value DEPENDFLAGS$(depsuffix))";                      \
+           [ "$$depflags" = "" ] && depflags=$(DEPENDFLAGS);                 \
+           echo "$(CXX) $$depflags $(CPPFLAGS) $(CXXFLAGS) $<";              \
+           $(CXX) $$depflags $(CPPFLAGS) $(CXXFLAGS) $<                      \
+               | sed "$$sedexp1" | tr "@" "\n" | sed -n "$$sedexp2" >$@ ;    \
+           if [ ! -s $@ ]; then                                              \
+               depfile=$*.u;                                                 \
+               [ ! -s $$depfile ] && depfile=`basename $*.d`;                \
+               if [ -s $$depfile ] ; then                                    \
+                  sed "$$sedexp1" $$depfile | tr "@" "\n"                    \
+                                            | sed -n "$$sedexp2" > $@ ;      \
+               fi;                                                           \
+               rm -f $$depfile ;                                             \
+           fi ;                                                              \
+           rm -f $*.i ;                                                      \
+      fi)
+endef
+
+$(DEPENDDIR):
+	@[ ! -d $(DEPENDDIR) ] && mkdir -p $(DEPENDDIR)
+
+
+ifeq ($(DEPENDFLAGS),)
+  # if DEPENDFLAGS is empty or not defined, set it to the concatenation
+  # of the variables specific to each type of a source file
+  DEPENDFLAGS = $(DEPENDFLAGS.cpp) $(value DEPENDFLAGS$(AS_EXT))
+else
+  DEPENDFLAGS.cpp := $(DEPENDFLAGS)
+  DEPENDFLAGS.S   := $(DEPENDFLAGS)
+  DEPENDFLAGS.s   := $(DEPENDFLAGS)
+endif
+
+ifneq ($(DEPENDFLAGS),)
+
+# set depsuffix to the suffix of the first prerequisite
+$(DEPENDDIR)/%.d: depsuffix = $(suffix $<)
+
+  ifneq ($(DEPENDFLAGS.cpp),)
+
+# rule to make dependencies for C++ source files
+$(DEPENDDIR)/%.d: %.cpp $(DEPENDDIR)
+	$(makedep)
+
+  endif   # DEPENDFLAGS.cpp
+  ifneq ($(value DEPENDFLAGS$(AS_EXT)),)
+
+# rule to make dependencies for assembly files
+$(DEPENDDIR)/%.d: %$(AS_EXT) $(DEPENDDIR)
+	$(makedep)
+
+  endif   # DEPENDFLAGS.as
+
+else   # ifeq ($(DEPENDFLAGS),)
+
+$(DEPENDDIR)/%.d:
+
+endif   # neq ($(DEPENDFLAGS),)
+
+
+# disable implicit rules from trying to compile .c and .cc files
+# under the include/ directory (e.g., istream.c to istream) due
+# to being listed as dependencies of .cpp files
+%: %.c
+
+%.o: %.c
+
+%: %.cc
+
+%.o: %.cc
+
+%: %.h
+
+# force the regeneration of all dependencies by removing them
+dependclean:
+	rm -f $(DEPENDDIR)/*.d; 
+	@echo "dependencies will be regenerated at the next invocation of make"
+
+# print ordinary make variables and their values (requires GNU make 3.80)
+printvars:
+	@$(foreach V,$(sort $(.VARIABLES)), \
+	    $(if $(filter-out environment% default automatic, $(origin $V)), \
+	         $(warning $V=$($V) ($(value $V)))))
+
+
+# define a set of phony targets that make should make unconditionally
+# regardless of whether files with the same name exist and their
+# timestamps
+.PHONY: all c_headers clean dependclean realclean config configure listtarget \
+       listruntarget listsrc listobj listvpath listsubtests printvars \
+       run run_all runall
+
+# override the default set of suffixes with our own
+.SUFFIXES: .a .c .cc .cpp .d .h .o .$(AS_EXT)

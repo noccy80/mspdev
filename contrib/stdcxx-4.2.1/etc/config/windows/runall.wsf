@@ -1,0 +1,494 @@
+<?xml version="1.0" ?>
+<package>
+    <comment>
+        Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+    </comment>
+    <job id="runexamples" prompt="no">
+        <?job error="false" debug="false" ?>
+        <runtime>
+            <description>
+runs examples and checks results.
+            </description>
+            <named helpstring="The root directory with executables" 
+                name="EXEDIR" required="true" type="string"/>
+            <named helpstring="The directory with project files of the executables" 
+                name="PRJDIR" required="false" type="string"/>
+            <named helpstring="The configuration" name="CONFIG" 
+                required="true" type="string"/>
+            <named helpstring="The root directory with .in and .out files" 
+                name="INOUTDIR" required="false" type="string"/>
+            <named helpstring="The log file" name="LOGFILE" 
+                required="false" type="string"/>
+            <named helpstring="The examples extension" name="EXT" 
+                required="false" type="string"/>
+            <named helpstring="The additional options for exec utility"
+                name="RUNFLAGS" required="false" type="string"/>
+            <example>
+            cscript runall.wsf /EXEDIR:"C:\stdcxx\build\examples" 
+            /PRJDIR:"C:\stdcxx\build\projects\examples"
+            /INOUTDIR:"C:\stdcxx\examples" /CONFIG:msvc-7.1
+            </example>
+            <usage>
+Usage: cscript runexamples.wsf /EXEDIR:@EXEDIR /CONFIG:@CONFIG
+[/PRJDIR:@PRJDIR] [/INOUTDIR:@INOUTDIR] [/LOGFILE:@LOGFILE]
+[/EXT:@EXT] [/RUNFLAGS:@RUNFLAGS]
+where
+@EXEDIR is the root directory with executables to be run and checked,
+@PRJDIR is the directory with .vcproj files of the executables,
+@INOUTDIR is the root directory with .in and .out files ,
+required by executables,
+@CONFIG is the compiler configuration (msvc-7.1, icc-9.0, etc),
+@LOGFILE is the log file name,
+@EXT is the extension of the example files, default value: "exe".
+@RUNFLAGS is the additional options for exec utility
+            </usage>
+        </runtime>
+        <object id="fso" progid="Scripting.FileSystemObject"/>
+        <object id="WshShell" progid="WScript.Shell"/>
+        <script language="JScript" src="config.js"/>
+        <script language="JScript" src="utilities.js"/>
+        <script language="JScript" src="summary.js"/>
+        <script id="runexamples" language="JScript">
+<![CDATA[
+//
+// Examples running script for stdcxx library
+//
+
+var examplesDir = ""; // path to the root directory containing executables
+var projectsDir = ""; // path to the directory containing projects of the executables
+var inoutDir = "";    // path to the root directory 
+                      // containing the .in and .out files
+var currentCfg = "msvc-7.1" // the configuration
+var logFileName = ""; // the log file name
+var logFileDefault = "runexamples.log"; // the default log file name
+var ext = "exe";
+var runflags = "";
+
+var varOut = "out";
+
+var exRun = 0;
+var exRunSucceeded = 0;
+var exRunFailed = 0;
+var exRunTimedOut = 0;
+var exBadCode = 0;
+var exNotCompiled = 0;
+
+var buildlogFile = "BuildLog.htm";
+var summaryFileName = "Summary.htm";
+var htmFolderName = "temphtm";
+
+var utlExec = "exec.exe";
+var unicodeLog = false;
+    
+var description = new runexamples; // run
+
+// the main function of the script
+function runexamples()
+{
+    readAndCheckArguments();
+    
+    getCompilerOpts(currentCfg);
+
+    unicodeLog = UNICODELOG;
+
+    var buildOutDir = examplesDir;
+    if (! fso.FolderExists(buildOutDir))
+        fso.CreateFolder(buildOutDir);
+        
+    var fLog = fso.CreateTextFile(examplesDir + "\\" + logFileName);
+    var fSummary = fso.CreateTextFile(buildOutDir + "\\" + summaryFileName);
+    
+    runAllExamples(examplesDir, projectsDir, inoutDir, fLog, fSummary, ext);
+
+    var logMsg = "Total run " + exRun + "; " + exRunSucceeded + " succeeded, " +
+        exRunFailed + " failed, " + exRunTimedOut + " failed because of timeout, " +
+        exBadCode + " exited with non-zero code, " +
+        exNotCompiled + " has not compiled";
+    
+    WScript.Echo(logMsg);
+        
+    fLog.WriteLine(logMsg);
+        
+    fLog.Close();
+    fSummary.Close();
+    
+    WScript.Quit(0);
+}
+
+// performs checking of the script parameters
+function readAndCheckArguments()
+{
+    if (!WScript.Arguments.Named.Exists("EXEDIR"))
+    {
+        WScript.StdErr.WriteLine(
+            "Generate: Missing required argument EXEDIR.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+    
+    if (!WScript.Arguments.Named.Exists("CONFIG"))
+    {
+        WScript.StdErr.WriteLine(
+            "Generate: Missing required argument CONFIG.");
+        WScript.Arguments.ShowUsage();
+        WScript.Quit(2);
+    }
+    
+    examplesDir =  WScript.Arguments.Named("EXEDIR");
+    currentCfg = WScript.Arguments.Named("CONFIG");
+
+    if (WScript.Arguments.Named.Exists("PRJDIR"))
+        projectsDir =  WScript.Arguments.Named("PRJDIR");
+
+    if (WScript.Arguments.Named.Exists("INOUTDIR"))
+        inoutDir =  WScript.Arguments.Named("INOUTDIR");
+
+    if (WScript.Arguments.Named.Exists("LOGFILE"))
+        logFileName = WScript.Arguments.Named("LOGFILE");
+    else
+        logFileName = logFileDefault;
+        
+    if (WScript.Arguments.Named.Exists("EXT"))
+        ext = WScript.Arguments.Named("EXT");
+    
+    if (WScript.Arguments.Named.Exists("RUNFLAGS"))
+    {
+        runflags = WScript.Arguments.Named("RUNFLAGS");
+        runflags = runflags.replace(/\'/g, "\"");
+    }
+
+    if (! fso.FolderExists(examplesDir))
+    {
+        WScript.StdErr.WriteLine(
+            "Generate: Could not find directory " + examplesDir);
+            
+        WScript.Quit(3);
+    }
+    
+    if (0 < inoutDir.length && !fso.FolderExists(inoutDir))
+    {
+        WScript.StdErr.WriteLine(
+            "Generate: Could not find directory " + inoutDir);
+            
+        WScript.Quit(3);
+    }
+}
+
+// run all executables starting from exeDir
+// exeDir - folder containing the executables
+// prjDir - folder with .vcproj files of the executables
+// srcDir - starting folder to search .in and .out files for the executable
+// fileLog - filename of the logfile
+// fileSimmary - filename of the summary file
+function runAllExamples(exeDir, prjDir, srcDir, fileLog, fileSummary, exeExt)
+{
+    if (!fso.FolderExists(exeDir))
+        return;
+
+    if (0 < prjDir.length && !fso.FolderExists(prjDir))
+        return;
+    
+    var enumFolder = fso.GetFolder(0 < prjDir.length ? prjDir : exeDir);
+    
+    var htmDir = exeDir + "\\" + htmFolderName;
+    if (! fso.FolderExists(htmDir))
+        fso.CreateFolder(htmDir);
+
+    var exeFiles = new Array();
+    var arrInfo = new Array();
+    
+    var enumFiles = new Enumerator(enumFolder.Files);
+    for (; !enumFiles.atEnd(); enumFiles.moveNext())
+    {
+        var fileName = enumFiles.item().Name;
+
+        if (0 < prjDir.length)
+        {
+            // skip "stdcxx_..." projects
+            if (0 == fileName.indexOf("stdcxx_") ||
+                "vcproj" != fso.GetExtensionName(fileName))
+            {
+                continue;
+            }
+        }
+        else if (exeExt != fso.GetExtensionName(fileName))
+            continue;
+
+        var pureFileName = fso.GetBaseName(fileName);
+        var exeFileName = pureFileName + "." + exeExt;
+            
+        var itemInfo = new ItemBuildInfo(pureFileName);
+        readBuildLog(exeDir, itemInfo, unicodeLog);
+
+        itemInfo.runReqOutput = readOutFile(srcDir, exeFileName);
+
+        exeFiles.push(exeFileName);
+        arrInfo.push(itemInfo);
+        
+        ++exRun;
+    }
+    
+    var runCmd = utlExec;
+    
+    if (0 < srcDir.length)
+        runCmd += " -d \"" + srcDir + "\"";
+
+    if (0 < runflags.length)
+        runCmd += " " + runflags + " ";
+
+    var targets = exeFiles.join(" ");
+    var target_list = null;
+    
+    var prevDir = WshShell.CurrentDirectory;
+    WshShell.CurrentDirectory = exeDir;
+    
+    // the max command line len == 2047 for Win2000
+    // http://support.microsoft.com/kb/830473
+    var MaxCmdLineLen = 2047;
+    if (MaxCmdLineLen >= runCmd.length + targets.length)
+        runCmd += exeFiles.join(" ");
+    else
+    {
+        target_list = "targets.lst";
+        
+        var strm = fso.CreateTextFile(target_list, true);
+        for (var i = 0; i < exeFiles.length; ++i)
+            strm.WriteLine(exeFiles[i]);
+        strm.Close();
+        
+        runCmd += "@" + target_list;
+    }
+
+    try
+    {
+        runCmd = "cmd /c " + runCmd + " 2>&1";
+        var oExec = WshShell.Exec(runCmd);
+
+        var execOut = "";
+        while (oExec.Status == 0)
+        {
+            execOut += oExec.StdOut.ReadAll();
+            WScript.Sleep(100);
+        }
+
+        execOut += oExec.StdOut.ReadAll();
+        WScript.Echo(execOut);
+    }
+    catch (e)
+    {
+        WScript.Echo("Exception in WshShell.Exec(" + runCmd + "): " + e.message);
+        return;
+    }
+    finally
+    {
+        if (null != target_list)
+            fso.DeleteFile(target_list);
+
+        WshShell.CurrentDirectory = prevDir;
+    }
+
+    for (var i = 0; i < arrInfo.length; ++i)
+    {
+        var itemInfo = arrInfo[i];
+        
+        var outFileName = exeDir + "\\" + itemInfo.name + ".out";
+
+        if (fso.FileExists(outFileName))
+        {
+            try
+            {   
+                var outFile = fso.OpenTextFile(outFileName, 1);
+                if (!outFile.AtEndOfStream)
+                    itemInfo.runOutput = outFile.ReadAll();
+                
+                outFile.Close();
+                fso.DeleteFile(outFileName);
+            }
+            catch(e)
+            {
+                WScript.Echo("Could not delete temporary file " + outFileName);
+            }
+        }
+        
+        itemInfo.exitCode = parseStatus(itemInfo.name + "." + exeExt, execOut);
+        switch (itemInfo.exitCode)
+        {
+        case  0: // OK
+        case -7: // OUTPUT
+        case -8: // FORMAT
+        case -9: // NOUT
+            ++exRunSucceeded;
+            fileLog.WriteLine(itemInfo.name + " completed successfully, exit code " +
+                itemInfo.exitCode);
+            break;
+        case -1:  // other
+        case -4:  // SEGV
+        case -10: // TRAP
+            ++exRunFailed;
+            fileLog.WriteLine(itemInfo.name + " failed");
+            break;
+        case -2: // KILLED
+            ++exRunTimedOut;
+            fileLog.WriteLine(itemInfo.name + " timed out");
+            break;
+        case -3: // DIFF
+            fileLog.WriteLine(itemInfo.name + " completed successfully, " +
+                "but output differs from the expected");
+            getDifferencesInfo(itemInfo);
+            ++exRunFailed;
+            break;
+        case -5: // COMP
+        case -6: // LINK
+            fileLog.WriteLine(itemInfo.name + " has not compiled");
+            ++exNotCompiled;
+            break;
+        default:
+            ++exBadCode;
+            fileLog.WriteLine(itemInfo.name + " completed successfully, exit code " +
+                itemInfo.exitCode);
+        }
+
+        saveBuildInfo(itemInfo, htmDir, "htm"); 
+        saveBuildSummary(itemInfo, fileSummary);
+    }
+}
+
+// parse the exec utility output to get status of the running executable 
+// exename - filename of the executable
+// exeOut - stdout content of the exec utility
+function parseStatus(exeName, execOut)
+{
+    var res = 0;
+
+    // maxNameLen is the width of the "NAME" column in the exec utility output
+    var maxNameLen = 30;
+    var pos = execOut.indexOf(exeName.substr(0, maxNameLen));
+    if (0 <= pos)
+    {
+        pos += maxNameLen + 1;
+        var status = execOut.substring(pos, execOut.indexOf(" ", pos + 6));
+        res = parseInt(status);
+        if (isNaN(res))
+        {
+            switch (status)
+            {
+            case "KILLED":
+                res = -2;
+                break;
+            case "  DIFF":
+                res = -3;
+                break;
+            case "  SEGV":
+                res = -4;
+                break;
+            case "  COMP":
+                res = -5;
+                break;
+            case "  LINK":
+                res = -6;
+                break;
+            case "OUTPUT":
+                res = -7;
+                break;
+            case "FORMAT":
+                res = -8;
+                break;
+            case "  NOUT":
+                res = -9;
+                break;
+            case "  TRAP":
+                res = -10;
+                break;
+            default:
+                res = -1;
+            }
+        }
+    }
+
+    return res;
+}
+
+// returns the content of the .in or .out file for the specified executable
+// srcDir - folder containing subfolders with .in and .out files
+// exeFileName - filename of the executable
+// nameSuffix - one of varIn, varOut
+function readAllFromFile(srcDir, exeFileName, nameSuffix)
+{   
+    if (! fso.FolderExists(srcDir))
+        return "";
+        
+    var pureName = fso.GetBaseName(exeFileName);
+        
+    var someDir = srcDir + "\\" + nameSuffix;
+    if (! fso.FolderExists(someDir))
+        return "";
+        
+    var someFileName = someDir + "\\" + pureName + "." + nameSuffix;
+    if (! fso.FileExists(someFileName))
+        return "";
+        
+    var someFile = fso.OpenTextFile(someFileName);
+    if (! someFile)
+        return "";
+        
+    return (someFile.ReadAll());
+}
+
+// returns the content of the .out file for the specified executable
+// srcDir - folder containing .out files
+// exeFileName - filename of the executable
+function readOutFile(srcDir, exeFileName)
+{
+    var outData = readAllFromFile(srcDir, exeFileName, varOut);
+    
+    if (0 == outData.length)
+    {
+        outData = readAllFromFile(srcDir + "\\manual", exeFileName, varOut);
+        if (0 < outData.length)
+            srcDir += "\\manual";
+        else
+        {
+            outData = readAllFromFile(srcDir + "\\tutorial", exeFileName, varOut);
+            if (0 < outData.length)
+                srcDir += "\\tutorial";
+        }
+    }
+    
+    var eolStr = String.fromCharCode(13) + String.fromCharCode(10);
+    var idxEOL = outData.indexOf(eolStr);
+    var outBegin = (idxEOL != -1) ? outData.substr(0, idxEOL) : outData;
+    var rgWords = outBegin.split(" ");
+    if (rgWords[0] != "link")
+        return outData;
+    
+    // try to open file using the link
+    var linkedFileName = srcDir + "\\" + varOut + "\\" + rgWords[1];
+    if (! fso.FileExists(linkedFileName))
+        return outData;
+            
+    var linkedFile = fso.OpenTextFile(linkedFileName);
+    if (! linkedFile)
+        return "";
+            
+    return (linkedFile.ReadAll());
+}
+
+]]>
+        </script>
+    </job>
+</package>

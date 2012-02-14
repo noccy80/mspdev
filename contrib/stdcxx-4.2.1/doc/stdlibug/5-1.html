@@ -1,0 +1,57 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>The vector Data Abstraction</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="5.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="5-2.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>5.1 The vector Data Abstraction</H2>
+<A NAME="idx71"><!></A>
+<P>The container class template <B><I><A HREF="../stdlibref/vector.html">vector</A></I></B> generalizes the concept of an ordinary C array. Like an array, a <B><I>vector</I></B> is an indexed data structure, with index values that range from 0 to one less than the number of elements contained in the structure. Elements in a <B><I>vector</I></B> can be accessed with a subscript, like an array. However, a <B><I>vector</I></B> differs from an array in the following important respects:</P>
+<UL>
+<LI><P CLASS="LIST">The size of a <B><I><A HREF="../stdlibref/vector.html">vector</A></I></B> changes dynamically. New elements can be inserted on to the end of a <B><I>vector</I></B>, or into the middle. Storage management is handled automatically. Insertion at the end of a vector is efficient. However, insertion into the middle of a vector is not as efficient as insertion into the middle of a <B><I><A HREF="../stdlibref/list.html">list</A></I></B> (<A HREF="6.html">Section&nbsp;6</A>). If many insertion operations into the middle of the container are to be performed, a <B><I>list</I></B> container should be used.</P></LI>
+<LI><P CLASS="LIST">A <B><I><A HREF="../stdlibref/vector.html">vector</A></I></B> has more self-knowledge than an ordinary array. In particular, a <B><I>vector</I></B> can be queried about the number of elements it contains, the number of elements which it can contain without allocating more memory, the maximum number of elements it can potentially contain, and so on.</P></LI>
+</UL>
+<P>The container class template <B><I><A HREF="../stdlibref/vector.html">vector</A></I></B> in the C++ Standard Library should be compared and contrasted to the container class template <B><I><A HREF="../stdlibref/deque.html">deque</A></I></B> described in <A HREF="7.html">Chapter&nbsp;7</A>. Like a <B><I>vector</I></B>, a <B><I>deque</I></B> (pronounced <I>deck</I>) is an indexed data structure. The major difference between the two is that a <B><I>deque</I></B> provides efficient insertion at either the beginning or the end of the container, while a <B><I>vector</I></B> provides efficient insertion only at the end. In many situations, either structure can be used. Use of a <B><I>vector</I></B> generally results in a smaller executable file, while use of a <B><I>deque</I></B> may result in a slightly faster program, depending upon the particular set of operations being performed.</P>
+<A NAME="511"><H3>5.1.1 Include Files</H3></A>
+<A NAME="idx72"><!></A>
+<P>Whenever you use a <B><I><A HREF="../stdlibref/vector.html">vector</A></I></B>, you must include the <B><I>vector</I></B> header file:</P>
+
+<UL><PRE>
+#include &lt;vector&gt;
+</PRE></UL>
+
+<BR>
+<HR>
+<A HREF="5.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="5-2.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

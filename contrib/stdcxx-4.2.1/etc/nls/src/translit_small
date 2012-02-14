@@ -1,0 +1,63 @@
+comment_char %
+escape_char  /
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Licensed to the Apache Software  Foundation (ASF) under one or more
+% contributor  license agreements.  See  the NOTICE  file distributed
+% with  this  work  for  additional information  regarding  copyright
+% ownership.   The ASF  licenses this  file to  you under  the Apache
+% License, Version  2.0 (the  License); you may  not use  this file  
+% except in  compliance with the License.   You may obtain  a copy of
+% the License at
+%
+% http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the  License is distributed on an  "AS IS" BASIS,
+% WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+% implied.   See  the License  for  the  specific language  governing
+% permissions and limitations under the License.
+%
+% Copyright 1999-2007 Rogue Wave Software, Inc.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Transliterations of small equivalents.
+% Generated through
+%   $ grep '^[^;]*;[^;]*;[^;]*;[^;]*;[^;]*;<small>[^;]*;' UnicodeData.txt | \
+%     sed -e 's/^\([^;]*\);\([^;]*\);[^;]*;[^;]*;[^;]*;<small> \([^;]*\);.*$/<U\1> <U\3> % \2/'
+
+LC_CTYPE
+
+translit_start
+
+<UFE50> <U002C> % SMALL COMMA
+<UFE51> <U3001> % SMALL IDEOGRAPHIC COMMA
+<UFE52> <U002E> % SMALL FULL STOP
+<UFE54> <U003B> % SMALL SEMICOLON
+<UFE55> <U003A> % SMALL COLON
+<UFE56> <U003F> % SMALL QUESTION MARK
+<UFE57> <U0021> % SMALL EXCLAMATION MARK
+<UFE58> <U2014> % SMALL EM DASH
+<UFE59> <U0028> % SMALL LEFT PARENTHESIS
+<UFE5A> <U0029> % SMALL RIGHT PARENTHESIS
+<UFE5B> <U007B> % SMALL LEFT CURLY BRACKET
+<UFE5C> <U007D> % SMALL RIGHT CURLY BRACKET
+<UFE5D> <U3014> % SMALL LEFT TORTOISE SHELL BRACKET
+<UFE5E> <U3015> % SMALL RIGHT TORTOISE SHELL BRACKET
+<UFE5F> <U0023> % SMALL NUMBER SIGN
+<UFE60> <U0026> % SMALL AMPERSAND
+<UFE61> <U002A> % SMALL ASTERISK
+<UFE62> <U002B> % SMALL PLUS SIGN
+<UFE63> <U002D> % SMALL HYPHEN-MINUS
+<UFE64> <U003C> % SMALL LESS-THAN SIGN
+<UFE65> <U003E> % SMALL GREATER-THAN SIGN
+<UFE66> <U003D> % SMALL EQUALS SIGN
+<UFE68> <U005C> % SMALL REVERSE SOLIDUS
+<UFE69> <U0024> % SMALL DOLLAR SIGN
+<UFE6A> <U0025> % SMALL PERCENT SIGN
+<UFE6B> <U0040> % SMALL COMMERCIAL AT
+
+translit_end
+
+END LC_CTYPE

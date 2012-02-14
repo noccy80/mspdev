@@ -1,0 +1,76 @@
+# -*- Makefile -*-
+#
+# $Id: GNUmakefile.exm 636366 2008-03-12 15:27:36Z faridz $
+#
+# makefile to build the C++ Standard library examples
+#
+########################################################################
+#
+# Licensed to the Apache Software  Foundation (ASF) under one or more
+# contributor  license agreements.  See  the NOTICE  file distributed
+# with  this  work  for  additional information  regarding  copyright
+# ownership.   The ASF  licenses this  file to  you under  the Apache
+# License, Version  2.0 (the  "License"); you may  not use  this file
+# except in  compliance with the License.   You may obtain  a copy of
+# the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the  License is distributed on an  "AS IS" BASIS,
+# WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+# implied.   See  the License  for  the  specific language  governing
+# permissions and limitations under the License.
+#
+# Copyright 1999-2007 Rogue Wave Software, Inc.
+#
+########################################################################
+
+include  ../makefile.in
+
+EXMDIR  = $(TOPDIR)/examples
+SRCDIRS = $(EXMDIR)/manual $(EXMDIR)/tutorial
+
+# do not compile these sources...
+OMIT_SRCS += rwstdmessages.cpp
+
+# override setting from makefile.in (examples only)
+CATFILE = rwstdmessages.cat
+
+include ../makefile.common
+
+INCLUDES += -I$(EXMDIR)/include
+
+# No example should use more than 512MB of memory. On most platforms
+# except HP-UX/IPF, 256MB is enough. (Related to STDCXX-440).
+RUNFLAGS += -d $(EXMDIR) --ulimit=as:536870912
+
+ifneq ($(RPATH),)
+  LDFLAGS += $(RPATH)$(LIBDIR)
+endif
+
+########################################################################
+#  TARGETS
+########################################################################
+
+.SUFFIXES:
+
+all:  $(TARGET) $(CATFILE)
+
+# dependency on main library
+$(TARGET): $(LIBDIR)/$(LIBNAME)
+
+$(LIBDIR)/$(LIBNAME):
+	@$(MAKE) -C $(LIBDIR) 
+
+$(BINDIR)/runutil:
+	@$(MAKE) -C $(BINDIR) runutil
+
+# do any directory specific cleanup using the realclean target
+realclean: dependclean clean
+	rm -f *.out
+
+#set TZ environment variable for examples
+run runall run_all: TZ = MST+7
+
+include ../makefile.rules

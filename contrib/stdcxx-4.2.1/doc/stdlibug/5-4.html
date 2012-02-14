@@ -1,0 +1,74 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>Example Program: The Sieve of Eratosthenes</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="5-3.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="6.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>5.4 Example Program: The Sieve of Eratosthenes</H2>
+<A NAME="idx98"><!></A>
+<A NAME="idx99"><!></A>
+<P>An example program that illustrates the use of vectors is the classic algorithm called the <I>sieve of Eratosthenes</I>, used to discover prime numbers. </P>
+<BLOCKQUOTE><HR><B>
+NOTE -- Source code for this program is in the file sieve.cpp.
+</B><HR></BLOCKQUOTE>
+<P>In the sieve of Eratosthenes, a list of all the numbers up to some bound is represented by an integer vector. The basic idea is to strike out (set to zero) all values that cannot be primes; thus all the remaining values are prime numbers. To do this, a loop examines each value in turn; for those that are set to one and thus not yet excluded from the set of candidate primes, it strikes out all multiples of the number. When the outermost loop is finished, all remaining prime values have been discovered. Here is the program:</P>
+
+<UL><PRE>
+int main ()
+{
+
+  // Create a sieve of ints, initially set to 1.
+  const int sievesize = 100;
+  std::vector&lt;int, std::allocator&lt;int&gt; &gt;
+    sieve ((size_t)sievesize, 1);
+
+  // At positions that are multiples of i, set value to zero.
+  for (int i = 2; i * i &lt; sievesize; i++)
+    if (sieve[i])
+      for (int j = i + i; j &lt; sievesize; j += i)
+        sieve[j] = 0;
+
+  // Now output all the values that are still set.
+  for (int j = 2; j &lt; sievesize; j++)
+    if (sieve[j]) 
+      std::cout &lt;&lt; j &lt;&lt; " ";
+    
+  return 0;
+}
+</PRE></UL>
+
+<BR>
+<HR>
+<A HREF="5-3.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="6.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

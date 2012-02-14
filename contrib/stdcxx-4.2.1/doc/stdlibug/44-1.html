@@ -1,0 +1,67 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>Multithread-Safe: Level 2</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="44.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="44-2.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>44.1 Multithread-Safe: Level 2</H2>
+<A NAME="idx980"><!></A>
+<A NAME="idx981"><!></A>
+<P>This implementation of iostreams and locales provides Multithread-Safety Level 2 as an option. All public and protected functions are reentrant under certain conditions, and there is protection against multiple threads trying to modify static and global data. The library may also lock an iostream object before modifying it. When this level of multi-thread safety is enabled, client code is not required to explicitly lock or unlock a class object, whether static, global, or local, in order to perform a single operation on the object.</P>
+<P>This means that iostream objects, with the exception of stream buffers, can be shared between threads of execution using a simple mutex object without explicit locking. The locking mechanism is enforced at the stream level. Therefore, all operations carried out on the stream are multithread safe, including the following:</P>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="3">
+<tr><td valign=top><P CLASS="TABLE"><B>Thread 1:</B></P>
+</td><td valign=top><P CLASS="TABLE"><B>Thread 2:</B></P>
+</td></tr>
+<tr><td valign=top>
+<UL><PRE>std::cout &lt;&lt; "Thread 1"
+          &lt;&lt; std::endl;
+</PRE></UL>
+</td><td valign=top>
+<UL><PRE>std::cout &lt;&lt; " Thread 2"
+          &lt;&lt; std::endl;
+</PRE></UL>
+</td></tr>
+</TABLE>
+<P>The eight standard iostream objects, <SAMP>std::cin</SAMP>, <SAMP>std::cout</SAMP>,<SAMP> std::cerr</SAMP>, <SAMP>std::clog</SAMP>, <SAMP>std::wcin</SAMP>,<SAMP> std::wcout</SAMP>, <SAMP>std::wcerr</SAMP>, and <SAMP>std::wclog</SAMP>, are normally thread-safe by default.  Due to the overhead necessitated by thread-safety no other stream objects are thread-safe by default.  This behavior can be customized when the library is configured.</P>
+<P>Thread safety is controlled by two bits, <B><I>ios_base::nolock</I></B> and <B><I>ios_base::nolockbuf</I></B>.  These bits can be set on an iostream object (such as <SAMP>std::cout</SAMP>) using the public member function <SAMP>std::ios_base::setf()</SAMP>.  When the bits are set, the object behaves in a thread-safe way as described above.  The public member function <SAMP>std::ios_base::unsetf()</SAMP> clears both bits.  When the bits are not set, the object is not thread-safe.  It is also possible to set the bits individually to allow the stream thread-unsafe access on the stream data (<SAMP>nolock</SAMP>), or to prevent the stream from locking prior to accessing the stream buffer (<SAMP>nolockbuf</SAMP>).</P>
+<BLOCKQUOTE><HR><B>
+NOTE --  The C++ standard does not address multi-thread safety in any way.  These bits are extensions to the standard.  Code using these bits is inherently unportable.
+</B><HR></BLOCKQUOTE>
+<P>The <B><I>ios_base::nolock</I></B> and <B><I>ios_base::nolockbuf</I></B> bits are not available in strictly conforming mode (strict ANSI).</P>
+
+<BR>
+<HR>
+<A HREF="44.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="44-2.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

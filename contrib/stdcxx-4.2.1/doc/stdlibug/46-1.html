@@ -1,0 +1,57 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>Extensions</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="46.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><IMG SRC="images/bnonext.gif" WIDTH=25 HEIGHT=21 ALT="No next file" BORDER=O><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>46.1 Extensions</H2>
+<A NAME="idx995"><!></A>
+<P>This section describes how this implementation of the standard iostreams differs from the ISO/ANSI C++ Standard Library specification. You must be aware that whenever you use one of the features described here, the portability of your program is impaired. It will not conform to the standard.</P>
+<A NAME="4611"><H3>46.1.1 File Descriptors</H3></A>
+<A NAME="idx996"><!></A>
+<P>The traditional iostreams allowed a file stream to connect to a file using a<I> file descriptor</I>. File descriptors are used by POSIX functions like <SAMP>open()</SAMP>, <SAMP>close()</SAMP>, <SAMP>read()</SAMP>, and <SAMP>write()</SAMP>. However, the ISO/ANSI standard for the programming language C and its library does not include these functions, nor does it mention file descriptors. In this sense, the use of file descriptors introduces platform and operating system dependencies into your program. This is exactly why the standard iostreams are not defined to use file descriptors.</P>
+<P>You may have existing programs that use the file descriptor features of the traditional iostreams. You may need to access system-specific files like pipes, which are accessible only through file descriptors. To address these concerns, this implementation offers additional constructors and member functions in the file stream and file buffer classes that enable you to work with file descriptors.</P>
+<P>The main additions are:</P>
+<UL>
+<LI><P CLASS="LIST">Constructors that take a file descriptor rather than a file name</P></LI>
+<LI><P CLASS="LIST">An additional third parameter that allows specification of file access rights. This parameter, available on several constructors and the <SAMP>open()</SAMP> member functions, is not available with the standard interface. The parameter has a default, so that you usually need not worry about file protection.</P></LI>
+</UL>
+<A NAME="4612"><H3>46.1.2 Multithreaded Environments</H3></A>
+<A NAME="idx997"><!></A>
+<P>See <A HREF="44.html">Chapter&nbsp;44</A> on multithreading. Note that all multithreading features are an extension of the standard and are therefore not portable to other implementations of the standard library.</P>
+
+<BR>
+<HR>
+<A HREF="46.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><IMG SRC="images/bnonext.gif" WIDTH=20 HEIGHT=21 ALT="No next file" BORDER=O>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>

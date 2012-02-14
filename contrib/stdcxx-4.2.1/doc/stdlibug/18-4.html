@@ -1,0 +1,103 @@
+<!--
+    Licensed to the Apache Software  Foundation (ASF) under one or more
+    contributor  license agreements.  See  the NOTICE  file distributed
+    with  this  work  for  additional information  regarding  copyright
+    ownership.   The ASF  licenses this  file to  you under  the Apache
+    License, Version  2.0 (the  License); you may  not use  this file
+    except in  compliance with the License.   You may obtain  a copy of
+    the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the  License is distributed on an  "AS IS" BASIS,
+    WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+    implied.   See  the License  for  the  specific language  governing
+    permissions and limitations under the License.
+
+    Copyright 1999-2007 Rogue Wave Software, Inc.
+-->
+
+<HTML>
+<HEAD>
+<TITLE>Example Program: Exceptions</TITLE>
+<LINK REL=StyleSheet HREF="../rw.css" TYPE="text/css" TITLE="Apache stdcxx Stylesheet"></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<A HREF="18-3.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="VI.html"><IMG SRC="images/bnext.gif" WIDTH=25 HEIGHT=21 ALT="Next file" BORDER=O></A><DIV CLASS="DOCUMENTNAME"><B>Apache C++ Standard Library User's Guide</B></DIV>
+<H2>18.4 Example Program: Exceptions</H2>
+<BLOCKQUOTE><HR><B>
+NOTE -- This program is in the file <code>tutorial/stdexcept.cpp</code>.
+</B><HR></BLOCKQUOTE>
+<A NAME="idx428"><!></A>
+<P>This following example program demonstrates the use of exceptions:</P>
+
+<UL><PRE>
+#include &lt;string&gt;      // for string
+#include &lt;stdexcept&gt;   // for exception, runtime_error, out_of_range
+#include &lt;iostream&gt;    // for cout
+
+
+int main ()
+{
+    // First we'll incite and catch an exception from the C++ Standard
+    // library class std::string by attempting to replace a substring
+    // starting at a position beyond the end of the string object.
+    try {
+        std::string ().replace (100, 1, 1, 'c');
+    }
+    catch (std::out_of_range &amp;e) {
+
+        // Print out the exception string, which in this implementation
+        // includes the location and the name of the function that threw
+        // the exception along with the reason for the exception.
+        std::cout &lt;&lt; "Caught an out_of_range exception: "
+                  &lt;&lt; e.what () &lt;&lt; '\n';
+    }
+    catch (std::exception &amp;e) {
+
+        std::cout &lt;&lt; "Caught an exception of an unexpected type: "
+                  &lt;&lt; e.what () &lt;&lt; '\n';
+    }
+    catch (...) {
+        std::cout &lt;&lt; "Caught an unknown exception\n";
+    }
+    
+    // Throw another exception.
+    try {
+        throw std::runtime_error ("a runtime error");
+    }
+    catch (std::runtime_error &amp;e) {
+        std::cout &lt;&lt; "Caught a runtime_error exception: "
+                  &lt;&lt; e.what () &lt;&lt; '\n';
+    }
+    catch (std::exception &amp;e) {
+        std::cout &lt;&lt; "Caught an exception of an unexpected type: "
+                  &lt;&lt; e.what () &lt;&lt; '\n';
+    } 
+    catch (...) {
+        std::cout &lt;&lt; "Caught an unknown exception\n";
+    }
+   
+    return 0;
+}
+</PRE></UL>
+<P>The exact output of the program is specific to the compiler used to compile it and to the location of the library headers but may look something like this:</P><UL><PRE>
+Caught an out_of_range exception: /usr/local/stdcxx/include/string.cc:422: std::string& std::string::replace(size_type, size_type, size_type, char_type): argument value 100 out of range [0, 0)
+Caught a runtime_error exception: a runtime error
+</UL></PRE>
+
+<BR>
+<HR>
+<A HREF="18-3.html"><IMG SRC="images/bprev.gif" WIDTH=20 HEIGHT=21 ALT="Previous file" BORDER=O></A><A HREF="noframes.html"><IMG SRC="images/btop.gif" WIDTH=56 HEIGHT=21 ALT="Top of Document" BORDER=O></A><A HREF="booktoc.html"><IMG SRC="images/btoc.gif" WIDTH=56 HEIGHT=21 ALT="Contents" BORDER=O></A><A HREF="tindex.html"><IMG SRC="images/bindex.gif" WIDTH=56 HEIGHT=21 ALT="Index page" BORDER=O></A><A HREF="VI.html"><IMG SRC="images/bnext.gif" WIDTH=20 HEIGHT=21 ALT="Next file" BORDER=O></A>
+
+<!-- Google Analytics tracking code -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+    _uacct = "UA-1775151-1";
+    urchinTracker();
+</script>
+<!-- end of Google Analytics tracking code -->
+
+</BODY>
+</HTML>
