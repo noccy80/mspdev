@@ -17,6 +17,7 @@ function build() {
 	else
 		export CXXFLAGS="$2"
 	fi
+	export DEST="`dirname $0`/$MCU"
 	./chef -m $1 -b
 
 }

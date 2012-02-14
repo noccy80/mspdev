@@ -130,10 +130,10 @@ case "$OP" in
 				make lib CXXFLAGS="$CXXFLAGS" &>../../$MCU/$LIB.log
 			fi
 			if [ "$?" == "0" ]; then
-				LIBCOUNT="`ls -al *.a 2>/dev/null | wc -l`"
-				HCOUNT="`ls -al *.h 2>/dev/null | wc -l`"
-				printf "   %s %-20s |%4s| (%d libraries, %d headers)\n" "··" $LIB " OK " $LIBCOUNT $HCOUNT
-				DEST="../../$MCU/" make install
+				printf "   %s %-20s |%4s| " "··" $LIB " OK "
+				DEST="../../$MCU/"
+				INST="`make install | tail --lines 1`"
+				printf "%s\n" "$INST"
 			else
 				printf "   %s %-20s |%4s| Failed, see %s\n" "  " $LIB "" "$MCU/$LIB.log"
 				cat ../../$MCU/$LIB.log | grep -i error > ../../$MCU/$LIB.err
@@ -142,8 +142,8 @@ case "$OP" in
 		done
 		ls $MCU/lib/*.a &>/dev/null && echo "   :: Chmodding libraries..." && chmod 666 $MCU/lib/*.a
 		chmod 666 $MCU/include/*.h
-		LIBCOUNT="`ls -al $MCU/lib/*.a 2>/dev/null | wc -l`"
-		HCOUNT="`ls -al $MCU/include/*.h 2>/dev/null | wc -l`"
+		LIBCOUNT=`ls -al $MCU/lib/*.a 2>/dev/null | wc -l`
+		HCOUNT=`ls -al $MCU/include/*.h 2>/dev/null | wc -l`
 		echo "   :: $LIBCOUNT libraries and $HCOUNT headers have been installed."
 		;;
 	"package")

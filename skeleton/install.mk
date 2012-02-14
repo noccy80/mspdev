@@ -9,3 +9,4 @@ endif
 	test -d $(DEST)/lib || mkdir $(DEST)/lib
 	cp -R $(LIBINCL) $(DEST)/include
 	cp $(TARGET).a $(DEST)/lib
+	printf "Installed"
