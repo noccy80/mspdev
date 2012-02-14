@@ -69,7 +69,7 @@ bin: $(TARGET).elf $(TARGET).hex
 
 # Build library
 $(TARGET).a: $(OBJS)
-	printf "$(HDR_AR) %s.a: %s\n" "AR" "$(TARGET)" "$(OBJS)"
+	printf "$(HDR_AR) \033[1m%s.a\033[0m: \033[37m%s\033[0m\n" "AR" "$(TARGET)" "$(strip $(OBJS))"
 	ar r -o $(TARGET).a $(OBJS) 2>/dev/null
 
 # Build binary
@@ -78,7 +78,7 @@ ifeq ($(MCU),)
 	echo "ERROR: MCU not defined or programmer not connected."
 	exit 1
 endif
-	printf "$(HDR_LD) %s.elf: %s %s\n" "LD" "$(TARGET)" "$(strip $(OBJS))" "$(if $(LIBS),(+$(subst -l,,$(LIBS))),)"
+	printf "$(HDR_LD) \033[1m%s.elf\033[0m: \033[37m%s\033[0m %s\n" "LD" "$(TARGET)" "$(strip $(OBJS))" "$(if $(LIBS),(+$(subst -l,,$(LIBS))),)"
 	$(CC) $(LDFLAGS) $(LIBPATH) -o $(TARGET).elf $(OBJS) $(LIBS) 
 	$(SIZE) $(TARGET).elf
 

@@ -1,0 +1,37 @@
+#!/usr/bin/php
+<?php require('lepton-ng');
+
+using('contrib.phpserial');
+
+class SerialConn {
+
+	const PARITY_NONE = 'N';
+	const PARITY_ODD =  'O';
+	const PARITY_EVEN = 'E';
+
+	public function __construct($device, $baud, $bits, $parity = SerialConn::PARITY_NONE, $stopbits = 1) {
+
+		// ...
+
+	}
+
+	public function write() {
+
+		$args = func_get_args();
+		if (count($args) == 1) {
+			$str = sprintf("%s", $args[0]);
+		} else {
+			$str = call_user_func_array('sprintf',$args);
+		}
+	}
+
+}
+
+
+console::write("Automate430 - Home autiomation framework");
+$sp = new SerialConn('/dev/ttyacm0', 8, 'N', 1);
+$sp->write("init\n");
+
+console::write("Setting the real time clock...");
+$sp->write("settime %d,%d,%d,%d,%d,%d\n", $y, $m, $d, $h, $m, $s);
+$sp->write("getevents\n");
