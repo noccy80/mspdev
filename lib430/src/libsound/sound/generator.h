@@ -1,10 +1,6 @@
 #ifndef __GENERATOR_H__
 #define __GENERATOR_H__
 
-#ifdef __CPLUSPLUS
-extern "C" { 
-#endif
-
 #define WAVE_POLYPHONY 4
 
 enum _WAVEFORM {
@@ -22,6 +18,7 @@ protected:
 public:
 	void noteOn(int note, float keymod);
 	void noteOff();
+	void reset();
 	virtual int read();
 };
 
@@ -69,7 +66,4 @@ private:
 	GeneratorList* generators;
 };
 
-#ifdef __CPLUSPLUS
-}
-#endif
 #endif

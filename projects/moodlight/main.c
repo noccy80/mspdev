@@ -23,6 +23,8 @@
 #include <msp430.h>
 #include <legacymsp430.h>
 #include "bcd.h"
+#include "moodlight.h"
+#include "inputs.h"
 
 // This is the main "sketch", if we are to borrow the words from the aurduino.
 #define ARDUINO_MAIN
@@ -32,10 +34,11 @@
 #define OUT_RED 2
 #define OUT_GREEN 1
 #define OUT_BLUE 3
-// Input pins, for reading and adc
-#define IN_RED 5
-#define IN_GREEN 6
-#define IN_BLUE 7
+
+volatile int ovr_on = 0;
+volatile int ovr_red = 0;
+volatile int ovr_green = 0;
+volatile int ovr_blue = 0;
 
 // Max is a bad name, but this is how many intensity levels exist
 const int max = 64;
@@ -45,11 +48,15 @@ volatile int red_val = 0;
 volatile int green_val = 0;
 volatile int blue_val = 0;
 
-volatile int display = 0;;
+volatile int display = 0;
+volatile int global_program = 0;
+volatile int delay_base = 30;
 
 // Function prototypes
 void demo();
 void ambient();
+
+void set_color(int r, int g, int b);
 
 /**
  * @brief Arduino style setup routine
@@ -85,10 +92,30 @@ void setup() {
 	// inaccurate the VLO can be
 	TACCR0 = 2;
 
+	// inputs_init();
+
 	//Enable global interrupts
 	WRITE_SR(GIE);
 
 }
+
+void override_color(int r, int g, int b) {
+	ovr_on = 100;
+	ovr_red = r;
+	ovr_green = g;
+	ovr_blue = b;
+	set_color(r, g, b);
+}
+
+void set_program(int program) {
+	global_program = program;
+}
+
+void set_delay(int delaybase) {
+	delay_base = delaybase;
+
+}
+
 
 /**
  * @brief Update the displayed color
@@ -100,6 +127,12 @@ void setup() {
  * @param int b The blue value
  */
 void set_color(int r, int g, int b) {
+	if (ovr_on-- > 0) {
+		red_val = ovr_red;
+		green_val = ovr_green;
+		blue_val = ovr_blue;
+		return;
+	}
 	red_val = r;
 	green_val = g;
 	blue_val = b;
@@ -126,9 +159,9 @@ void loop() {
 void ambient() {
 
 	int r, g, b;
-	r = analogRead(IN_RED);
-	g = analogRead(IN_GREEN);
-	b = analogRead(IN_BLUE);
+	r = analogRead(9);
+	g = analogRead(10);
+	b = analogRead(11);
 
 	// This is bogus, the value should be scaled properly!
 	set_color(r/10, g/10, b/10);
@@ -143,13 +176,11 @@ void ambient() {
 void demo() {
 
 	// Our counter
-	int n, m;
-	// The delay constant
-	int delay = 2000;
+	int n, m, i;
 	// Multipliers for each step (a) and between changes (b).
 	// Note that multiplier a is used TWICE, so set it accordingly.
-	int mula = 10;
-	int mulb = 10;
+	int delaya = 500;
+	int delayb = 30000;
 
 	display = 0;
 
@@ -172,10 +203,9 @@ void demo() {
 					case 5:
 						set_color(max - n,0,max -n); break;
 				}
-				__delay_cycles(delay * mula);
-				__delay_cycles(delay * mula);
+				for (i = 0; i < delay_base; i++) __delay_cycles(delaya);
 			}
-			__delay_cycles(delay * mulb);
+			for (i = 0; i < delay_base; i++) __delay_cycles(delayb);
 		}
 
 	}
@@ -190,9 +220,9 @@ interrupt(TIMER0_A0_VECTOR) timer_isr(void) {
 
 	static int step = 0;
 	P1OUT = 0xFF;
-	digitalWrite(OUT_RED,(red_val<step)?LOW:HIGH);
-	digitalWrite(OUT_GREEN,(green_val<step)?LOW:HIGH);
-	digitalWrite(OUT_BLUE,(blue_val<step)?LOW:HIGH);
+	digitalWrite(OUT_RED,(step<red_val)?HIGH:LOW);
+	digitalWrite(OUT_GREEN,(step<green_val)?HIGH:LOW);
+	digitalWrite(OUT_BLUE,(step<blue_val)?HIGH:LOW);
 	step++;
 	if (step>max) step = 0;
 
