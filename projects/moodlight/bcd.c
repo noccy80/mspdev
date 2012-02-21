@@ -17,12 +17,12 @@ const uint8_t bcd_char[10] = {
 
 
 void bcd_write(int digit) {
-
+/*
 	P2DIR = 0xFF;
 	P2REN = 0x00;
 	P2SEL = 0x00;
 	P2SEL2 = 0x00;
 
 	P2OUT = (bcd_char[digit] >> 1);
-
+*/
 }

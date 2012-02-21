@@ -39,6 +39,7 @@ volatile int ovr_on = 0;
 volatile int ovr_red = 0;
 volatile int ovr_green = 0;
 volatile int ovr_blue = 0;
+int power = 0;
 
 // Max is a bad name, but this is how many intensity levels exist
 const int max = 64;
@@ -58,6 +59,30 @@ void ambient();
 
 void set_color(int r, int g, int b);
 
+
+void set_power_mode(int powermode) {
+	power = powermode;
+	if (!power) {
+		digitalWrite(OUT_RED, LOW);
+		digitalWrite(OUT_GREEN, LOW);
+		digitalWrite(OUT_BLUE, LOW);
+		TACCTL0 = ~CCIE;
+	} else {
+		//Set ACLK to use internal VLO (12 kHz clock)
+		BCSCTL3 |= LFXT1S_2;
+
+		//Set TimerA to use auxiliary clock in UP mode
+		TACTL = TASSEL_1 | MC_1;
+		//Enable the interrupt for TACCR0 match
+		TACCTL0 = CCIE;
+
+		// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
+		// should output an LED change every 1 second. Try this out and see how
+		// inaccurate the VLO can be
+		TACCR0 = 2;
+	}
+}
+
 /**
  * @brief Arduino style setup routine
  *
@@ -76,23 +101,8 @@ void setup() {
 	//pinMode(IN_GREEN, INPUT);
 	//pinMode(IN_BLUE, INPUT);
 
-	P2DIR = 0xFF;
-	P2SEL = 0x00;
-
-	//Set ACLK to use internal VLO (12 kHz clock)
-	BCSCTL3 |= LFXT1S_2;
-
-	//Set TimerA to use auxiliary clock in UP mode
-	TACTL = TASSEL_1 | MC_1;
-	//Enable the interrupt for TACCR0 match
-	TACCTL0 = CCIE;
-
-	// Set TACCR0 which also starts the timer. At 12 kHz, counting to 12000
-	// should output an LED change every 1 second. Try this out and see how
-	// inaccurate the VLO can be
-	TACCR0 = 2;
-
-	// inputs_init();
+	set_power_mode(1);
+	inputs_init();
 
 	//Enable global interrupts
 	WRITE_SR(GIE);
@@ -211,6 +221,7 @@ void demo() {
 	}
 
 }
+
 
 /**
  * @brief ISR for TIMER0_A0, does the pwm stuff.

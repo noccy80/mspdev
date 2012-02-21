@@ -5,5 +5,6 @@ void override_color(int r, int g, int b);
 void free_override_color();
 void set_program(int program);
 void set_delay(int delaybase);
+void set_power_mode(int powermode);
 
 #endif
