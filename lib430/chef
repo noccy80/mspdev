@@ -85,13 +85,16 @@ case "$OP" in
 			cd src/$LIB
 			if [ -e Makefile ]; then
 				make clean 
-# &> /dev/null
 			fi
 			printf "   %s %-20s |%4s| Make clean\n" "··" $LIB " OK "
 			cd ../..
 		done
 		;;
 	"docs")
+		if [ "`which doxygen`" == "" ]; then
+			echo "You dont seem to have doxygen installed."
+			exit 1
+		fi
 		echo "== Cooking docs =="
 
 		for LIB in $LIB430LIBS; do
@@ -133,7 +136,6 @@ case "$OP" in
 				printf "   %s %-20s |%4s| " "··" $LIB " OK "
 				DEST="../../$MCU/"
 				INST="`make install 2>/dev/null | tail --lines 1`"
-				echo "$CXXFLAGS" > "$DEST/CXXFLAGS"
 				printf "%s\n" "$INST"
 			else
 				printf "   %s %-20s |%4s| Failed, see %s\n" "  " $LIB "" "$MCU/$LIB.log"

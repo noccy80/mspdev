@@ -10,6 +10,9 @@ if [ ! -e MCUS ]; then
 		$0
 	fi
 fi
+function libraries() {
+	export LIBRARIES="$1"
+}
 function build() {
 
 	if [ "$2" == "" ]; then
@@ -18,6 +21,7 @@ function build() {
 		export CXXFLAGS="$2"
 	fi
 	export DEST="`dirname $0`/$MCU"
+	export LIB430LIBS="$LIBRARIES $3"
 	./chef -m $1 -b
 
 }
