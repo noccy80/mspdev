@@ -31,15 +31,16 @@
 #include <arduino.h>
 
 // Output pins
-#define OUT_RED 2
+#define OUT_RED 3
 #define OUT_GREEN 1
-#define OUT_BLUE 3
+#define OUT_BLUE 2
 
 volatile int ovr_on = 0;
 volatile int ovr_red = 0;
 volatile int ovr_green = 0;
 volatile int ovr_blue = 0;
 int power = 0;
+volatile long ticks = 0;
 
 // Max is a bad name, but this is how many intensity levels exist
 const int max = 64;
@@ -57,8 +58,8 @@ volatile int delay_base = 30;
 void demo();
 void ambient();
 
-void set_color(int r, int g, int b);
-
+void reset_ticks() { ticks = 0; }
+long get_ticks() { return ticks; }
 
 void set_power_mode(int powermode) {
 	power = powermode;
@@ -102,15 +103,15 @@ void setup() {
 	//pinMode(IN_BLUE, INPUT);
 
 	set_power_mode(1);
-	inputs_init();
+	//inputs_init();
 
 	//Enable global interrupts
 	WRITE_SR(GIE);
 
 }
 
-void override_color(int r, int g, int b) {
-	ovr_on = 100;
+void override_color(uint8_t r, uint8_t g, uint8_t b, int duration) {
+	ovr_on = duration;
 	ovr_red = r;
 	ovr_green = g;
 	ovr_blue = b;
@@ -132,20 +133,20 @@ void set_delay(int delaybase) {
  *
  * Will assign the red green and blue value to the volatile variables
  *
- * @param int r The red value
- * @param int g The green value
- * @param int b The blue value
+ * @param r The red value
+ * @param g The green value
+ * @param b The blue value
  */
-void set_color(int r, int g, int b) {
+void set_color(uint8_t r, uint8_t g, uint8_t b) {
 	if (ovr_on-- > 0) {
 		red_val = ovr_red;
 		green_val = ovr_green;
 		blue_val = ovr_blue;
 		return;
 	}
-	red_val = r;
-	green_val = g;
-	blue_val = b;
+	red_val = map(r,0,255,0,max);
+	green_val = map(g,0,255,0,max);
+	blue_val = map(b,0,255,0,max);
 }
 
 /**
@@ -196,22 +197,15 @@ void demo() {
 
 	while(1) {
 
-		// Green to Red
-		for (m = 0; m < 6; m++) {
-			for (n = 0; n < max; n++) {
+		for (m = 0; m < 2; m++) {
+			for (n = 0; n < 255; n++) {
 				switch(m) {
 					case 0:
 						set_color(n,0,0); break;
 					case 1:
-						set_color(max,n,0); break;
+						set_color(0,n,0); break;
 					case 2:
-						set_color(max-n,max,0); break;
-					case 3:
-						set_color(0,max -n,n); break;
-					case 4:
-						set_color(n,0,max); break;
-					case 5:
-						set_color(max - n,0,max -n); break;
+						set_color(0,0,n); break;
 				}
 				for (i = 0; i < delay_base; i++) __delay_cycles(delaya);
 			}
@@ -229,11 +223,18 @@ void demo() {
  */
 interrupt(TIMER0_A0_VECTOR) timer_isr(void) {
 
+	ticks++;
 	static int step = 0;
 	P1OUT = 0xFF;
-	digitalWrite(OUT_RED,(step<red_val)?HIGH:LOW);
-	digitalWrite(OUT_GREEN,(step<green_val)?HIGH:LOW);
-	digitalWrite(OUT_BLUE,(step<blue_val)?HIGH:LOW);
+	#ifdef TRANSISTOR_NPN
+	digitalWrite(OUT_RED,(step>=red_val)?HIGH:LOW);
+	digitalWrite(OUT_GREEN,(step>=green_val)?HIGH:LOW);
+	digitalWrite(OUT_BLUE,(step>=blue_val)?HIGH:LOW);
+	#else
+	digitalWrite(OUT_RED,(step>=red_val)?LOW:HIGH);
+	digitalWrite(OUT_GREEN,(step>=green_val)?LOW:HIGH);
+	digitalWrite(OUT_BLUE,(step>=blue_val)?LOW:HIGH);
+	#endif
 	step++;
 	if (step>max) step = 0;
 
