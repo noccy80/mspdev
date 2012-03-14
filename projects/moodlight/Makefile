@@ -23,8 +23,6 @@ BUILD     = bin prog
 # Target binary without extension.
 TARGET    = main
 
-# If you don't have common.mk for some reason you can manually download it from
-# theNoccyLabs repository at http://sv.noccy.com/mspdev/skeleton/common.mk 
 include ../../skeleton/common.mk
 
 # This sets all the pointers for the libraries in order.

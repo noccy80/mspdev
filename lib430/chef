@@ -133,6 +133,7 @@ case "$OP" in
 				printf "   %s %-20s |%4s| " "··" $LIB " OK "
 				DEST="../../$MCU/"
 				INST="`make install 2>/dev/null | tail --lines 1`"
+				echo "$CXXFLAGS" > "$DEST/CXXFLAGS"
 				printf "%s\n" "$INST"
 			else
 				printf "   %s %-20s |%4s| Failed, see %s\n" "  " $LIB "" "$MCU/$LIB.log"
