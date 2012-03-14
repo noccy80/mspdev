@@ -1,0 +1,13 @@
+#!/usr/bin/php
+<?php
+
+$fo = fopen('frequencies.csv','r');
+if (!$fo) die("Could not open file");
+
+while (!feof($fo)) {
+	$fd = fgetcsv($fo,1024,"\t");
+	$out[] = intval($fd[2]);
+}
+printf("const int freq[] = { ");
+printf(join(',',$out));
+printf("};");
