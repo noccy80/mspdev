@@ -2,6 +2,8 @@
 # noccyONE
 
 msp430-based 8-bit synth
+
+<pre>
                                                                _
           |                                                /\ | \ /_
         | |  .::::::. .::::::. .::::::. .::::::. :::  :::  \/ | / \
@@ -11,6 +13,7 @@ msp430-based 8-bit synth
         | |                                      .....:::
         | |____                                  '''''''
         |____
+</pre>
 
 Concept and Design by NoccyLabs. Copyright (C) 2012, NoccyLabs. This project
 is 100% open source
