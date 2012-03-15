@@ -3,3 +3,9 @@
 *.elf
 *.lst
 *.a
+*.log
+*.err
+*.map
+/lib430/msp*
+/lib430/docs
+/lib430/MCUS
