@@ -15,6 +15,9 @@ function libraries() {
 }
 function build() {
 
+	if [ "$LIBRARIES" == "" ]; then
+		echo "Warning: Libraries to build not specified in MCUS"
+	fi
 	if [ "$2" == "" ]; then
 		export CXXFLAGS=""
 	else

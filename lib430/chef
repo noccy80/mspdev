@@ -147,6 +147,7 @@ case "$OP" in
 		chmod 666 $MCU/include/*.h
 		LIBCOUNT=`ls -al $MCU/lib/*.a 2>/dev/null | wc -l`
 		HCOUNT=`ls -al $MCU/include/*.h 2>/dev/null | wc -l`
+		echo 'CXXFLAGS="$CXXFLAGS"' > $MCU/CXXFLAGS
 		echo "   :: $LIBCOUNT libraries and $HCOUNT headers have been installed."
 		;;
 	"package")
