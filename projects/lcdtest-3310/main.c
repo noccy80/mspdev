@@ -9,12 +9,11 @@ unsigned int p = 0;
 
 // Display buffer
 
-const char* str[5]  = {
-	"              ",
-	"  Loading...  ",
-	" Please wait  ",
-	"              ",
-	"              "
+const char* menu[4]  = {
+	"Option 1",
+	"Option 2",
+	"Option 3",
+	"Option 4"
 };
 
 /**
@@ -24,11 +23,31 @@ const char* str[5]  = {
  */
 void update_display() {
 	static int i = 0;
-	for (int q = 0; q < 5; q++) {
-		lcd_draw_text(str[q],0,q+1);
-	}
+	static int p = 0;
+	static int m = 0;
+	
+	lcd_draw_text_block(menu[0],10,1,(m==0),74);
+	lcd_draw_glyph(check[0],2,1);
+	
+	lcd_draw_text_block(menu[1],10,2,(m==1),74);
+	lcd_draw_glyph(check[1],2,2);
+	
+	lcd_draw_text_block(menu[2],10,3,(m==2),74);
+	lcd_draw_glyph(radio[0],2,3);
+	
+	lcd_draw_text_block(menu[3],10,4,(m==3),74);
+	lcd_draw_glyph(radio[1],2,4);
+	
+	lcd_draw_glyph(bar[0],0,5);
+	lcd_tile_glyph(load[p],2,5,80);
+	lcd_draw_glyph(bar[1],82,5);
+	
 	lcd_draw_glyph(batt[i],0,0);
 	i++; if (i>3) i=0;
+	p++; if (p>3) {
+		p=0;
+		m++; if (m>3) m=0;
+	}
 
 }
 

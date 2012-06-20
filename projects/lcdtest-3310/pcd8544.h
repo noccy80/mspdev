@@ -110,6 +110,16 @@ void lcd_contrast(char c);
 void lcd_draw_glyph(const char* glyph, unsigned char x, unsigned char y);
 
 /**
+ * @brief Draw a glyph from a const char and repeat it
+ * 
+ * @param const char* The glyph to draw
+ * @param unsigned char x The vertical offset (0-83)
+ * @param unsigned char y The row (0-6)
+ * @param unsigned char w The number of columns to repeat
+ */
+void lcd_tile_glyph(const char* glyph, unsigned char x, unsigned char y, unsigned char w);
+
+/**
  * @brief Draw text using the 5x8 font.
  *
  * This function will draw the provided string to the LCD at the specified

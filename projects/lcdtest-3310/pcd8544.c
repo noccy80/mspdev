@@ -123,6 +123,15 @@ void lcd_draw_glyph(const char* glyph, unsigned char x, unsigned char y) {
 	}
 }
 
+void lcd_tile_glyph(const char* glyph, unsigned char x, unsigned char y, unsigned char w) {
+	lcd_cursor(x,y);
+	int c = 0;
+	for (int p = 0; p < w; p++) {
+		lcd_send(glyph[c+1], LCD_SEND_DATA);
+		if (++c >= glyph[0]) c = 0;
+	}
+}
+
 void lcd_draw_text(const char* string, unsigned char x, unsigned char y) {
 	lcd_cursor(x,y);
 	for (int c = 0; c < strlen(string); c++) {
@@ -134,7 +143,7 @@ void lcd_draw_text(const char* string, unsigned char x, unsigned char y) {
 
 void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length) {
 	int mask = 0x00;
-	if (inverse == 1) mask = 0xFF;
+	if (inverse != 0) mask = 0xFF;
 	lcd_cursor(x,y);
 	for (int c = 0; c < strlen(string); c++) {
 		for (int n = 0; n < 6; n++) {
