@@ -13,7 +13,7 @@
 SOURCEC   = main.c pcd8544.c
 SOURCECPP =
 SOURCEASM =
-CXXFLAGS += -oS -std=gnu99 -DPCD8544_FIX_YALIGN
+CXXFLAGS += -std=gnu99 -DPCD8544_FIX_YALIGN
 
 # bin:binary file, lib:library, prog:program device
 BUILD     = bin prog
