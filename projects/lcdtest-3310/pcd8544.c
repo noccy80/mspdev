@@ -130,7 +130,20 @@ void lcd_draw_text(const char* string, unsigned char x, unsigned char y) {
 			lcd_send(font5x8[(unsigned char)string[c]][n], LCD_SEND_DATA);
 		}
 	}
+}
 
+void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length) {
+	int mask = 0x00;
+	if (inverse == 1) mask = 0xFF;
+	lcd_cursor(x,y);
+	for (int c = 0; c < strlen(string); c++) {
+		for (int n = 0; n < 6; n++) {
+			lcd_send(font5x8[(unsigned char)string[c]][n]^mask, LCD_SEND_DATA);
+		}
+	}
+	for (int n = length; n > strlen(string)*5; n--) {
+        lcd_send(mask, LCD_SEND_DATA);	
+	}
 }
 
 void lcd_write_byte(unsigned char v) {
