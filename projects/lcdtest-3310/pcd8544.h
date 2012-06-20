@@ -110,13 +110,33 @@ void lcd_contrast(char c);
 void lcd_draw_glyph(const char* glyph, unsigned char x, unsigned char y);
 
 /**
- * @brief Draw text using the 5x8 font
+ * @brief Draw text using the 5x8 font.
+ *
+ * This function will draw the provided string to the LCD at the specified
+ * position. It will only consume as many columns as the text fills, so if you
+ * want to draw a menu or such, instead see lcd_draw_text_block()
  * 
+ * @see lcd_draw_text_block()
  * @param const char* The text to draw
  * @param unsigned char x The vertical offset (0-83)
  * @param unsigned char y The row (0-6)
  */
 void lcd_draw_text(const char* string, unsigned char x, unsigned char y);
+
+/**
+ * @brief Draw text using the 5x8 font as a block.
+ * 
+ * This function will allow for updating menus and the likes, where you need
+ * to remove the text or graphics that was in a spot when updating the menu
+ * entries. Optional inverted text for extra spiffiness.
+ *
+ * @param const char* The text to draw
+ * @param unsigned char x The vertical offset (0-83)
+ * @param unsigned char y The row (0-6)
+ * @param int If non-zero the text will be inversed
+ * @param int The number of pixels to draw including the text
+ */
+void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length);
 
 /**
  * @brief Write a byte to the display at the current position
