@@ -118,5 +118,11 @@ void lcd_draw_glyph(const char* glyph, unsigned char x, unsigned char y);
  */
 void lcd_draw_text(const char* string, unsigned char x, unsigned char y);
 
+/**
+ * @brief Write a byte to the display at the current position
+ * 
+ * @param unsigned char The byte to write
+ */
+void lcd_write_byte(unsigned char v);
 
 #endif

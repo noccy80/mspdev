@@ -109,7 +109,7 @@ void lcd_contrast(char c) {
  
 void lcd_cursor(unsigned char x, unsigned char y) {
     lcd_send(0x80|x,LCD_SEND_COMMAND);
-	#ifdef FIX_YALIGN
+	#ifdef PCD8544_FIX_YALIGN
     lcd_send(0x40|(y+1),LCD_SEND_COMMAND);
 	#else
     lcd_send(0x40|y,LCD_SEND_COMMAND);
@@ -131,4 +131,8 @@ void lcd_draw_text(const char* string, unsigned char x, unsigned char y) {
 		}
 	}
 
+}
+
+void lcd_write_byte(unsigned char v) {
+	lcd_send(v,LCD_SEND_DATA);
 }

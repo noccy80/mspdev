@@ -17,8 +17,11 @@ const char* str[5]  = {
 	"              "
 };
 
-
-
+/**
+ * @brief Called from Timer0_A0 ISR.
+ * 
+ * Updates the display.
+ */
 void update_display() {
 	static int i = 0;
 	for (int q = 0; q < 5; q++) {
@@ -26,19 +29,27 @@ void update_display() {
 	}
 	lcd_draw_glyph(batt[i],0,0);
 	i++; if (i>3) i=0;
-	for (int q = 0; q < 5; q++) __delay_cycles(50000);
+
 }
 
+/**
+ * @brief Draws a hatch pattern on the display.
+ * 
+ */
 void draw_hatch() {
 	// draw cross pattern
 	lcd_cursor(0,0);
 	char v = 0xAA;
 	for(int x=0;x<((84*48)/4);x++) {
-		lcd_send(v,LCD_SEND_DATA);
+		lcd_write_byte(v);
 		v ^= 0xFF;
 	}
 }	
 
+/**
+ * @brief Main function
+ * 
+ */
 int main(void) {
 
 	WDTCTL = WDTPW + WDTHOLD; // Stop WDT
@@ -63,6 +74,7 @@ int main(void) {
 
 	// Initialize LCD and enable global interrupts
 	lcd_init();
+	//draw_hatch();
 	eint(); // _BIS_SR(GIE);
 
 	for(;;); // buffer_flush();
