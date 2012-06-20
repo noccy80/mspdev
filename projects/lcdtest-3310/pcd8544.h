@@ -21,7 +21,7 @@
  * Based on code by TopHatHacker (github.com/tophathacker) and rewritten
  * and commented for tidyness and modularity.
  * 
- * Licensed under GNU GPL version 3.0.
+ * Licensed under GNU GPL version 3
  * 
  * @version 1.0
  * @author Christopher Vagnetoft (noccylabs.info)

@@ -1,4 +1,4 @@
-#include  <msp430.h>
+#include <msp430.h>
 #include <legacymsp430.h>
 #include <string.h>
 #include "pcd8544.h"
@@ -11,8 +11,8 @@ unsigned int p = 0;
 
 const char* str[5]  = {
 	"              ",
-	"              ",
 	"  Loading...  ",
+	" Please wait  ",
 	"              ",
 	"              "
 };
