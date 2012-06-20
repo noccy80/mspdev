@@ -37,7 +37,7 @@ CC       = msp430-gcc
 NAKENASM = naken430asm
 GCCASM   = msp430-gcc
 OBJCOPY  = msp430-objcopy
-SIZE     = msp430-size -x
+SIZE     = msp430-size -Axd 
 STRIP    = msp430-strip
 # Flags and command lines
 #  if your main never returns: -mendup-at=main  (saves 6 bytes of ram)
@@ -46,8 +46,8 @@ CFLAGS   = -mmcu=$(MCU) -ffunction-sections -fdata-sections -fno-inline-small-fu
 ASFLAGS  = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS  = -mmcu=$(MCU) -Wl,-Map=$(TARGET).map
 # Object files and listings
-OBJS     = $(SOURCEC:.c=.c.o) $(SOURCEASM:.asm=.asm.o) $(SOURCEASM:.s43=.s43.o) $(SOURCECPP:.cpp=.cpp.o)
-LSTS     = $(SOURCEC:.c=.lst) $(SOURCECPP:.cpp=.lst)
+OBJS     = $(strip $(SOURCEC:.c=.c.o) $(SOURCEASM:.asm=.asm.o) $(SOURCEASM:.s43=.s43.o) $(SOURCECPP:.cpp=.cpp.o) $(SOURCECPP:.cc=.cc.o))
+LSTS     = $(strip $(SOURCEC:.c=.c.lst) $(SOURCECPP:.cpp=.cpp.lst) $(SOURCECPP:.cc=.cc.lst))
 ASMTYPE ?= gcc
 AR      ?= msp430-ar
 ARLFAGS ?= r
@@ -58,6 +58,7 @@ HDR_AR   = [\033[0;33m%-3s\033[0m]
 HDR_LD   = [\033[0;36m%-3s\033[0m]
 HDR_HEX  = [\033[0;36m%-3s\033[0m]
 HDR_LST  = [\033[0;35m%-3s\033[0m]
+HDR_RM   = [\033[0;33m%-3s\033[0m]
 
 # Phony targets; all and clean
 .phony: all bin lib clean listing prog identify package help
@@ -80,7 +81,9 @@ ifeq ($(MCU),)
 endif
 	printf "$(HDR_LD) \033[1m%s.elf\033[0m: \033[37m%s\033[0m %s\n" "LD" "$(TARGET)" "$(strip $(OBJS))" "$(if $(LIBS),(+$(subst -l,,$(LIBS))),)"
 	$(CC) $(LDFLAGS) $(LIBPATH) -o $(TARGET).elf $(OBJS) $(LIBS) 
-	$(SIZE) $(TARGET).elf
+
+size: $(TARGET)
+	$(SIZE) $(TARGET).elf | grep " " | grep -v "$(TARGET)"
 
 listing: $(LSTS)
 	
@@ -126,15 +129,17 @@ endif
 	$(OBJCOPY) -O ihex $< $@
 
 # rule for making assembler source listing, to see the code
-%.lst: %.c
+%.c.lst: %.c
 	printf "$(HDR_LST) %s\n" "LST" "$@"
 	$(CC) -c $(CFLAGS) -Wa,-anlhd $< > $@
 
 # Clean
 clean:
 ifeq ($(BUILD),lib)
+	printf "$(HDR_RM) $(TARGET).a $(OBJS)\n" "RM "
 	rm -fr $(TARGET).a $(OBJS)
 else
+	printf "$(HDR_RM) $(TARGET).elf $(TARGET).hex $(TARGET).map $(OBJS) $(LSTS)\n" "RM "
 	rm -fr $(TARGET).hex $(TARGET).elf $(TARGET).map $(OBJS) $(LSTS)
 endif
 
@@ -142,6 +147,14 @@ endif
 docs: Doxyfile
 	printf "[\033[38;5;148m%-3s\033[39m] Doxygen\n" "DOC"
 	doxygen 2>doxygen.err >doxygen.log
+
+interactive: prog
+	printf "[\033[38;5;148m%-3s\033[39m] entering interactive mode\n" "MSP"
+	$(MSPDEBUG) -q $(MSPTYPE)
+
+ strip: 
+	printf "[\033[38;5;148m%-3s\033[39m] Stripping debug information...\n" "---"
+	$(STRIP) $(TARGET).elf
 
 prog: $(TARGET).elf
 	printf "[\033[38;5;148m%-3s\033[39m] programming device: \033[1m%s\033[0m\n" "MSP" "$(MCU)"
@@ -158,8 +171,8 @@ package: clean
 	@echo "Packaging source..."
 	@bash -c "test -e $(TARGET)-src.tgz && rm -rf $(TARGET)-src.tgz; exit 0"
 	@echo "Copying files..."
-	@mkdir /tmp/$(TARGET)-src
-	@cp * /tmp/$(TARGET)-src
+	@mkdir -p /tmp/$(TARGET)-src
+	@cp -R * /tmp/$(TARGET)-src
 	@echo "Creating tarball..."
 	@cd /tmp && tar cfz $(TARGET)-src.tgz $(TARGET)-src
 	@mv /tmp/$(TARGET)-src.tgz .
