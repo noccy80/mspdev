@@ -5,6 +5,8 @@
 #ifndef PCD8544_FIX_YALIGN
 #warning If your display is offset by 5 pixels, add -DPCD8544_FIX_YALIGN to CXXFLAGS
 #endif
+
+unsigned char cx, cy;
  
 void lcd_send(unsigned char data, unsigned char cd) {
  
@@ -39,7 +41,18 @@ void lcd_send(unsigned char data, unsigned char cd) {
 
 	// Disable display controller.
 	SCEPORT |= SCE;
- 
+	
+	if (cd == LCD_SEND_DATA) {
+		cx++;
+		if (cx > (LCD_X_RES - 1)) {
+			cx = 0; cy++;
+			#ifdef PCD8544_FIX_YALIGN
+			// Soft wrapping when FIX_YALIGN is defined
+			lcd_cursor(cx,cy);
+			#endif
+		}
+	}
+	 
 }
  
 void lcd_clear(void) {
@@ -65,12 +78,9 @@ void lcd_init(void) {
 	SCEPORT &= ~SCE;          // RESET SCE to enable
 	// toggle RES
 	RESPORT |= RES;           // Set RES
-	char l;
-	for(l=0;l<100;l++)
-	l=l;
+	__delay_cycles(300);
 	RESPORT &= ~RES;          // reset RES
-	for(l=0;l<100;l++)
-	l=l;
+	__delay_cycles(300);
 	RESPORT |= RES;           // Set RES
 
 	// Cycle Clock
@@ -80,8 +90,7 @@ void lcd_init(void) {
 	// Disable display controller.
 	SCEPORT |= SCE;           // bring high to disable 
 
-	for(l=0;l<100;l++)
-	l=l;
+	__delay_cycles(300);
 
 	// Send sequence of command
 	lcd_send( 0x21, LCD_SEND_COMMAND );  // LCD Extended Commands.
@@ -108,12 +117,14 @@ void lcd_contrast(char c) {
 }
  
 void lcd_cursor(unsigned char x, unsigned char y) {
+	if (!((x >= 0) && (x <= 83) && (y>=0) && (y<=5))) return;
     lcd_send(0x80|x,LCD_SEND_COMMAND);
 	#ifdef PCD8544_FIX_YALIGN
     lcd_send(0x40|(y+1),LCD_SEND_COMMAND);
 	#else
     lcd_send(0x40|y,LCD_SEND_COMMAND);
 	#endif
+	cx = x; cy = y;
 }
  
 void lcd_draw_glyph(const char* glyph, unsigned char x, unsigned char y) {
@@ -132,6 +143,12 @@ void lcd_tile_glyph(const char* glyph, unsigned char x, unsigned char y, unsigne
 	}
 }
 
+void lcd_put_char(const char c) {
+	for (int n = 0; n < 6; n++) {
+		lcd_send(font5x8[(unsigned char)c][n], LCD_SEND_DATA);
+	}
+}
+
 void lcd_draw_text(const char* string, unsigned char x, unsigned char y) {
 	lcd_cursor(x,y);
 	for (int c = 0; c < strlen(string); c++) {
@@ -142,8 +159,7 @@ void lcd_draw_text(const char* string, unsigned char x, unsigned char y) {
 }
 
 void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length) {
-	int mask = 0x00;
-	if (inverse != 0) mask = 0xFF;
+	int mask = (inverse!=0)?0xFF:0x00;
 	lcd_cursor(x,y);
 	for (int c = 0; c < strlen(string); c++) {
 		for (int n = 0; n < 6; n++) {
@@ -158,3 +174,11 @@ void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, i
 void lcd_write_byte(unsigned char v) {
 	lcd_send(v,LCD_SEND_DATA);
 }
+
+#ifndef PCD8544_NO_PRINTF
+int putchar(int c) { 
+	lcd_put_char((char)c&0xFF); 
+	return 1; 
+}
+#endif
+

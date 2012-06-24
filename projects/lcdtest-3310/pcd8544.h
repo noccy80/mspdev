@@ -16,7 +16,13 @@
  * If the display on your device is offset by 5 pixels, causing the
  * top row of the display to be 5 pixels down, then add the define
  * PCD8544_FIX_YALIGN to your project or -DPCD8544_FIX_YALIGN to your
- * compiler flags in the makefile to fix this problem.
+ * compiler flags in the makefile to fix this problem. This will also implement
+ * soft wrapping for all drawing operations to mimic the behavior of the
+ * original controller.
+ *
+ * When compiled, the driver can link putchar() to lcd_putchar(), allowing it
+ * to integrate with the printf() present in mspgcc. If you do not wish to have
+ * this link put in place, define -DPCD8544_NO_PRINTF in the makefile.
  * 
  * Based on code by TopHatHacker (github.com/tophathacker) and rewritten
  * and commented for tidyness and modularity.
@@ -147,6 +153,16 @@ void lcd_draw_text(const char* string, unsigned char x, unsigned char y);
  * @param int The number of pixels to draw including the text
  */
 void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length);
+
+/**
+ * @brief Draw text using the 5x8 font at the current cursor position.
+ *
+ * This function will draw the provided string to the LCD at the current cursor
+ * position. 
+ * 
+ * @param const char* The text to draw
+ */
+void lcd_put_char(const char c);
 
 /**
  * @brief Write a byte to the display at the current position

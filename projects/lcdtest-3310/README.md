@@ -17,6 +17,15 @@ top row of the display to be 5 pixels down, then add the define
 `PCD8544_FIX_YALIGN` to your project or `-DPCD8544_FIX_YALIGN` to your
 compiler flags in the makefile to fix this problem.
 
+When compiled, the driver can link putchar() to lcd_putchar(), allowing it
+to integrate with the printf() present in mspgcc. If you do not wish to have
+this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
+
+## Defines
+
+  - `PCD8544_FIX_YALIGN` - Fixes offset issue with newer version controllers
+  - `PCD8544_NO_PRINTF` - Don't create a putchar() stub for mspgcc:s printf()
+
 ## Functions
 
 	/**
