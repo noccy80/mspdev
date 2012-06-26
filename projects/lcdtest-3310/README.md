@@ -28,6 +28,10 @@ this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
 
 ## Functions
 
+### Core functions
+
+#### lcd_send()
+
 	/**
 	 * @brief Send data or command to LCD
 	 * 
@@ -36,25 +40,38 @@ this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
 	 */
 	void lcd_send(unsigned char,unsigned char);
 
-	/**
-	 * @brief Clear the LCD
-	 * 
-	 * 
-	 */
+#### lcd_init();
+
+Initialize the LCD
+
+	void lcd_init(void);
+
+#### lcd_clear()
+
+Clear the LCD
+
 	void lcd_clear(void);
 
-	/**
-	 * @brief
-	 * 
-	 * @param unsigned char The line to clear (0-5)
-	 */
+#### lcd_clear_line()
+
+Clear a line
+
+  - unsigned char The line to clear (0-5)
+
 	void lcd_clear_line(unsigned char l);
 
+#### lcd_erase()
+
 	/**
-	 * @brief Initialize the LCD
+ 	* @brief Erase a region from the display
 	 * 
+	 * @param unsigned char x The vertical offset (0-83)
+	 * @param unsigned char y The row (0-6)
+	 * @param unsigned char w The number of columns to erase
 	 */
-	void lcd_init(void);
+	void lcd_erase(unsigned char x, unsigned char y, unsigned char w);
+
+#### lcd_cursor()
 
 	/**
 	 * @brief Set the cursor position
@@ -64,6 +81,8 @@ this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
 	 */
 	void lcd_cursor(unsigned char,unsigned char);
 
+#### lcd_contrast()
+
 	/**
 	 * @brief Set the LCD contrast
 	 * 
@@ -71,24 +90,48 @@ this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
 	 */
 	void lcd_contrast(char c);
 
+#### lcd_write_byte()
+
+	/**
+	 * @brief Write a byte to the display at the current position
+	 * 
+	 * @param unsigned char The byte to write
+	 */
+	void lcd_write_byte(unsigned char v);
+
+
+### Glyphs and images
+
+Glyphs are arrays of chars, with the first value indicating the width of the
+glyph. All glyphs operate on 8 bits (8 rows)
+
+#### lcd_draw_glyph()
+
+Draws a glyph on the canvas
+
 	/**
 	 * @brief Draw a glyph from a const char*
 	 * 
 	 * @param const char* The glyph to draw
 	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-6)
+	 * @param unsigned char y The row (0-5)
 	 */
 	void lcd_draw_glyph(const char* glyph, unsigned char x, unsigned char y);
+
+#### lcd_tile_glyph()
 
 	/**
 	 * @brief Draw a glyph from a const char and repeat it
 	 * 
 	 * @param const char* The glyph to draw
 	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-6)
+	 * @param unsigned char y The row (0-5)
 	 * @param unsigned char w The number of columns to repeat
 	 */
 	void lcd_tile_glyph(const char* glyph, unsigned char x, unsigned char y, unsigned char w);
+
+### Text functions
+#### lcd_draw_text()
 
 	/**
 	 * @brief Draw text using the 5x8 font.
@@ -100,9 +143,11 @@ this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
 	 * @see lcd_draw_text_block()
 	 * @param const char* The text to draw
 	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-6)
+	 * @param unsigned char y The row (0-5)
 	 */
 	void lcd_draw_text(const char* string, unsigned char x, unsigned char y);
+
+#### lcd_draw_text_block()
 
 	/**
 	 * @brief Draw text using the 5x8 font as a block.
@@ -113,18 +158,11 @@ this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
 	 *
 	 * @param const char* The text to draw
 	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-6)
+	 * @param unsigned char y The row (0-5)
 	 * @param int If non-zero the text will be inversed
 	 * @param int The number of pixels to draw including the text
 	 */
 	void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length);
-
-	/**
-	 * @brief Write a byte to the display at the current position
-	 * 
-	 * @param unsigned char The byte to write
-	 */
-	void lcd_write_byte(unsigned char v);
 
 ## Credits
 
