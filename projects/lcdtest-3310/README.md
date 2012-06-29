@@ -32,13 +32,9 @@ this link put in place, add `-DPCD8544_NO_PRINTF` to the flags in your makefile.
 
 #### lcd_send()
 
-	/**
-	 * @brief Send data or command to LCD
-	 * 
-	 * @param unsigned char The command or data byte
-	 * @param unsigned char LCD_SEND_COMMAND|LCD_SEND_DATA
-	 */
-	void lcd_send(unsigned char,unsigned char);
+Send data or command to LCD
+
+    void lcd_send(unsigned char byte,unsigned char dc);
 
 #### lcd_init();
 
@@ -56,113 +52,65 @@ Clear the LCD
 
 Clear a line
 
-  - unsigned char The line to clear (0-5)
-
-	void lcd_clear_line(unsigned char l);
+	void lcd_clear_line(unsigned char line);
 
 #### lcd_erase()
 
-	/**
- 	* @brief Erase a region from the display
-	 * 
-	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-6)
-	 * @param unsigned char w The number of columns to erase
-	 */
-	void lcd_erase(unsigned char x, unsigned char y, unsigned char w);
+Erase a region from the display
+
+    void lcd_erase(unsigned char x, unsigned char y, unsigned char width);
 
 #### lcd_cursor()
 
-	/**
-	 * @brief Set the cursor position
-	 * 
-	 * @param unsigned char Column offset (0-83)
-	 * @param unsigned char Row offset (0-5)
-	 */
-	void lcd_cursor(unsigned char,unsigned char);
+Set the cursor position
+
+    void lcd_cursor(unsigned char,unsigned char);
 
 #### lcd_contrast()
 
-	/**
-	 * @brief Set the LCD contrast
-	 * 
-	 * @param char The contrast level (0-127)
-	 */
-	void lcd_contrast(char c);
+Set the LCD contrast as a value between 0 and 127.
+
+    void lcd_contrast(char c);
 
 #### lcd_write_byte()
 
-	/**
-	 * @brief Write a byte to the display at the current position
-	 * 
-	 * @param unsigned char The byte to write
-	 */
-	void lcd_write_byte(unsigned char v);
+Write a byte to the display at the current position
 
+	void lcd_write_byte(unsigned char b);
 
 ### Glyphs and images
 
 Glyphs are arrays of chars, with the first value indicating the width of the
-glyph. All glyphs operate on 8 bits (8 rows)
+glyph. All glyphs operate on 8 bits (8 rows or 1 text row). 
 
 #### lcd_draw_glyph()
 
-Draws a glyph on the canvas
+Draws a glyph from a const char
 
-	/**
-	 * @brief Draw a glyph from a const char*
-	 * 
-	 * @param const char* The glyph to draw
-	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-5)
-	 */
 	void lcd_draw_glyph(const char* glyph, unsigned char x, unsigned char y);
 
 #### lcd_tile_glyph()
 
-	/**
-	 * @brief Draw a glyph from a const char and repeat it
-	 * 
-	 * @param const char* The glyph to draw
-	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-5)
-	 * @param unsigned char w The number of columns to repeat
-	 */
+Tile a glyph from a const char
+
 	void lcd_tile_glyph(const char* glyph, unsigned char x, unsigned char y, unsigned char w);
 
 ### Text functions
 #### lcd_draw_text()
 
-	/**
-	 * @brief Draw text using the 5x8 font.
-	 *
-	 * This function will draw the provided string to the LCD at the specified
-	 * position. It will only consume as many columns as the text fills, so if you
-	 * want to draw a menu or such, instead see lcd_draw_text_block()
-	 * 
-	 * @see lcd_draw_text_block()
-	 * @param const char* The text to draw
-	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-5)
-	 */
-	void lcd_draw_text(const char* string, unsigned char x, unsigned char y);
+This function will draw the provided string to the LCD at the specified
+position. It will only consume as many columns as the text fills, so if you
+want to draw a menu or such, instead see lcd_draw_text_block()
+
+    void lcd_draw_text(const char* string, unsigned char x, unsigned char y);
 
 #### lcd_draw_text_block()
 
-	/**
-	 * @brief Draw text using the 5x8 font as a block.
-	 * 
-	 * This function will allow for updating menus and the likes, where you need
-	 * to remove the text or graphics that was in a spot when updating the menu
-	 * entries. Optional inverted text for extra spiffiness.
-	 *
-	 * @param const char* The text to draw
-	 * @param unsigned char x The vertical offset (0-83)
-	 * @param unsigned char y The row (0-5)
-	 * @param int If non-zero the text will be inversed
-	 * @param int The number of pixels to draw including the text
-	 */
-	void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length);
+This function will allow for updating menus and the likes, where you need
+to remove the text or graphics that was in a spot when updating the menu
+entries. Optional inverted text for extra spiffiness.
+
+    void lcd_draw_text_block(const char* string, unsigned char x, unsigned char y, int inverse, int length);
 
 ## Credits
 
