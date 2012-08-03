@@ -18,7 +18,7 @@ SOURCEASM =
 BUILD     = bin prog
 
 # Target binary without extension.
-TARGET    = main
+TARGET    = target
 
 # Include paths, f.ex. -I. -Isome/path
 INCLUDES  =

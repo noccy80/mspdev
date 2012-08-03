@@ -1,0 +1,214 @@
+#!/bin/bash
+
+test -e /etc/mspdev && . /etc/mspdev
+test -e ~/.mspdev && . ~/.mspdev
+
+# Sanity checks
+if [ -z $MSPDEV_PATH ]; then
+    echo "MSPDEV_PATH is not set."
+    exit 1
+fi
+if [ ! -e "$MSPDEV_PATH/skeleton" ]; then
+    echo "MSPDEV_PATH does not exist or does not contain mspdev: $MSPDEV_PATH"
+    exit 1
+fi
+test -z "$MSPDEV_TEMPLATES" && MSPDEV_TEMPLATES="$MSPDEV_PATH/templates"
+
+# Functions
+function showhelp() {
+    echo "mspdev - Help script for mspgcc and mspdev from NoccyLabs"
+    echo ""
+    echo "mspdev [-vh][-p name][-t template] command"
+    echo ""
+    echo "  -v  verbose"
+    echo "  -h  help"
+    echo "  -p  project name (if not included project is set up in current working dir)"
+    echo "  -t  project type (select template for main files)"
+    echo ""
+    echo "Valid commands are:"
+    echo
+    echo "  scaffold - initialize a new project"
+    echo "  makefile - regenerate the makefile"
+    echo "  templates - list the templates"
+    echo 
+    echo "A few examples:"
+    echo 
+    echo "  $ mspdev -p awesomeflasher -t ledflasher scaffold"
+    echo "  $ mspdev -p project scaffold"
+
+}
+function minstall() {
+	if [ "$VERBOSE" == "1" ]; then
+		echo "Copying skeleton file: $2"
+	fi
+	cp $1/$2 $3
+}
+function minstall-template() {
+	if [ "$VERBOSE" == "1" ]; then
+		echo "Installing files from template $2"
+	fi
+	cp -Ri $MSPDEV_TEMPLATES/$1/* .
+	for csrc in `ls *.c 2>/dev/null`; do
+		cfiles="$cfiles $csrc"
+	done
+	for cppsrc in `ls *.cpp 2>/dev/null`; do
+		cppfiles="$cppfiles $cppsrc"
+	done
+	for asmsrc in `ls *.asm 2>/dev/null`; do
+		asmfiles="$asmfiles $asmsrc"
+	done
+	
+	if [ "$VERBOSE" == "1" ]; then
+		echo "Source files (C): $cfiles"
+		echo "Source files (C++): $cppfiles"
+		echo "Source files (asm): $asmfiles"
+	fi
+}
+function mupdate-manifest() {
+	if [ "$VERBOSE" == "1" ]; then
+		echo "Updating manifests..."
+	fi
+	for csrc in `ls *.c 2>/dev/null`; do
+		cfiles="$cfiles $csrc"
+	done
+	for cppsrc in `ls *.cpp 2>/dev/null`; do
+		cppfiles="$cppfiles $cppsrc"
+	done
+	for asmsrc in `ls *.asm 2>/dev/null`; do
+		asmfiles="$asmfiles $asmsrc"
+	done
+	
+	if [ "$VERBOSE" == "1" ]; then
+		echo "Source files (C): $cfiles"
+		echo "Source files (C++): $cppfiles"
+		echo "Source files (asm): $asmfiles"
+	fi
+}
+function mpatch() {
+	if [ "$VERBOSE" == "1" ]; then
+		echo "Patching makefiles..."
+	fi
+        if [ ! -z "$with_project_name" ]; then
+		mpatch-update Makefile "TARGET" "TARGET    = $with_project_name"
+	fi
+	mpatch-update Makefile "SOURCEC " "SOURCEC   =$cfiles"
+	mpatch-update Makefile "SOURCECPP" "SOURCECPP =$cppfiles"
+	mpatch-update Makefile "SOURCEASM" "SOURCEASM =$asmfiles"
+	
+}
+function mpatch-update() {
+	cat $1 | grep $2 > /dev/null
+	if [ "$?" == "1" ]; then
+		return
+	fi
+	cat $1 | grep --before=100 "$2" | head -n -1 > .maketmp
+	echo "$3" >> .maketmp
+	cat $1 | grep --after=100 "$2" | grep -v "$2" >> .maketmp
+	cat .maketmp | grep -v "include common.mk" > Makefile
+	rm -rf .maketmp
+	if [ $VERBOSE == 1 ]; then
+            echo "Patched for $3"
+        fi
+}
+
+# Argument parsing
+VERBOSE=0
+PROJECT_NAME=project
+NEWPATH=`pwd`
+TEMPLATE=basic
+while getopts ":hvp:t:" opt "$@"; do
+    case $opt in
+        "h")
+            showhelp
+            exit
+            ;;
+        "t")
+        	TEMPLATE=$OPTARG
+		if [ ! -e $MSPDEV_TEMPLATES/$TEMPLATE ]; then
+			echo "No such template: $TEMPLATE"
+			exit 2
+		fi
+        	;;
+        "p")
+            NEWPATH=$NEWPATH/$OPTARG
+            PROJECT_NAME=$OPTARG
+            ;;
+            
+        "v")
+            VERBOSE=1
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Command execution
+main_ok=0
+case "${@: -1}" in
+    "help")
+        showhelp
+        exit
+        ;;
+    "scaffold")
+        echo "Scaffold project"
+        echo
+        #        123456789|123456789|123456789|123456789|
+        read -p "·· Project (binary) name: " -i $PROJECT_NAME -e with_project_name
+        read -p "·· Destination folder: " -i "$NEWPATH" -e with_project_folder
+        read -p "   Include lib430 support? [y/N]: " -N 1 -e with_lib430
+        if [ "${with_lib430,}" == "y" ]; then
+            read -p "·· lib430 libraries to include: " -i "$MSPDEV_DEFAULT_LIBS" -e
+        fi
+        read -p "   Continue creating project? [y/N]: " -N 1 -e all_ok
+        if [ "${all_ok,}" == "y" ]; then
+		echo
+        	test -e $with_project_folder || mkdir -p $with_project_folder 
+        	cd $with_project_folder
+        	minstall $MSPDEV_PATH skeleton/Makefile Makefile
+        	minstall-template $TEMPLATE
+        	mpatch
+        	echo "include $MSPDEV_PATH/skeleton/common.mk" >> $with_project_folder/Makefile
+		fi
+		echo "Scaffolding done."
+		main_ok=1
+        ;;
+    "templates")
+    	echo "Installed templates:"
+    	echo
+    	for tpl in `ls $MSPDEV_TEMPLATES`; do
+    		echo "  - $tpl"
+    	done
+    	echo
+    	echo "Template path: $MSPDEV_TEMPLATES"
+    	main_ok=1
+    	;;
+    "makefile")
+        if [ ! -e $NEWPATH/Makefile ]; then
+            echo "No makefile found!"
+            exit 3
+        fi
+        cd $NEWPATH
+        echo "Updating makefile with current files..."
+        mupdate-manifest
+        mpatch
+        echo "All done."
+        main_ok=1
+        ;;
+    "status")
+        echo "MSPDEV_PATH = $MSPDEV_PATH"
+        echo "MSPDEV_TEMPLATES = $MSPDEV_TEMPLATES"
+        echo "MSPDEV_DEFAULT_LIBS = $MSPDEV_DEFALT_LIBS"
+	main_ok=1
+        ;;
+esac
+
+if [ "$main_ok" == "0" ]; then
+	showhelp
+	exit 1
+fi
